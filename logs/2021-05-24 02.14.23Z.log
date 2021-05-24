@@ -1,0 +1,138 @@
+Executed Command: say : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259);
+by Member 524722785302609941; Nebula#8747 (Nebula) with arguments "hi"
+
+Executed Command: help : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726);
+by Member 524722785302609941; Nebula#8747 (Nebula) with arguments ""
+
+Executed Command: autocomplete : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726);
+by Member 524722785302609941; Nebula#8747 (Nebula) with arguments "Discord Bot"
+
+Error in Command: snowflake : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments ""
+
+Executed Command: help : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259);
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments ""
+
+Error in Command: snowflake : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments ""
+
+Error in Command: snowflake : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments ""
+
+Error in Command: snowflake : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments ""
+
+Error in Command: snowflake : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments ""
+
+Error in Command: snowflake : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments ""
+
+Error in Command: snowflake : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments ""
+
+Error in Command: autocomplete : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'DeepAI.DeepAIError: Unknown value type for form data key: text
+	at DeepAI.DeepAI_API.makeMultipartRequest(String url_path, String method, Dictionary`2 dataObjectForForm)
+	at DeepAI.DeepAI_API.stringApiCallMultipartForm(String url_path, String method, Dictionary`2 dataObjectForForm)
+	at DeepAI.DeepAI_API.callStandardApi(String model, Object inputs_and_options)
+	at Hexa.Modules.TextCompletionModule.TextCompletionCommand(CommandContext ctx, String text) in /workspaces/dsharp/Hexa/Modules/TextCompletionModule.cs:line 23
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments ""
+
+Executed Command: autocomplete : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259);
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments "bruh"
+
+Executed Command: autocomplete : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259);
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments "owo"
+
+Executed Command: autocomplete : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259);
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments "furry"
+
+Error in  : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException: Specified command was not found.
+Command name: eval'
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments ""
+
+Executed Command: ping : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726);
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
+
+Error in  : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException: Specified command was not found.
+Command name: servers'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
+
+Error in Command: serverinfo : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments "672575411095470102"
+
+Error in Command: serverinfo : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments "roles 672575411095470102"
+
+Error in Command: serverinfo : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments "672575411095470102 roles"
+
+Error in  : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException: Specified command was not found.
+Command name: says'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
+
+Executed Command: sayd : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726);
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments "<@!256569460981366784> i blame you."
+
+Executed Command: autocomplete : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259);
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments "I once had a dream, but"
+
+Error in  : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException: Specified command was not found.
+Command name: wiki'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
+
+Error in  : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException: Specified command was not found.
+Command name: servers'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
+
+Error in Command: ban : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
+
+Error in  : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException: Specified command was not found.
+Command name: warn'
+by Member 256569460981366784; Arcan#0001 (computer) with arguments ""
+
+Error in Command: ban : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.Exceptions.UnauthorizedException: Unauthorized: 403
+	at Hexa.Modules.AdminModule.BanCommand(CommandContext ctx, DiscordMember user, Int32 messages_to_delete, String reason) in /workspaces/dsharp/Hexa/Modules/AdminModule.cs:line 49
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 256569460981366784; Arcan#0001 (computer) with arguments "<@!524722785302609941>"
+
+Error in  : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException: Specified command was not found.
+Command name: yt'
+by Member 256569460981366784; Arcan#0001 (computer) with arguments ""
+
+Executed Command: ping : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259);
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments ""
+

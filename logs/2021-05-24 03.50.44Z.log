@@ -1,0 +1,8 @@
+Error in Command: autocomplete : , Channel 845310279595196416 with exception 
+	'System.Net.WebException: The remote server returned an error: (401) Unauthorized.
+	at System.Net.HttpWebRequest.GetResponse()
+	at Hexa.Modules.TextCompletionModule.RequestAutoComplete(String api_key, String text) in /workspaces/dsharp/Hexa/Modules/TextCompletionModule.cs:line 39
+	at Hexa.Modules.TextCompletionModule.TextCompletionCommand(CommandContext ctx, String text) in /workspaces/dsharp/Hexa/Modules/TextCompletionModule.cs:line 59
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by User 524722785302609941; Nebula#8747 with arguments "the quick brown fox"
+

@@ -1,0 +1,22 @@
+Error in Command: autocomplete : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'DeepAI.DeepAIError: Web Error: {"status": "Looks like you're enjoying our API. Want to keep using it? Sign up to get an API Key that's as unique as you are. It's free! https://deepai.org/"}
+	at DeepAI.DeepAI_API.stringApiCallMultipartForm(String url_path, String method, Dictionary`2 dataObjectForForm)
+	at DeepAI.DeepAI_API.callStandardApi(String model, Object inputs_and_options)
+	at Hexa.Modules.TextCompletionModule.TextCompletionCommand(CommandContext ctx, String text) in /workspaces/dsharp/Hexa/Modules/TextCompletionModule.cs:line 23
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments "furry"
+
+Error in Command: autocomplete : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'DSharpPlus.CommandsNext.Exceptions.ChecksFailedException: One or more pre-execution checks failed.
+	at DSharpPlus.CommandsNext.CommandsNextExtension.RunAllChecksAsync(Command cmd, CommandContext ctx)
+	at DSharpPlus.CommandsNext.CommandsNextExtension.ExecuteCommandAsync(CommandContext ctx)'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments "furry"
+
+Error in Command: autocomplete : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'DeepAI.DeepAIError: Web Error: {"status": "Looks like you're enjoying our API. Want to keep using it? Sign up to get an API Key that's as unique as you are. It's free! https://deepai.org/"}
+	at DeepAI.DeepAI_API.stringApiCallMultipartForm(String url_path, String method, Dictionary`2 dataObjectForForm)
+	at DeepAI.DeepAI_API.callStandardApi(String model, Object inputs_and_options)
+	at Hexa.Modules.TextCompletionModule.TextCompletionCommand(CommandContext ctx, String text) in /workspaces/dsharp/Hexa/Modules/TextCompletionModule.cs:line 23
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments "furry"
+

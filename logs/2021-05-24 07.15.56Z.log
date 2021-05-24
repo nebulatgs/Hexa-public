@@ -1,0 +1,9 @@
+Error in Command: uptime : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'System.FormatException: Input string was not in a correct format.
+	at System.Globalization.TimeSpanFormat.FormatCustomized(TimeSpan value, ReadOnlySpan`1 format, DateTimeFormatInfo dtfi, StringBuilder result)
+	at System.Globalization.TimeSpanFormat.Format(TimeSpan value, String format, IFormatProvider formatProvider)
+	at System.TimeSpan.ToString(String format)
+	at Hexa.Modules.InfoModule.UptimeCommand(CommandContext ctx) in /workspaces/dsharp/Hexa/Modules/InfoModule.cs:line 70
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 524722785302609941; Nebula#8747 (Nebula) with arguments ""
+

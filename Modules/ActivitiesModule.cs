@@ -1,21 +1,21 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Mime;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection.Emit;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-// using Discord.Commands;
-// using Discord.WebSocket;
-using DSharpPlus.Entities;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Microsoft.Extensions.Configuration;
+// using Discord.Commands;
+// using Discord.WebSocket;
+using DSharpPlus.Entities;
 using Hexa.Attributes;
+using Microsoft.Extensions.Configuration;
 
 namespace Hexa.Modules
 {
@@ -50,7 +50,7 @@ namespace Hexa.Modules
             var httpWebRequest = (HttpWebRequest)WebRequest.Create($"https://discord.com/api/v8/channels/{channel.Id}/invites");
             httpWebRequest.ContentType = "application/json";
             var headers = new WebHeaderCollection();
-            
+
             headers.Add("Authorization", $"Bot {Program.TOKEN}");
             headers.Add("Content-Type", "application/json");
             httpWebRequest.Headers = headers;
@@ -71,7 +71,7 @@ namespace Hexa.Modules
         [GroupCommand]
         public async Task StartActivityAsync(CommandContext ctx)
         {
-            await ctx.RespondAsync("Please select a valid activity");  
+            await ctx.RespondAsync("Please select a valid activity");
         }
 
         [Command("yt")]
@@ -79,11 +79,14 @@ namespace Hexa.Modules
         [Aliases("youtube")]
         public async Task StartYoutubeAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if(channel == null)
+            if (channel == null)
+            {
                 await ctx.RespondAsync("Please select a voice channel");
+                return;
+            }
             var activity_id = "755600276941176913";
             var code = RequestActivity(activity_id, channel);
-            await ctx.RespondAsync($"https://discord.gg/{code}");    
+            await ctx.RespondAsync($"https://discord.gg/{code}");
         }
 
         [Command("fish")]
@@ -91,22 +94,28 @@ namespace Hexa.Modules
         [Aliases("fishington")]
         public async Task StartFishingtonAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if(channel == null)
+            if (channel == null)
+            {
                 await ctx.RespondAsync("Please select a voice channel");
+                return;
+            }
             var activity_id = "814288819477020702";
             var code = RequestActivity(activity_id, channel);
-            await ctx.RespondAsync($"https://discord.gg/{code}");    
+            await ctx.RespondAsync($"https://discord.gg/{code}");
         }
 
         [Command("poker")]
         [Description("Start Poker Night")]
         public async Task StartPokerAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if(channel == null)
+            if (channel == null)
+            {
                 await ctx.RespondAsync("Please select a voice channel");
+                return;
+            }
             var activity_id = "755827207812677713";
             var code = RequestActivity(activity_id, channel);
-            await ctx.RespondAsync($"https://discord.gg/{code}");    
+            await ctx.RespondAsync($"https://discord.gg/{code}");
         }
 
         [Command("betrayal")]
@@ -114,11 +123,14 @@ namespace Hexa.Modules
         [Aliases("amogus", "amongus")]
         public async Task StartBetrayalAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if(channel == null)
+            if (channel == null)
+            {
                 await ctx.RespondAsync("Please select a voice channel");
+                return;
+            }
             var activity_id = "773336526917861400";
             var code = RequestActivity(activity_id, channel);
-            await ctx.RespondAsync($"https://discord.gg/{code}");    
+            await ctx.RespondAsync($"https://discord.gg/{code}");
         }
     }
 }

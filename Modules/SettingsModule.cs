@@ -1,12 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharp​Plus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
 using Hexa.Attributes;
 
 namespace Hexa.Modules
@@ -83,39 +79,5 @@ namespace Hexa.Modules
 
             await ctx.RespondAsync(embed: hEmbed.Build());
         }
-
-        // [Command("enable")]
-        // private async Task EnableCommand(CommandContext ctx, string name)
-        // {
-        //     try { await HexaSettings.SetToggle(ctx.Guild, name, "true"); }
-        //     catch (Exception ex) { await ctx.RespondAsync(ex.Message); return; }
-
-        //     // var hEmbed = new HexaEmbed(ctx, "Settings");
-
-        //     //  hEmbed.embed.AddField(
-        //     //         name: HexaSettings.StringFromSettingType((HexaSettings.SettingType)toggle.SettingTypeId),
-        //     //         value: "Enabled",
-        //     //         inline: true
-        //     //  );
-
-        //     // await ctx.RespondAsync(embed: hEmbed.Build());
-        // }
-
-        // // [Command("disable")]
-        // private async Task DisableCommand(CommandContext ctx, string name)
-        // {
-        //     try { await HexaSettings.SetToggle(ctx.Guild, name, "false"); }
-        //     catch (Exception ex) { await ctx.RespondAsync(ex.Message); return; }
-
-        //     var hEmbed = new HexaEmbed(ctx, "Settings");
-
-        //     hEmbed.embed.AddField(
-        //            name: "test",
-        //            value: "Disabled",
-        //            inline: true
-        //     );
-
-        //     await ctx.RespondAsync(embed: hEmbed.Build());
-        // }
     }
 }

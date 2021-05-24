@@ -1,0 +1,11 @@
+Executed Command: snowflake : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726);
+by Member 524722785302609941; Nebula#8747 (Nebula) with arguments "704823131549860000"
+
+Executed Command: snowflake : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259);
+by Member 524722785302609941; Nebula#8747 (Nebula) with arguments "704823131549860000"
+
+Error in  : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException: Specified command was not found.
+Command name: shit'
+by Member 256569460981366784; Arcan#0001 (Arcan) with arguments ""
+

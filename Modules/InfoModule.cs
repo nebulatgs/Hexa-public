@@ -60,5 +60,20 @@ namespace Hexa.Modules
 
             await ctx.RespondAsync(embed: hEmbed.Build());
         }
+
+        [Command("uptime")]
+        [Aliases("up")]
+        public async Task UptimeCommand(CommandContext ctx)
+        {
+            var hEmbed = new HexaEmbed(ctx, $"hexa's session uptime");
+
+            hEmbed.embed.AddField(
+                name: "Up for:",
+                value: $"{(DateTime.Now - Program.LaunchTime).ToString(@"hh\:mm\:ss")}",
+                inline: false
+            );
+
+            await ctx.RespondAsync(embed: hEmbed.Build());
+        }
     }
 }

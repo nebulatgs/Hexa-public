@@ -1,10 +1,5 @@
-using System;
 using System.Threading.Tasks;
 using System.Linq;
-using System.Linq.Expressions;
-using DSharpPlus.CommandsNext;
-using DSharp​Plus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
 using DSharpPlus;
 
 namespace Hexa.Modules

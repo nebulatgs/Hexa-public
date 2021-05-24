@@ -1,0 +1,64 @@
+Executed Command: ping : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726);
+by Member 524722785302609941; Nebula#8747 (Nebula) with arguments ""
+
+Executed Command: ping : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726);
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
+
+Error in Command: ban : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
+
+Executed Command: help : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726);
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
+
+Error in Command: ban : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
+
+Error in Command: ban : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.Exceptions.UnauthorizedException: Unauthorized: 403
+	at Hexa.Modules.AdminModule.BanCommand(CommandContext ctx, DiscordMember user, Int32 messages_to_delete, String reason) in /workspaces/dsharp/Hexa/Modules/AdminModule.cs:line 49
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments "<@704823131549860000>"
+
+Error in Command: ban : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.Exceptions.UnauthorizedException: Unauthorized: 403
+	at Hexa.Modules.AdminModule.BanCommand(CommandContext ctx, DiscordMember user, Int32 messages_to_delete, String reason) in /workspaces/dsharp/Hexa/Modules/AdminModule.cs:line 49
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments "<@704823131549860000>"
+
+Error in Command: ban : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.Exceptions.UnauthorizedException: Unauthorized: 403
+	at Hexa.Modules.AdminModule.BanCommand(CommandContext ctx, DiscordMember user, Int32 messages_to_delete, String reason) in /workspaces/dsharp/Hexa/Modules/AdminModule.cs:line 49
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments "<@704823131549860000>"
+
+Error in Command: ban : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.Exceptions.UnauthorizedException: Unauthorized: 403
+	at Hexa.Modules.AdminModule.BanCommand(CommandContext ctx, DiscordMember user, Int32 messages_to_delete, String reason) in /workspaces/dsharp/Hexa/Modules/AdminModule.cs:line 49
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments "<@704823131549860000>"
+
+Error in Command: ban : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.Exceptions.UnauthorizedException: Unauthorized: 403
+	at Hexa.Modules.AdminModule.BanCommand(CommandContext ctx, DiscordMember user, Int32 messages_to_delete, String reason) in /workspaces/dsharp/Hexa/Modules/AdminModule.cs:line 49
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments "<@704823131549860000>"
+
+Executed Command: purge : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726);
+by Member 524722785302609941; Nebula#8747 (Nebula) with arguments "1"
+
+Executed Command: purge : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726);
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments "100"
+
+Executed Command: snowflake : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726);
+by Member 524722785302609941; Nebula#8747 (Nebula) with arguments "621841580210388992"
+
+Executed Command: sayd : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726);
+by Member 524722785302609941; Nebula#8747 (Nebula) with arguments "hi"
+
+Executed Command: ping : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726);
+by Member 256569460981366784; Arcan#0001 (computer) with arguments ""
+

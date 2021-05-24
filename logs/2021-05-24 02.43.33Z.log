@@ -1,0 +1,10 @@
+Error in  : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException: Specified command was not found.
+Command name: yt'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
+
+Error in Command: ping : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'System.ArgumentException: Could not find a suitable overload for the command.
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 524722785302609941; Nebula#8747 (Nebula) with arguments ":pinging:"
+

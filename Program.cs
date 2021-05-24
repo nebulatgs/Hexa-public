@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
-using DSharp​Plus.CommandsNext.Attributes;
-using DSharp​Plus.CommandsNext.Exceptions;
-using Hexa.Attributes;
+using DSharpPlus.Entities;
+using DSharpPlus.Interactivity;
+using DSharpPlus.Interactivity.Enums;
+using DSharpPlus.Interactivity.Extensions;
 using Microsoft.Extensions.Configuration;
-using Postgrest;
-using Postgrest.Attributes;
-using Postgrest.Extensions;
-using Postgrest.Models;
-using Supabase;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Postgrest.Attributes;
+using Postgrest.Models;
 
 namespace Hexa
 {
@@ -27,7 +24,7 @@ namespace Hexa
         // public int Id { get; set; }
         [PrimaryKey("SettingId")]
         public int SettingId { get; set; }
-        
+
         [Column("GuildId")]
         public ulong GuildId { get; set; }
 
@@ -53,57 +50,92 @@ namespace Hexa
     class Program
     {
         private readonly IConfiguration _config;
-        // public static Dictionary<ulong, HexaSettings> settings;
-        public static string TOKEN;
+        public static DateTime LaunchTime { get; private set; }
+        public static string TOKEN { get; private set; }
+        public static List<ulong> DevGroupIds { get; set; }
         public Program()
         {
             var _builder = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile(path: "config.json");
             _config = _builder.Build();
-            TOKEN = _config["Token"];
-            // settings = new Dictionary<ulong, HexaSettings>();
-            // settings.Add(0, new HexaSettings
-            // {
-            //     toggles = new Dictionary<string, bool>(){
-            //         { "Ghost Ping Detection", false }
-            //     }
-            // });
+            if (Environment.GetEnvironmentVariable("PROD") is not null)
+                TOKEN = Environment.GetEnvironmentVariable("BOT_TOKEN");
+            else
+                TOKEN = _config["Token"];
+            DevGroupIds = new List<ulong>();
+            var devs = _config["Devs"].Split(',');
+            foreach (var dev in devs)
+                DevGroupIds.Add(ulong.Parse(dev.Trim()));
+            LaunchTime = DateTime.Now;
         }
         static void Main(string[] args)
         {
-            new Program().MainAsync().GetAwaiter().GetResult();
-
+            new Program()
+                .MainAsync()
+                .GetAwaiter()
+                .GetResult();
         }
 
         public async Task MainAsync()
         {
-            var discord = new DiscordClient(new DiscordConfiguration()
+            var discord = new DiscordShardedClient(new DiscordConfiguration()
             {
-                Token = _config["Token"],
+                Token = TOKEN,
                 TokenType = TokenType.Bot,
                 Intents = DiscordIntents.All,
                 AutoReconnect = true,
                 MinimumLogLevel = LogLevel.Information
             });
-            
-            var commands = discord.UseCommandsNext(new CommandsNextConfiguration()
+            var services = new ServiceCollection().AddSingleton<Random>().BuildServiceProvider();
+            var commands = await discord.UseCommandsNextAsync(new CommandsNextConfiguration()
             {
                 StringPrefixes = new[] { _config["Prefix"] },
                 EnableDms = true,
+                Services = services
             });
-            commands.RegisterCommands(Assembly.GetExecutingAssembly());
-            commands.CommandExecuted += new HexaLogger("logfile.log").Log;
-            commands.SetHelpFormatter<HexaHelp>();
 
-            var url = "https://mjtsibevgbffwhfbctsh.supabase.co";
-            var key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyMTY1Njk5NiwiZXhwIjoxOTM3MjMyOTk2fQ.Vk50me1kdQFmVrn2e4geY1qdg0_93yq-CGcJwfwKDf0";
+            await discord.UseInteractivityAsync(new InteractivityConfiguration
+            {
+                // default pagination behaviour to just ignore the reactions
+                PaginationBehaviour = PaginationBehaviour.Ignore,
+                PollBehaviour = PollBehaviour.DeleteEmojis,
 
+                // default timeout for other actions to 2 minutes
+                Timeout = TimeSpan.FromMinutes(2)
+            });
+
+            HexaLogger logger = new HexaLogger($"logs/{DateTime.Now.ToString("u").Replace(':', '.')}.log");
+            foreach (var command in commands)
+            {
+                command.Value.RegisterCommands(Assembly.GetExecutingAssembly());
+                command.Value.CommandExecuted += logger.LogCommandExecution;
+                command.Value.CommandErrored += logger.LogCommandError;
+                command.Value.SetHelpFormatter<HexaHelp>();
+            }
+
+            string url, key;
+            if (Environment.GetEnvironmentVariable("PROD") is null)
+            {
+                url = _config["Supabase_Url"];
+                key = _config["Supabase_Token"];
+            }
+            else
+            {
+                url = Environment.GetEnvironmentVariable("SUPABASE_URL");
+                key = Environment.GetEnvironmentVariable("SUPABASE_TOKEN");
+            }
             await Supabase.Client.InitializeAsync(url, key);
 
             discord.MessageDeleted += new Modules.GhostPingDetector().OnDelete;
 
-            await discord.ConnectAsync();
+            await discord.StartAsync();
+            await Task.Delay(100);
+            foreach (var client in discord.ShardClients)
+            {
+                var activity = new DiscordActivity($"{_config["Prefix"]}help | Shard {client.Key}", ActivityType.Playing);
+                await client.Value.UpdateStatusAsync(activity, UserStatus.Online);
+            }
             await Task.Delay(-1);
             // commands.CommandErrored += CmdErroredHandler;
 

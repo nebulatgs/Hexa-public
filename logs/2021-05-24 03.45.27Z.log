@@ -1,0 +1,13 @@
+Error in  : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
+	'DSharpPlus.CommandsNext.Exceptions.CommandNotFoundException: Specified command was not found.
+Command name: uinfo'
+by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
+
+Error in Command: autocomplete : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
+	'System.Net.WebException: The remote server returned an error: (400) Bad Request.
+	at System.Net.HttpWebRequest.GetResponse()
+	at Hexa.Modules.TextCompletionModule.RequestAutoComplete(String api_key, String text) in /workspaces/dsharp/Hexa/Modules/TextCompletionModule.cs:line 39
+	at Hexa.Modules.TextCompletionModule.TextCompletionCommand(CommandContext ctx, String text) in /workspaces/dsharp/Hexa/Modules/TextCompletionModule.cs:line 59
+	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
+by Member 524722785302609941; Nebula#8747 (Nebula) with arguments "the quick brown fox"
+
