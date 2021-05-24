@@ -8,6 +8,8 @@ namespace Hexa.Modules
     {   
         public async Task OnDelete(DiscordClient client, DSharpPlus.EventArgs.MessageDeleteEventArgs args)
         {
+            if (args.Message.Author == client.CurrentUser)
+                return;
             var setting = await HexaSettings.GetToggle(args.Guild, HexaSettings.SettingType.GhostPing);
             if(args.Message.MentionedUsers.Count() > 0 && bool.Parse(setting))
             {

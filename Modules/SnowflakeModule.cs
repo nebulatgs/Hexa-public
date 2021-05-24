@@ -38,8 +38,10 @@ namespace Hexa.Modules
                     badges += " <:partner:846268079741992980>";
                 if (member.Flags.Value.HasFlag(UserFlags.HypeSquadEvents))
                     badges += " <:hypesquad_events:846247756766248971>";
-                if (member.Flags.Value.HasFlag(UserFlags.BugHunterLevelOne) || member.Flags.Value.HasFlag(UserFlags.BugHunterLevelTwo))
+                if (member.Flags.Value.HasFlag(UserFlags.BugHunterLevelOne))
                     badges += " <:bughunter:846247040102432778>";
+                if (member.Flags.Value.HasFlag(UserFlags.BugHunterLevelTwo))
+                    badges += " <:bug_hunter_lvl2:846375404444975114>";
                 if (member.Flags.Value.HasFlag(UserFlags.HouseBravery))
                     badges += " <:bravery:845399344004857936>";
                 if (member.Flags.Value.HasFlag(UserFlags.HouseBalance))

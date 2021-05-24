@@ -1,6 +1,0 @@
-Error in Command: poll : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
-	'DSharpPlus.CommandsNext.Exceptions.ChecksFailedException: One or more pre-execution checks failed.
-	at DSharpPlus.CommandsNext.CommandsNextExtension.RunAllChecksAsync(Command cmd, CommandContext ctx)
-	at DSharpPlus.CommandsNext.CommandsNextExtension.ExecuteCommandAsync(CommandContext ctx)'
-by Member 524722785302609941; Nebula#8747 (Nebula) with arguments ""
-

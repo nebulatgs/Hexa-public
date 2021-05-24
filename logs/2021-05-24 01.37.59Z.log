@@ -1,7 +1,0 @@
-Error in Command: snowflake : Guild 780986840249401355; cubed testing server, Channel #general (780986840807112726) with exception 
-	'System.ArgumentOutOfRangeException: Valid values are between -62135596800 and 253402300799, inclusive. (Parameter 'seconds')
-	at System.DateTimeOffset.FromUnixTimeSeconds(Int64 seconds)
-	at Hexa.Modules.SnowflakeFetcher.Snow(CommandContext ctx, Int64 snowflake) in /workspaces/dsharp/Hexa/Modules/SnowflakeModule.cs:line 18
-	at DSharpPlus.CommandsNext.Command.ExecuteAsync(CommandContext ctx)'
-by Member 524722785302609941; Nebula#8747 (Nebula) with arguments "704823131549860000"
-

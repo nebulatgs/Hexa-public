@@ -13,9 +13,9 @@ namespace Hexa.Attributes
         {
         }
 
-        public override async Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
+        public override Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
         {
-            return Program.DevGroupIds.Contains(ctx.Message.Author.Id);
+            return Task.FromResult(Program.DevGroupIds.Contains(ctx.Message.Author.Id));
         }
     }
 }

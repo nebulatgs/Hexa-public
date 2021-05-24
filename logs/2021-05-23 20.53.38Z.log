@@ -1,9 +1,0 @@
-Error in Command: ping : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259) with exception 
-	'DSharpPlus.CommandsNext.Exceptions.ChecksFailedException: One or more pre-execution checks failed.
-	at DSharpPlus.CommandsNext.CommandsNextExtension.RunAllChecksAsync(Command cmd, CommandContext ctx)
-	at DSharpPlus.CommandsNext.CommandsNextExtension.ExecuteCommandAsync(CommandContext ctx)'
-by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
-
-Executed Command: ping : Guild 844754896358998018; hexa testing server, Channel #general (844754897362485259);
-by Member 299707523370319883; Wumpus#9999 (Wumpus) with arguments ""
-

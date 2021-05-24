@@ -87,7 +87,8 @@ namespace Hexa
                 AutoReconnect = true,
                 MinimumLogLevel = LogLevel.Information
             });
-            var services = new ServiceCollection().AddSingleton<Random>().BuildServiceProvider();
+            HexaLogger logger = new HexaLogger($"logs/{DateTime.Now.ToString("u").Replace(':', '.')}.log");
+            var services = new ServiceCollection().AddSingleton<HexaLogger>(logger).BuildServiceProvider();
             var commands = await discord.UseCommandsNextAsync(new CommandsNextConfiguration()
             {
                 StringPrefixes = new[] { _config["Prefix"] },
@@ -105,7 +106,6 @@ namespace Hexa
                 Timeout = TimeSpan.FromMinutes(2)
             });
 
-            HexaLogger logger = new HexaLogger($"logs/{DateTime.Now.ToString("u").Replace(':', '.')}.log");
             foreach (var command in commands)
             {
                 command.Value.RegisterCommands(Assembly.GetExecutingAssembly());
