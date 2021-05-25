@@ -6,7 +6,6 @@ using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
-using Emzi0767.Utilities;
 
 namespace Hexa.Modules
 {
@@ -14,8 +13,14 @@ namespace Hexa.Modules
     {
         [Command("snowflake")]
         [Aliases("snow", "lookup")]
-        public async Task Snow(CommandContext ctx, ulong snowflake)
+        [Description("Look up user/guild snowflakes")]
+        public async Task Snow(CommandContext ctx, [Description("The snowflake of the user/guild you want to look up")] ulong? snowflake = null)
         {
+            if (snowflake is null)
+            {
+                await ctx.RespondAsync("What snowflake should I look up?");
+                return;
+            }
             var hEmbed = new HexaEmbed(ctx, "snowflake information");
             var snowTime = DateTimeOffset.FromUnixTimeSeconds((long)(((snowflake >> 22) + 1420070400000) / 1000)).UtcDateTime;
             hEmbed.embed.Description = $"snowflake info on {snowflake}";
@@ -28,7 +33,7 @@ namespace Hexa.Modules
             DiscordGuild guild;
             try
             {
-                member = await ctx.Client.GetUserAsync(snowflake);
+                member = await ctx.Client.GetUserAsync(snowflake.Value);
                 string badges = "";
                 if (member.Flags == UserFlags.None)
                     badges += "None";
@@ -65,19 +70,30 @@ namespace Hexa.Modules
                     inline: true
                 );
             }
-            catch (Exception e)
+            catch
             {
                 try
                 {
-                    guild = await ctx.Client.GetGuildAsync(snowflake);
+                    guild = await ctx.Client.GetGuildAsync(snowflake.Value);
                     hEmbed.embed.WithThumbnail(guild.IconUrl, 32, 32);
+                    int roles = guild.Roles.Values.Where(x => x.Id != guild.EveryoneRole.Id).Count();
                     hEmbed.embed.AddField(
-                        name: "user: ",
-                        value: $"{guild.Name}\n{guild.Roles.Values}",
-                        inline: false
+                        name: "guild: ",
+                        value: $"{guild.Name}",
+                        inline: true
                     );
+                    hEmbed.embed.AddField(
+                        name: "roles: ",
+                        value: roles.ToString(),
+                        inline: true
+                    );
+                    // hEmbed.embed.AddField(
+                    //     name: "\u200B",
+                    //     value: "\u200B",
+                    //     inline: true
+                    // );
                 }
-                catch (Exception ex)
+                catch
                 {
                     hEmbed.embed.AddField(
                     name: "Snowflake not found",

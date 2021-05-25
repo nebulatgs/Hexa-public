@@ -69,7 +69,7 @@ namespace Hexa.Modules
             var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
             var builder = new ConfigurationBuilder().AddJsonStream(httpResponse.GetResponseStream());
             var config = builder.Build();
-            return config["data"];
+            return config["output"];
         }
 
         public TextCompletionModule()
@@ -78,8 +78,13 @@ namespace Hexa.Modules
         [Command("autocomplete")]
         [Aliases("ai", "complete")]
         [Description("Autocomplete text using GPT-2")]
-        public async Task TextCompletionCommand(CommandContext ctx, [RemainingText, Description("The text to complete using ai.")] string text)
+        public async Task TextCompletionCommand(CommandContext ctx, [RemainingText, Description("The text to complete")] string text = null)
         {
+            if (text is null)
+            {
+                await ctx.RespondAsync("What text should I complete?");
+                return;
+            }
             await ctx.Channel.TriggerTypingAsync();
             var output = RequestAutoCompleteDeepAI("468f237f-d4c0-426b-b06f-7362d03daadb", text);
             // var output = RequestAutoCompleteInferKit("b0444ca5-bd34-4f24-bc56-8beaaa811b69", text);

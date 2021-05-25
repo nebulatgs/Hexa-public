@@ -71,7 +71,7 @@ namespace Hexa.Modules
         [GroupCommand]
         public async Task StartActivityAsync(CommandContext ctx)
         {
-            await ctx.RespondAsync("Please select a valid activity");
+            await ctx.RespondAsync("What activity should I start?");
         }
 
         [Command("yt")]
@@ -79,9 +79,9 @@ namespace Hexa.Modules
         [Aliases("youtube")]
         public async Task StartYoutubeAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if (channel == null)
+            if (channel is null)
             {
-                await ctx.RespondAsync("Please select a voice channel");
+                await ctx.RespondAsync("What voice channel should I start Youtube Together in?");
                 return;
             }
             var activity_id = "755600276941176913";
@@ -94,9 +94,9 @@ namespace Hexa.Modules
         [Aliases("fishington")]
         public async Task StartFishingtonAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if (channel == null)
+            if (channel is null)
             {
-                await ctx.RespondAsync("Please select a voice channel");
+                await ctx.RespondAsync("What voice channel should I start Fishington.io in?");
                 return;
             }
             var activity_id = "814288819477020702";
@@ -108,9 +108,9 @@ namespace Hexa.Modules
         [Description("Start Poker Night")]
         public async Task StartPokerAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if (channel == null)
+            if (channel is null)
             {
-                await ctx.RespondAsync("Please select a voice channel");
+                await ctx.RespondAsync("What voice channel should I start Poker Night in?");
                 return;
             }
             var activity_id = "755827207812677713";
@@ -123,9 +123,9 @@ namespace Hexa.Modules
         [Aliases("amogus", "amongus")]
         public async Task StartBetrayalAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if (channel == null)
+            if (channel is null)
             {
-                await ctx.RespondAsync("Please select a voice channel");
+                await ctx.RespondAsync("What voice channel should I start Betrayal.io in?");
                 return;
             }
             var activity_id = "773336526917861400";

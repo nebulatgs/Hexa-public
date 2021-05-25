@@ -21,7 +21,6 @@ namespace Hexa.Modules
         }
         [Command("evaluate")]
         [Aliases("eval", "ev")]
-        [RequireUserPermissions(Permissions.Administrator)]
         [Description("Evaluate an expression")]
         public async Task EvaluateCommand(CommandContext ctx, [RemainingText] string code)
         {

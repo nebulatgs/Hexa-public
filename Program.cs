@@ -88,11 +88,13 @@ namespace Hexa
                 MinimumLogLevel = LogLevel.Information
             });
             HexaLogger logger = new HexaLogger($"logs/{DateTime.Now.ToString("u").Replace(':', '.')}.log");
+            HexaCommandHandler command_handler = new HexaCommandHandler(_config["Prefix"]);
             var services = new ServiceCollection().AddSingleton<HexaLogger>(logger).BuildServiceProvider();
             var commands = await discord.UseCommandsNextAsync(new CommandsNextConfiguration()
             {
                 StringPrefixes = new[] { _config["Prefix"] },
                 EnableDms = true,
+                UseDefaultCommandHandler = false,
                 Services = services
             });
 
@@ -111,6 +113,7 @@ namespace Hexa
                 command.Value.RegisterCommands(Assembly.GetExecutingAssembly());
                 command.Value.CommandExecuted += logger.LogCommandExecution;
                 command.Value.CommandErrored += logger.LogCommandError;
+                command.Value.CommandErrored += CmdErroredHandler;
                 command.Value.SetHelpFormatter<HexaHelp>();
             }
 
@@ -128,6 +131,7 @@ namespace Hexa
             await Supabase.Client.InitializeAsync(url, key);
 
             discord.MessageDeleted += new Modules.GhostPingDetector().OnDelete;
+            discord.MessageCreated += command_handler.CommandHandler;
 
             await discord.StartAsync();
             await Task.Delay(100);
@@ -137,23 +141,22 @@ namespace Hexa
                 await client.Value.UpdateStatusAsync(activity, UserStatus.Online);
             }
             await Task.Delay(-1);
-            // commands.CommandErrored += CmdErroredHandler;
 
         }
-
-        // private async Task CmdErroredHandler(CommandsNextExtension _, CommandErrorEventArgs e)
-        // {
-        //     Console.WriteLine("hi");
-        //     var failedChecks = ((ChecksFailedException)e.Exception).FailedChecks;
-        //     foreach (var failedCheck in failedChecks)
-        //     {
-        //         if (failedCheck is GuildOnlyAttribute)
-        //         {
-        //             var cooldownAttribute = (GuildOnlyAttribute)failedCheck;
-        //             // await e.Context.RespondAsync($"Only usable during year {cooldownAttribute.}.");
-        //             await e.Context.RespondAsync($"You are using commands too fast! Try again in {5} seconds");
-        //         }
-        //     }
-        // }
+        private async Task CmdErroredHandler(CommandsNextExtension _, CommandErrorEventArgs e)
+        {
+            // Console.WriteLine("hi");
+            // var failedChecks = ((ChecksFailedException)e.Exception).FailedChecks;
+            await e.Context.RespondAsync(e.Exception.Message);
+            // foreach (var failedCheck in failedChecks)
+            // {
+            //     if (failedCheck is GuildOnlyAttribute)
+            //     {
+            //         var cooldownAttribute = (GuildOnlyAttribute)failedCheck;
+            //         // await e.Context.RespondAsync($"Only usable during year {cooldownAttribute.}.");
+            //         await e.Context.RespondAsync($"You are using commands too fast! Try again in {5} seconds");
+            //     }
+            // }
+        }
     }
 }

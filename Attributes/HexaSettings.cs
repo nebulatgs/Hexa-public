@@ -47,7 +47,7 @@ namespace Hexa
             }
             throw new Exception("That setting does not exist");
         }
-        public static async Task<string> GetToggle(DiscordGuild guild, SettingType setting_type)
+        public static async Task<string> GetValue(DiscordGuild guild, SettingType setting_type)
         {
             var instance = Supabase.Client.Instance;
             var channels = instance.From<GuildSetting>();
@@ -58,7 +58,7 @@ namespace Hexa
             else
                 return foundSettings.First().Value;
         }
-        public static async Task<IEnumerable<GuildSetting>> GetTogglesAsync(DiscordGuild guild)
+        public static async Task<IEnumerable<GuildSetting>> GetValuesAsync(DiscordGuild guild)
         {
             var instance = Supabase.Client.Instance;
             var channels = instance.From<GuildSetting>();
@@ -66,7 +66,7 @@ namespace Hexa
             var foundSettings = guildSettings.Models.Where(x => x.GuildId == guild.Id);
             return foundSettings;
         }
-        public static async Task SetToggle(DiscordGuild guild, string find, string value)
+        public static async Task SetValue(DiscordGuild guild, string find, string value)
         {
             var setting_type = SettingTypeFromString(find);
             var instance = Supabase.Client.Instance;

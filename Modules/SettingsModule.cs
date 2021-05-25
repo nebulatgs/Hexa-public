@@ -15,11 +15,12 @@ namespace Hexa.Modules
     {
         [Command("settings")]
         [Aliases("set")]
-        public async Task SettingsCommand(CommandContext ctx, string setting = null, string action = null)
+        [Description("Change server-specific settings")]
+        public async Task SettingsCommand(CommandContext ctx, [Description("The setting to change")] string setting = null, [RemainingText, Description("The new value")]string action = null)
         {
-            var hEmbed = new HexaEmbed(ctx, "Settings");
-            var toggles = await HexaSettings.GetTogglesAsync(ctx.Guild);
-            if (setting == null)
+            var hEmbed = new HexaEmbed(ctx, "settings");
+            var toggles = await HexaSettings.GetValuesAsync(ctx.Guild);
+            if (setting is null)
             {
                 foreach (var toggle in toggles)
                 {
@@ -63,9 +64,9 @@ namespace Hexa.Modules
                         return;
                 }
             }
-            try { await HexaSettings.SetToggle(ctx.Guild, setting, parsedAction); }
+            try { await HexaSettings.SetValue(ctx.Guild, setting, parsedAction); }
             catch (Exception ex) { await ctx.RespondAsync(ex.Message); return; }
-            toggles = await HexaSettings.GetTogglesAsync(ctx.Guild);
+            toggles = await HexaSettings.GetValuesAsync(ctx.Guild);
             foreach (var toggle in toggles)
             {
                 string value = toggle.Value;

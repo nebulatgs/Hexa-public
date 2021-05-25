@@ -13,6 +13,7 @@ namespace Hexa.Modules
 {
     [DevOnly]
     [Hidden]
+    [Description("Bot Logs")]
     public class LogsModule : BaseCommandModule
     {
         public HexaLogger Logger { private get; set; }

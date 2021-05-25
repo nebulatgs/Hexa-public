@@ -1,9 +1,6 @@
-using System.Linq;
-using System;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
 using DSharpPlus;
 using Hexa.Attributes;
 
@@ -16,8 +13,13 @@ namespace Hexa.Modules
         [Command("say")]
         [RequireUserPermissions(Permissions.Administrator)]
         [Description("Make the bot say something")]
-        public async Task SayCommand(CommandContext ctx, [RemainingText][Description("What the bot should say")] string message)
+        public async Task SayCommand(CommandContext ctx, [RemainingText][Description("What the bot should say")] string message = null)
         {   
+            if (message is null)
+            {
+                await ctx.RespondAsync("What should I say?");
+                return;
+            }
             await ctx.Channel.SendMessageAsync(message);
         }
 
@@ -26,9 +28,13 @@ namespace Hexa.Modules
         [RequireBotPermissions(Permissions.ManageMessages)]
         [Description("Make the bot say something and delete the original message")]
         [GuildOnly]
-        public async Task SayDCommand(CommandContext ctx, [RemainingText][Description("What the bot should say")] string message)
+        public async Task SayDCommand(CommandContext ctx, [RemainingText][Description("What the bot should say")] string message = null)
         {
+            
             await ctx.Message.DeleteAsync();
+            if (message is null)
+                return;
+            
             await ctx.Channel.SendMessageAsync(message);
         }
     }
