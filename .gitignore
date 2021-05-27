@@ -1,4 +1,6 @@
 bin
 obj
 logs
+nightly
+nightly2
 config.json
