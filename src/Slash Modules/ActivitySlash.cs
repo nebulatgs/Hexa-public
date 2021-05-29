@@ -2,13 +2,11 @@ using System.IO;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
-
-using Microsoft.Extensions.Configuration;
-
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using Hexa.Helpers;
+using Microsoft.Extensions.Configuration;
 
 namespace Hexa.Modules
 {
@@ -66,6 +64,19 @@ namespace Hexa.Modules
             "832012586023256104"
         };
 
+        public static ulong[] EmojiIds = {
+            // Youtube Together
+            847668867751739435,
+            // Fishington.io
+            847667655922024498,
+            // Poker Night
+            847667610279215144,
+            // Betrayal.io
+            847667494202507264,
+            // Chess in the Park
+            847669270409904159
+        };
+
         [SlashCommand("activity", "Start an activity in a voice channel")]
         public async Task ActivityCommand(InteractionContext ctx, [Option("channel", "The voice channel to start the activity in")] DiscordChannel channel, [Option("activity", "The activity to start")] ActivityEnum activity)
         {
@@ -73,7 +84,7 @@ namespace Hexa.Modules
                 return;
             var activity_id = (ulong)activity;
             var code = RequestActivity(ActivityIds[(int)activity], channel);
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $"Start {activity.GetAttributeOfType<ChoiceNameAttribute>().Name}") }).WithContent(channel.Mention));
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start {activity.GetAttributeOfType<ChoiceNameAttribute>().Name}", false, new DiscordComponentEmoji(EmojiIds[(int)activity])) }).WithContent(channel.Mention));
         }
     }
 }

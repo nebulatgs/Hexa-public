@@ -4,25 +4,21 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
+using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Enums;
 using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.SlashCommands;
-
+using Hexa.Helpers;
+using Hexa.Other;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Postgrest.Attributes;
 using Postgrest.Models;
-
-using Hexa.Helpers;
-using DSharpPlus.EventArgs;
-using Hexa.Other;
 
 namespace Hexa
 {
@@ -30,8 +26,6 @@ namespace Hexa
     [Table("ServerSettings")]
     public class GuildSetting : BaseModel
     {
-        // [PrimaryKey("GuildSettingsId")]
-        // public int Id { get; set; }
         [PrimaryKey("SettingId")]
         public int SettingId { get; set; }
 
@@ -107,7 +101,7 @@ namespace Hexa
                 UseDefaultCommandHandler = false,
                 Services = services
             });
-            
+
             await discord.UseInteractivityAsync(new InteractivityConfiguration
             {
                 // default pagination behaviour to just ignore the reactions
@@ -117,12 +111,24 @@ namespace Hexa
                 // default timeout for other actions to 2 minutes
                 Timeout = TimeSpan.FromMinutes(2)
             });
-            foreach(var client in discord.ShardClients)
+            discord.GuildMemberUpdated += new UsernameChangeLogger().OnChange;
+            discord.GuildCreated += new JoinLeaveLogger().OnChange;
+            discord.GuildDeleted += new JoinLeaveLogger().OnChange;
+            foreach (var client in discord.ShardClients)
             {
                 var slash = client.Value.UseSlashCommands();
-                slash.RegisterCommands<Modules.ActivitySlash>(844754896358998018);
-                slash.RegisterCommands<Modules.AvatarSlash>(844754896358998018);
-                slash.RegisterCommands<Modules.ButtonSlash>(844754896358998018);
+                if (Environment.GetEnvironmentVariable("PROD") is not null)
+                {
+                    slash.RegisterCommands<Modules.ActivitySlash>();
+                    slash.RegisterCommands<Modules.AvatarSlash>();
+                    slash.RegisterCommands<Modules.ButtonSlash>();
+                }
+                else
+                {
+                    slash.RegisterCommands<Modules.ActivitySlash>(844754896358998018);
+                    slash.RegisterCommands<Modules.AvatarSlash>(844754896358998018);
+                    slash.RegisterCommands<Modules.ButtonSlash>(844754896358998018);
+                }
             }
             var guild_levels = new GuildLevels();
             var user_levels = new UserLevels();
@@ -158,7 +164,8 @@ namespace Hexa
             discord.MessageCreated += user_levels.MessageSent;
 
 
-            discord.ComponentInteractionCreated += async (DiscordClient client, ComponentInteractionCreateEventArgs args) => {
+            discord.ComponentInteractionCreated += async (DiscordClient client, ComponentInteractionCreateEventArgs args) =>
+            {
                 await args.Interaction.CreateResponseAsync(InteractionResponseType.DefferedMessageUpdate);
                 // await args.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder()
                 // {
@@ -172,31 +179,15 @@ namespace Hexa
             {
                 foreach (var client in discord.ShardClients)
                 {
-                    // var activity = new DiscordActivity($"{_config["Prefix"]}help | Shard {client.Key}", ActivityType.Playing);
                     var activity = new DiscordActivity($"{_config["Prefix"]}help | {client.Value.Guilds.Sum(x => x.Value.MemberCount).ToString("N0")} users", ActivityType.Playing);
                     await client.Value.UpdateStatusAsync(activity, UserStatus.Online);
                 }
             }, TimeSpan.FromSeconds(5));
-
-            // await Task.Delay(-1);
-
         }
         private async Task CmdErroredHandler(CommandsNextExtension _, CommandErrorEventArgs e)
         {
-            // Console.WriteLine("hi");
-            // var failedChecks = ((ChecksFailedException)e.Exception).FailedChecks;
             await e.Context.RespondAsync(e.Exception.Message);
-            // foreach (var failedCheck in failedChecks)
-            // {
-            //     if (failedCheck is GuildOnlyAttribute)
-            //     {
-            //         var cooldownAttribute = (GuildOnlyAttribute)failedCheck;
-            //         // await e.Context.RespondAsync($"Only usable during year {cooldownAttribute.}.");
-            //         await e.Context.RespondAsync($"You are using commands too fast! Try again in {5} seconds");
-            //     }
-            // }
         }
-
     }
 
     public class PeriodicTask

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
+
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity;
 
@@ -16,15 +17,13 @@ namespace Hexa.Helpers
             var previous = new DiscordButtonComponent(ButtonStyle.Primary, $"{pagination_id}_previous", "previous page", true);
             var close = new DiscordButtonComponent(ButtonStyle.Danger, $"{pagination_id}_close", "close", false);
             DiscordButtonComponent[] buttons = { previous, next, close };
-
             var page_list = pages.ToImmutableList();
             int current_page = 0;
-
             // Init the message builder
             var builder = new DiscordMessageBuilder();
             var buttonBuilder = builder.WithComponents(buttons);
             builder = buttonBuilder.WithContent(page_list[current_page].Content).WithEmbed(page_list[current_page].Embed);
-            
+
             var message = await c.SendMessageAsync(builder);
 
             // Loop until timeout and handle the buttons
@@ -39,6 +38,8 @@ namespace Hexa.Helpers
                     await message.ModifyAsync(builder);
                     return;
                 }
+                if (result.Result.User != u)
+                    continue;
                 else if (result.Result.Id == $"{pagination_id}_next")
                 {
                     current_page++;

@@ -21,7 +21,7 @@ namespace Hexa.Modules
             DiscordUser bot;
             if (snowflake is null)
             {
-                hEmbed.embed.Description = $"[Invite me to your server!](https://discord.com/oauth2/authorize?client_id={ctx.Client.CurrentUser.Id}&permissions={permissions}&scope=bot)";
+                hEmbed.embed.Description = $"[Invite me to your server!](https://discord.com/oauth2/authorize?client_id={ctx.Client.CurrentUser.Id}&permissions={permissions}&scope=bot%20applications.commands)";
             }
             else
             {
@@ -32,7 +32,7 @@ namespace Hexa.Modules
                     await ctx.RespondAsync("I can only create invites for bots!");
                     return;
                 }
-                hEmbed.embed.Description = $"[Invite {bot.Username} to your server!](https://discord.com/oauth2/authorize?client_id={snowflake}&permissions={permissions}&scope=bot)";
+                hEmbed.embed.Description = $"[Invite {bot.Username} to your server!](https://discord.com/oauth2/authorize?client_id={snowflake}&permissions={permissions}&scope=bot%20applications.commands)";
             }
             await ctx.RespondAsync(embed: hEmbed.Build());
         }
@@ -45,7 +45,7 @@ namespace Hexa.Modules
             var hEmbed = new HexaEmbed(ctx, "bot invite");
             if (user is null)
             {
-                hEmbed.embed.Description = $"[Invite me to your server!](https://discord.com/oauth2/authorize?client_id={ctx.Client.CurrentUser.Id}&permissions={permissions}&scope=bot)";
+                hEmbed.embed.Description = $"[Invite me to your server!](https://discord.com/oauth2/authorize?client_id={ctx.Client.CurrentUser.Id}&permissions={permissions}&scope=bot%20applications.commands)";
             }
             else
             {
@@ -54,7 +54,7 @@ namespace Hexa.Modules
                     await ctx.RespondAsync("I can only create invites for bots!");
                     return;
                 }
-                hEmbed.embed.Description = $"[Invite {user.Username} to your server!](https://discord.com/oauth2/authorize?client_id={user.Id}&permissions={permissions}&scope=bot)";
+                hEmbed.embed.Description = $"[Invite {user.Username} to your server!](https://discord.com/oauth2/authorize?client_id={user.Id}&permissions={permissions}&scope=bot%20applications.commands)";
             }
             await ctx.RespondAsync(embed: hEmbed.Build());
         }
