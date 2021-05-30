@@ -182,6 +182,7 @@ namespace Hexa
                     var activity = new DiscordActivity($"{_config["Prefix"]}help | {client.Value.Guilds.Sum(x => x.Value.MemberCount).ToString("N0")} users", ActivityType.Playing);
                     await client.Value.UpdateStatusAsync(activity, UserStatus.Online);
                 }
+                ServerTime.FetchServerTimeDifference();
             }, TimeSpan.FromSeconds(5));
         }
         private async Task CmdErroredHandler(CommandsNextExtension _, CommandErrorEventArgs e)

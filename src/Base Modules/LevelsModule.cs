@@ -38,7 +38,7 @@ namespace Hexa.Modules
                 var values = await LevelDBInterface.GetUserValues();
                 hEmbed.embed.AddField($"messages:", $"#{(values.OrderByDescending(x => x.MessageLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.MessageLevel} messages sent", true);
                 hEmbed.embed.AddField($"commands:", $"#{(values.OrderByDescending(x => x.CommandLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.CommandLevel} commands used", true);
-                hEmbed.embed.WithThumbnail(member.AvatarUrl);
+                hEmbed.embed.WithThumbnail(member.AvatarUrl, 32, 32);
             }
             catch
             {
@@ -53,7 +53,7 @@ namespace Hexa.Modules
                     var values = await LevelDBInterface.GetGuildValues();
                     hEmbed.embed.AddField($"messages:", $"#{(values.OrderByDescending(x => x.MessageLevel).Select(y => y.GuildId).ToList().IndexOf(guild.Id) + 1)}\n{value.MessageLevel} messages sent", true);
                     hEmbed.embed.AddField($"commands:", $"#{(values.OrderByDescending(x => x.CommandLevel).Select(y => y.GuildId).ToList().IndexOf(guild.Id) + 1)}\n{value.CommandLevel} commands used", true);
-                    hEmbed.embed.WithThumbnail(guild.IconUrl);
+                    hEmbed.embed.WithThumbnail(guild.IconUrl, 32, 32);
                 }
                 catch
                 {
@@ -82,7 +82,7 @@ namespace Hexa.Modules
                 var values = await LevelDBInterface.GetUserValues();
                 hEmbed.embed.AddField($"messages:", $"#{(values.OrderByDescending(x => x.MessageLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.MessageLevel} messages sent", true);
                 hEmbed.embed.AddField($"commands:", $"#{(values.OrderByDescending(x => x.CommandLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.CommandLevel} commands used", true);
-                hEmbed.embed.WithThumbnail(member.AvatarUrl);
+                hEmbed.embed.WithThumbnail(member.AvatarUrl, 32);
             }
             catch
             {

@@ -162,17 +162,10 @@ namespace Hexa.Modules
                     continue;
                 }
 
-                // var aiButton = new Random().Next(0, values.Count() - 1);
-                // while (values[aiButton] != 0)
-                // aiButton = new Random().Next(0, values.Count() - 1);
                 var checkBoard = new TicTacToeAlgorithm();
                 checkBoard.board = new List<int>(values);
 
                 var aiButton = 0;
-                // while
-                // values[0] = 3;
-                // if (values[5] == 2) values[5] = 3; else values[1] = 3;
-                // if (values[9] == 2) values[9] = 3; else values[3] = 3;
                 if (turn == 1)
                     if (values[4] == 2)
                         aiButton = 4;
@@ -200,23 +193,7 @@ namespace Hexa.Modules
                         while (values.ElementAt(aiButton) != 2)
                             aiButton = new Random().Next(0, values.Count() - 1);
 
-
-                // for (; aiButton < values.Count(); aiButton++)
-                // {
-                //     if (values[aiButton] != 0)
-                //         continue;
-                //     if (aiButton == 0 || aiButton == 2 || aiButton == 6 || aiButton == 8)
-                //         break;
-                //     if (aiButton == 1 || aiButton == 3 || aiButton == 5 || aiButton == 7)
-                //         continue;
-                //     // break;
-                //     // var cells_O = checkBoard.check(player: 2);
-                //     // if (cells_O.Item1)
-                //     // break;
-                // }
-
                 buttons.ElementAt(aiButton).Disabled = true;
-                // buttons.ElementAt(aiButton).Style = ButtonStyle.Danger;
                 buttons.ElementAt(aiButton).Label = "\u200A◯\u200A";
                 values[aiButton] = 4;
                 board.board = values;
@@ -240,7 +217,6 @@ namespace Hexa.Modules
             foreach (var button in buttons)
             {
                 button.Disabled = true;
-                // button.Style = ButtonStyle.Success;
             }
             await message.ModifyAsync(builder);
         }

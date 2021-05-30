@@ -22,6 +22,8 @@ namespace Hexa.Modules
         [Category("Fun")]
         public async Task PingCommand(CommandContext ctx)
         {
+            TimeSpan serverTimeDifference = ServerTime.ServerTimeDifference;
+            DateTime actualTime = DateTime.Now + serverTimeDifference;
             var startTime = DateTime.Now;
             var receiveTime = startTime - ctx.Message.Timestamp;
             var hEmbed = new HexaEmbed(ctx, "Pong!");
@@ -41,7 +43,7 @@ namespace Hexa.Modules
                 inline: true
             );
             var message = await ctx.RespondAsync(embed: hEmbed.Build());
-            var sendTime = DateTime.Now - startTime;
+            var sendTime = DateTime.Now + serverTimeDifference - startTime;
             hEmbed.embed.Fields[0].Value = $"```{sendTime.Milliseconds} ms```";
             await message.ModifyAsync(embed: hEmbed.Build());
         }
