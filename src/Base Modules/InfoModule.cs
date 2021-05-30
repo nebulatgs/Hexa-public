@@ -35,6 +35,11 @@ namespace Hexa.Modules
                 value: $"```{receiveTime.Milliseconds} ms```",
                 inline: true
             );
+            hEmbed.embed.AddField(
+                name: "ws",
+                value: $"```{ctx.Client.Ping} ms```",
+                inline: true
+            );
             var message = await ctx.RespondAsync(embed: hEmbed.Build());
             var sendTime = DateTime.Now - startTime;
             hEmbed.embed.Fields[0].Value = $"```{sendTime.Milliseconds} ms```";

@@ -41,6 +41,8 @@ namespace Hexa.Modules
                 string badges = "";
                 if (member.Flags == UserFlags.None)
                     badges += "None";
+                if (member.Flags.Value.HasFlag(UserFlags.VerifiedBot))
+                    badges += " <:verified1:848290146435858513><:verified2:848290146650161162>";
                 if (member.Flags.Value.HasFlag(UserFlags.DiscordEmployee))
                     badges += " <:staff:846246922347610123>";
                 if (member.Flags.Value.HasFlag(UserFlags.DiscordPartner))
@@ -91,11 +93,6 @@ namespace Hexa.Modules
                         value: roles.ToString(),
                         inline: true
                     );
-                    // hEmbed.embed.AddField(
-                    //     name: "\u200B",
-                    //     value: "\u200B",
-                    //     inline: true
-                    // );
                 }
                 catch
                 {
@@ -108,7 +105,6 @@ namespace Hexa.Modules
             }
 
             await ctx.RespondAsync(embed: hEmbed.Build());
-            // ctx.Client.GetUserAsync(snowflake);
         }
     }
 }

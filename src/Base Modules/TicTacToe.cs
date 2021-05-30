@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
@@ -13,24 +14,64 @@ namespace Hexa.Modules
     public class TicTacToeAlgorithm
     {
         public List<int> board;
-        public bool check(List<int> grid = null, int player = 0)
+        public int PossWin(List<int> grid = null, int player = 0)
+        {
+            if (grid is null) grid = board;
+            Func<int, int, int, int> win = (p1, p2, p3) =>
+                grid[p1] * grid[p2] * grid[p3] == player * player * 2 ? p1 != 2 ? p1 : p2 != 2 ? p2 : p3 != 2 ? p3 : -1 : -1;
+            var selected = -1;
+            // Rows
+            if (win(0, 1, 2) != -1)
+                selected = win(0, 1, 2);
+            else if (win(3, 4, 5) != -1)
+                selected = win(3, 4, 5);
+            else if (win(6, 7, 8) != -1)
+                selected = win(6, 7, 8);
+            // Columns
+            else if (win(0, 3, 6) != -1)
+                selected = win(0, 3, 6);
+            else if (win(1, 4, 7) != -1)
+                selected = win(1, 4, 7);
+            else if (win(2, 5, 8) != -1)
+                selected = win(2, 5, 8);
+            // Diagonals
+            else if (win(0, 4, 8) != -1)
+                selected = win(0, 4, 8);
+            else if (win(2, 4, 6) != -1)
+                selected = win(2, 4, 6);
+            if (selected != -1)
+                if (grid[selected] != 2)
+                    selected = -1;
+            return selected;
+        }
+        public Tuple<bool, int, int, int> check(List<int> grid = null, int player = 0)
         {
             if (grid is null) grid = board;
             Func<int, int, int, bool> row = (p1, p2, p3) => grid[p1] == player && grid[p2] == player && grid[p3] == player;
 
-            return (
-                // Rows
-                row(0, 1, 2) ||
-                row(3, 4, 5) ||
-                row(6, 7, 8) ||
-                // Columns
-                row(0, 3, 6) ||
-                row(1, 4, 7) ||
-                row(2, 5, 8) ||
-                // Diagonals
-                row(0, 4, 8) ||
-                row(2, 4, 6)
-            );
+            // return (
+            // Rows
+            if (row(0, 1, 2))
+                return Tuple.Create(true, 0, 1, 2);
+            else if (row(3, 4, 5))
+                return Tuple.Create(true, 3, 4, 5);
+            else if (row(6, 7, 8))
+                return Tuple.Create(true, 6, 7, 8);
+            // Columns
+            else if (row(0, 3, 6))
+                return Tuple.Create(true, 0, 3, 6);
+            else if (row(1, 4, 7))
+                return Tuple.Create(true, 1, 4, 7);
+            else if (row(2, 5, 8))
+                return Tuple.Create(true, 2, 5, 8);
+            // Diagonals
+            else if (row(0, 4, 8))
+                return Tuple.Create(true, 0, 4, 8);
+            else if (row(2, 4, 6))
+                return Tuple.Create(true, 2, 4, 6);
+            else
+                return Tuple.Create(false, 0, 0, 0);
+            // );
         }
     }
     public class TicTacToeModule : BaseCommandModule
@@ -49,9 +90,9 @@ namespace Hexa.Modules
                 button_row1[i] = (new DiscordButtonComponent(ButtonStyle.Secondary, $"tictactoe_{i}", "\u200B ", false));
                 button_row2[i] = (new DiscordButtonComponent(ButtonStyle.Secondary, $"tictactoe_{i + 3}", "\u200B ", false));
                 button_row3[i] = (new DiscordButtonComponent(ButtonStyle.Secondary, $"tictactoe_{i + 6}", "\u200B ", false));
-                values.Add(0);
-                values.Add(0);
-                values.Add(0);
+                values.Add(2);
+                values.Add(2);
+                values.Add(2);
             }
             var board = new TicTacToeAlgorithm();
             board.board = values;
@@ -60,12 +101,31 @@ namespace Hexa.Modules
             // Init the message builder
             var builder = new DiscordMessageBuilder();
             var buttonBuilder = builder.WithComponents(button_row1).WithComponents(button_row2).WithComponents(button_row3);
-            builder = buttonBuilder.WithContent("Play TicTacToe!");
+            builder = buttonBuilder.WithContent("Play Tic Tac Toe!");
             var message = await ctx.Channel.SendMessageAsync(builder);
 
             var interactivity = ctx.Client.GetInteractivity();
             var timeout = TimeSpan.FromSeconds(60);
             var loop_timeout = DateTime.Now + timeout;
+            var turn = 1;
+            Func<int> Make2 = () =>
+            {
+                if (values[4] == 2)
+                    return 4;
+                else
+                {
+                    var selected = 1;
+                    var loop = 1;
+                    while (values[selected] != 2 || selected != 1 || selected != 3 || selected != 5 || selected != 7)
+                    {
+                        selected = new Random().Next(0, values.Count() - 1);
+                        loop++;
+                        if (loop >= 9)
+                            break;
+                    }
+                    return selected;
+                }
+            };
             while (DateTime.Now < loop_timeout)
             {
                 var result = await interactivity.WaitForButtonAsync(message, buttons, timeout);
@@ -76,30 +136,106 @@ namespace Hexa.Modules
 
                 var buttonInd = buttons.FindIndex(x => x.CustomId == result.Result.Id);
                 var button = buttons.Where(x => x.CustomId == result.Result.Id).First();
-                
+
                 button.Disabled = true;
                 button.Style = ButtonStyle.Primary;
                 button.Label = "\u200A✕\u200A";
-                values[buttonInd] = 1;
-                
+                values[buttonInd] = 5;
+
+                var cells_X = board.check(player: 5);
+                if (cells_X.Item1)
+                {
+                    buttons.ElementAt(cells_X.Item2).Style = ButtonStyle.Success;
+                    buttons.ElementAt(cells_X.Item3).Style = ButtonStyle.Success;
+                    buttons.ElementAt(cells_X.Item4).Style = ButtonStyle.Success;
+                    var losingSide = values.Select((val, index) => (val, index)).Where(x => x.val == 4);
+                    foreach (var elem in losingSide)
+                    {
+                        buttons.ElementAt(elem.index).Style = ButtonStyle.Danger;
+                    }
+                    break;
+                }
+
                 if (buttons.Where(x => x.Label == "\u200B ").Count() <= 1)
                 {
                     await message.ModifyAsync(builder);
                     continue;
                 }
 
-                var aiButton = new Random().Next(0, values.Count() - 1);
-                while (values[aiButton] != 0)
-                    aiButton = new Random().Next(0, values.Count() - 1);
+                // var aiButton = new Random().Next(0, values.Count() - 1);
+                // while (values[aiButton] != 0)
+                // aiButton = new Random().Next(0, values.Count() - 1);
+                var checkBoard = new TicTacToeAlgorithm();
+                checkBoard.board = new List<int>(values);
 
-                if (board.check(player: 1))
-                    break;
+                var aiButton = 0;
+                // while
+                // values[0] = 3;
+                // if (values[5] == 2) values[5] = 3; else values[1] = 3;
+                // if (values[9] == 2) values[9] = 3; else values[3] = 3;
+                if (turn == 1)
+                    if (values[4] == 2)
+                        aiButton = 4;
+                    else
+                        aiButton = 0;
+                if (turn == 2)
+                    if (board.PossWin(player: 5) != -1)
+                        aiButton = board.PossWin(player: 5);
+                    else
+                        aiButton = Make2();
+                if (turn == 3)
+                    if (board.PossWin(player: 4) != -1)
+                        aiButton = board.PossWin(player: 4);
+                    else if (board.PossWin(player: 5) != -1)
+                        aiButton = board.PossWin(player: 5);
+                    else
+                        while (values.ElementAt(aiButton) != 2)
+                            aiButton = Make2();
+                if (turn == 4)
+                    if (board.PossWin(player: 4) != -1)
+                        aiButton = board.PossWin(player: 4);
+                    else if (board.PossWin(player: 5) != -1)
+                        aiButton = board.PossWin(player: 5);
+                    else
+                        while (values.ElementAt(aiButton) != 2)
+                            aiButton = new Random().Next(0, values.Count() - 1);
+
+
+                // for (; aiButton < values.Count(); aiButton++)
+                // {
+                //     if (values[aiButton] != 0)
+                //         continue;
+                //     if (aiButton == 0 || aiButton == 2 || aiButton == 6 || aiButton == 8)
+                //         break;
+                //     if (aiButton == 1 || aiButton == 3 || aiButton == 5 || aiButton == 7)
+                //         continue;
+                //     // break;
+                //     // var cells_O = checkBoard.check(player: 2);
+                //     // if (cells_O.Item1)
+                //     // break;
+                // }
 
                 buttons.ElementAt(aiButton).Disabled = true;
-                buttons.ElementAt(aiButton).Style = ButtonStyle.Danger;
+                // buttons.ElementAt(aiButton).Style = ButtonStyle.Danger;
                 buttons.ElementAt(aiButton).Label = "\u200A◯\u200A";
-                values[aiButton] = 2;
+                values[aiButton] = 4;
+                board.board = values;
+
+                var cells_O = board.check(player: 4);
+                if (cells_O.Item1)
+                {
+                    buttons.ElementAt(cells_O.Item2).Style = ButtonStyle.Success;
+                    buttons.ElementAt(cells_O.Item3).Style = ButtonStyle.Success;
+                    buttons.ElementAt(cells_O.Item4).Style = ButtonStyle.Success;
+                    var losingSide = values.Select((val, index) => (val, index)).Where(x => x.val == 5);
+                    foreach (var elem in losingSide)
+                    {
+                        buttons.ElementAt(elem.index).Style = ButtonStyle.Danger;
+                    }
+                    break;
+                }
                 await message.ModifyAsync(builder);
+                turn++;
             }
             foreach (var button in buttons)
             {

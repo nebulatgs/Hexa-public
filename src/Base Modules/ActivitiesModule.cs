@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
-using DSharpPlus.Interactivity.Extensions;
 using Hexa.Attributes;
 using Microsoft.Extensions.Configuration;
 

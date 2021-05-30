@@ -84,7 +84,20 @@ namespace Hexa.Modules
                 return;
             var activity_id = (ulong)activity;
             var code = RequestActivity(ActivityIds[(int)activity], channel);
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start {activity.GetAttributeOfType<ChoiceNameAttribute>().Name}", false, new DiscordComponentEmoji(EmojiIds[(int)activity])) }).WithContent(channel.Mention));
+            await ctx.CreateResponseAsync(
+                InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder().WithComponents(
+                    new DiscordComponent[] 
+                        {
+                            new DiscordLinkButtonComponent(
+                                $"https://discord.gg/{code}",
+                                $" Start {activity.GetAttributeOfType<ChoiceNameAttribute>().Name}",
+                                false,
+                                new DiscordComponentEmoji(EmojiIds[(int)activity])
+                            )
+                        }
+                ).WithContent(channel.Mention)
+            );  
         }
     }
 }
