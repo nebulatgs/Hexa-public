@@ -12,7 +12,8 @@ namespace Hexa.Helpers
             return GetServerTime() - DateTime.Now;
         }
         public static void FetchServerTimeDifference(){
-            ServerTimeDifference = GetServerTimeDifference();
+            try{ServerTimeDifference = GetServerTimeDifference();}
+            catch{}
         }
         public static TimeSpan ServerTimeDifference{ get; private set; }
         private static DateTime GetServerTime()

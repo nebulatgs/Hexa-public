@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using DSharpPlus;
@@ -27,6 +28,10 @@ namespace Hexa.Modules
             var toggles = await HexaSettings.GetValuesAsync(ctx.Guild);
             if (setting is null)
             {
+                if(toggles.Count() == 0)
+                {
+                    
+                }
                 foreach (var toggle in toggles)
                 {
                     string value = toggle.Value;

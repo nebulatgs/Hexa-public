@@ -10,7 +10,7 @@ namespace Hexa
     public class HexaSettings
     {
         public enum SettingType { GhostPing, ModLog, ServerPrefix, ToggleIndex = 2 }
-
+        // public static List<GuildSetting>
         public static SettingType SettingTypeFromString(string setting_type)
         {
             switch (setting_type)
@@ -57,7 +57,10 @@ namespace Hexa
             if (foundSettings.Count() == 0)
                 return null;
             else
-                return foundSettings.First().Value;
+            {
+                var first = foundSettings.FirstOrDefault();
+                return first.Value;
+            }
         }
         public static async Task<IEnumerable<GuildSetting>> GetValuesAsync(DiscordGuild guild)
         {
@@ -80,6 +83,7 @@ namespace Hexa
             var channels = instance.From<GuildSetting>();
             var guildSettings = await channels.Get();
             var foundSettings = guildSettings.Models.Where(x => x.GuildId == guild.Id);
+            // guildSettings.Models.
             if (foundSettings.Where(x => x.SettingTypeId == (int)setting_type).Count() == 0)
             {
                 if (guildSettings.Models.Count() != 0)

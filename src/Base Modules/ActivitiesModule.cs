@@ -30,6 +30,27 @@ namespace Hexa.Modules
         [JsonInclude]
         public string validate = null;
     }
+    [HexaCooldown(5)]
+    [Description("Watch Youtube Together")]
+    public class YoutubeActivityModule : BaseCommandModule
+    {
+        [Command("youtube")]
+        [Description("Start Youtube Together")]
+        [Aliases("yt")]
+        [Category("Games")]
+        public async Task StartYoutubeAsync(CommandContext ctx, DiscordChannel channel = null)
+        {
+            if (channel is null)
+            {
+                await ctx.RespondAsync("What voice channel should I start Youtube Together in?");
+                return;
+            }
+            var activity_id = "755600276941176913";
+            var code = ActivitiesModule.RequestActivity(activity_id, channel);
+            var b = new DiscordMessageBuilder().WithComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Youtube Together", false, new DiscordComponentEmoji(847668867751739435)) }).WithContent(channel.Mention);
+            await ctx.RespondAsync(b);
+        }
+    }
 
     [Group("activity")]
     [Aliases("act")]
@@ -38,7 +59,7 @@ namespace Hexa.Modules
     [Category("Games")]
     public class ActivitiesModule : BaseCommandModule
     {
-        private string RequestActivity(string activity, DiscordChannel channel)
+        public static string RequestActivity(string activity, DiscordChannel channel)
         {
             var reqBody = new ActivityRequestBody(activity);
             var httpWebRequest = (HttpWebRequest)WebRequest.Create($"https://discord.com/api/v8/channels/{channel.Id}/invites");

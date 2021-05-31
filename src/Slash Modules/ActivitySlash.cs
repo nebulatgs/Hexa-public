@@ -99,5 +99,28 @@ namespace Hexa.Modules
                 ).WithContent(channel.Mention)
             );  
         }
+
+        [SlashCommand("youtube", "Watch Youtube Together in a voice channel")]
+        public async Task YoutubeCommand(InteractionContext ctx, [Option("channel", "The voice channel to start Youtube Together in")] DiscordChannel channel)
+        {
+            if (channel.Type != ChannelType.Voice)
+                return;
+            // var activity_id = (ulong)activity;
+            var code = RequestActivity(ActivityIds[0], channel);
+            await ctx.CreateResponseAsync(
+                InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder().WithComponents(
+                    new DiscordComponent[] 
+                        {
+                            new DiscordLinkButtonComponent(
+                                $"https://discord.gg/{code}",
+                                $" Watch Youtube Together",
+                                false,
+                                new DiscordComponentEmoji(EmojiIds[0])
+                            )
+                        }
+                ).WithContent(channel.Mention)
+            );  
+        }
     }
 }

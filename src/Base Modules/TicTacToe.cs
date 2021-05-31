@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
@@ -74,10 +73,120 @@ namespace Hexa.Modules
             // );
         }
     }
+    [HexaCooldown(5)]
     public class TicTacToeModule : BaseCommandModule
     {
+        public Random Rand { get; set; }
+
+        [Command("tictactoe")]
+        public async Task TicTacToeCommand(CommandContext ctx, DiscordMember opponent)
+        {
+            DiscordButtonComponent[] button_row1 = new DiscordButtonComponent[3];
+            DiscordButtonComponent[] button_row2 = new DiscordButtonComponent[3];
+            DiscordButtonComponent[] button_row3 = new DiscordButtonComponent[3];
+            List<DiscordButtonComponent> buttons = new List<DiscordButtonComponent>();
+            List<int> values = new List<int>();
+            for (var i = 0; i < 3; i++)
+            {
+                button_row1[i] = (new DiscordButtonComponent(ButtonStyle.Secondary, $"tictactoe_{i}", "\u200B ", false));
+                button_row2[i] = (new DiscordButtonComponent(ButtonStyle.Secondary, $"tictactoe_{i + 3}", "\u200B ", false));
+                button_row3[i] = (new DiscordButtonComponent(ButtonStyle.Secondary, $"tictactoe_{i + 6}", "\u200B ", false));
+                values.Add(2);
+                values.Add(2);
+                values.Add(2);
+            }
+            var board = new TicTacToeAlgorithm();
+            board.board = values;
+            buttons = button_row1.Concat(button_row2).Concat(button_row3).ToList();
+
+            // Init the message builder
+            var builder = new DiscordMessageBuilder();
+            var buttonBuilder = builder.WithComponents(button_row1).WithComponents(button_row2).WithComponents(button_row3);
+            builder = buttonBuilder.WithContent($"Play Tic Tac Toe against {opponent.DisplayName}!\n{(await ctx.Guild.GetMemberAsync(ctx.Message.Author.Id)).DisplayName}'s turn");
+            // builder.Content
+            var message = await ctx.Channel.SendMessageAsync(builder);
+
+            var interactivity = ctx.Client.GetInteractivity();
+            var timeout = TimeSpan.FromSeconds(60);
+            var loop_timeout = DateTime.Now + timeout;
+            var turn = 1;
+            while (DateTime.Now < loop_timeout)
+            {
+                var result = await interactivity.WaitForButtonAsync(message, buttons, timeout);
+                if (result.TimedOut)
+                    continue;
+                if (turn % 2 == 0)
+                {
+                    if (result.Result.User == ctx.Message.Author)
+                    {
+                        continue;
+                    }
+                    builder.Content = $"Play Tic Tac Toe against {opponent.DisplayName}!\n{(await ctx.Guild.GetMemberAsync(ctx.Message.Author.Id)).DisplayName}'s turn";
+                }
+                else
+                {
+                    if (result.Result.User == opponent)
+                    {
+                        continue;
+                    }
+                    builder.Content = $"Play Tic Tac Toe against {opponent.DisplayName}!\n{opponent.DisplayName}'s turn";
+                }
+                var buttonInd = buttons.FindIndex(x => x.CustomId == result.Result.Id);
+                var button = buttons.Where(x => x.CustomId == result.Result.Id).First();
+                var player = result.Result.User == ctx.Message.Author ? 5 : 4;
+                button.Disabled = true;
+                button.Style = ButtonStyle.Primary;
+                button.Label = player == 5 ? "\u200A✕\u200A" : "\u200A◯\u200A";
+                values[buttonInd] = player;
+                turn++;
+                await message.ModifyAsync(builder);
+                var cells_X = board.check(player: 5);
+                if (cells_X.Item1)
+                {
+                    builder.Content = $"Play Tic Tac Toe against {opponent.DisplayName}!\n{(await ctx.Guild.GetMemberAsync(ctx.Message.Author.Id)).DisplayName} wins!";
+                    buttons.ElementAt(cells_X.Item2).Style = ButtonStyle.Success;
+                    buttons.ElementAt(cells_X.Item3).Style = ButtonStyle.Success;
+                    buttons.ElementAt(cells_X.Item4).Style = ButtonStyle.Success;
+                    var losingSide = values.Select((val, index) => (val, index)).Where(x => x.val == 4);
+                    foreach (var elem in losingSide)
+                    {
+                        buttons.ElementAt(elem.index).Style = ButtonStyle.Danger;
+                    }
+                    break;
+                }
+
+                var cells_O = board.check(player: 4);
+                if (cells_O.Item1)
+                {
+                    builder.Content = $"Play Tic Tac Toe against {opponent.DisplayName}!\n{opponent.DisplayName} wins!";
+                    buttons.ElementAt(cells_O.Item2).Style = ButtonStyle.Success;
+                    buttons.ElementAt(cells_O.Item3).Style = ButtonStyle.Success;
+                    buttons.ElementAt(cells_O.Item4).Style = ButtonStyle.Success;
+                    var losingSide = values.Select((val, index) => (val, index)).Where(x => x.val == 4);
+                    foreach (var elem in losingSide)
+                    {
+                        buttons.ElementAt(elem.index).Style = ButtonStyle.Danger;
+                    }
+                    break;
+                }
+
+                if (buttons.Where(x => x.Label == "\u200B ").Count() <= 1)
+                {
+                    await message.ModifyAsync(builder);
+                    continue;
+                }
+                await message.ModifyAsync(builder);
+            }
+            foreach (var button in buttons)
+            {
+                button.Disabled = true;
+            }
+            await message.ModifyAsync(builder);
+        }
+
         [Command("tictactoe")]
         [Category("Games")]
+        [Description("Play Tic Tac Toe against the bot")]
         public async Task TicTacToeCommand(CommandContext ctx)
         {
             DiscordButtonComponent[] button_row1 = new DiscordButtonComponent[3];
@@ -118,7 +227,7 @@ namespace Hexa.Modules
                     var loop = 1;
                     while (values[selected] != 2 || selected != 1 || selected != 3 || selected != 5 || selected != 7)
                     {
-                        selected = new Random().Next(0, values.Count() - 1);
+                        selected = Rand.Next(0, values.Count() - 1);
                         loop++;
                         if (loop >= 9)
                             break;
@@ -168,7 +277,8 @@ namespace Hexa.Modules
                 var aiButton = 0;
                 if (turn == 1)
                     if (values[4] == 2)
-                        aiButton = 4;
+                        while (values.ElementAt(aiButton) != 2)
+                            aiButton = Rand.Next(0, values.Count() - 1);
                     else
                         aiButton = 0;
                 if (turn == 2)
@@ -191,7 +301,7 @@ namespace Hexa.Modules
                         aiButton = board.PossWin(player: 5);
                     else
                         while (values.ElementAt(aiButton) != 2)
-                            aiButton = new Random().Next(0, values.Count() - 1);
+                            aiButton = Rand.Next(0, values.Count() - 1);
 
                 buttons.ElementAt(aiButton).Disabled = true;
                 buttons.ElementAt(aiButton).Label = "\u200A◯\u200A";

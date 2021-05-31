@@ -146,7 +146,7 @@ namespace Hexa.Helpers
             {
                 // this.EmbedBuilder.AddField("bot info", $"``{HexaSettings.GetValue(this.Context.Guild, HexaSettings.SettingType.ServerPrefix).GetAwaiter().GetResult()}``: current server prefix", false);
                 var bot_info = new StringBuilder();
-                bot_info.Append($"``{HexaSettings.GetValue(this.Context.Guild, HexaSettings.SettingType.ServerPrefix).GetAwaiter().GetResult()}``: current server prefix\n");
+                bot_info.Append($"``{HexaSettings.GetValue(this.Context.Guild, HexaSettings.SettingType.ServerPrefix).GetAwaiter().GetResult() ?? "-"}``: current server prefix\n");
                 bot_info.Append($"{this.Context.Client.CurrentUser.Mention}: mention me for help\n");
                 this.EmbedBuilder.Title = "bot info";
                 this.EmbedBuilder.Description = bot_info.ToString().Trim();

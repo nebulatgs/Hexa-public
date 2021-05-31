@@ -19,14 +19,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Postgrest.Attributes;
 using Postgrest.Models;
+using Supabase;
 
 namespace Hexa
 {
 
     [Table("ServerSettings")]
-    public class GuildSetting : BaseModel
+    public class GuildSetting : SupabaseModel
     {
-        [PrimaryKey("SettingId")]
+        [PrimaryKey("SettingId", false)]
         public int SettingId { get; set; }
 
         [Column("GuildId")]
@@ -93,7 +94,7 @@ namespace Hexa
             });
             HexaLogger logger = new HexaLogger($"logs/{DateTime.Now.ToString("u").Replace(':', '.')}.log");
             HexaCommandHandler command_handler = new HexaCommandHandler(_config["Prefix"]);
-            var services = new ServiceCollection().AddSingleton<HexaLogger>(logger).BuildServiceProvider();
+            var services = new ServiceCollection().AddSingleton<HexaLogger>(logger).AddSingleton<Random>().BuildServiceProvider();
             var commands = await discord.UseCommandsNextAsync(new CommandsNextConfiguration()
             {
                 StringPrefixes = new[] { _config["Prefix"] },
@@ -183,7 +184,7 @@ namespace Hexa
                     await client.Value.UpdateStatusAsync(activity, UserStatus.Online);
                 }
                 ServerTime.FetchServerTimeDifference();
-            }, TimeSpan.FromSeconds(5));
+            }, TimeSpan.FromMinutes(1));
         }
         private async Task CmdErroredHandler(CommandsNextExtension _, CommandErrorEventArgs e)
         {
