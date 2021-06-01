@@ -22,7 +22,7 @@ namespace Hexa
             if (msg.Author.IsBot)
                 return;
             string setPrefix = "";
-            setPrefix = Environment.GetEnvironmentVariable("PROD") is not null ? await HexaSettings.GetValue(e.Guild, HexaSettings.SettingType.ServerPrefix) : "+";
+            setPrefix = Environment.GetEnvironmentVariable("PROD") is not null ? await HexaSettings.GetValue(e.Guild, HexaSettings.SettingType.ServerPrefix) ?? "-" : "+";
             // if (setPrefix == "")
             // setPrefix = defaultPrefix;
             // var cmdStart = msg.GetStringPrefixLength(setPrefix);

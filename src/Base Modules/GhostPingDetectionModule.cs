@@ -11,7 +11,7 @@ namespace Hexa.Modules
         {
             if (args.Message.Author == client.CurrentUser)
                 return;
-            var setting = await HexaSettings.GetValue(args.Guild, HexaSettings.SettingType.GhostPing);
+            var setting = await HexaSettings.GetValue(args.Guild, HexaSettings.SettingType.GhostPing) ?? "false";
             if(args.Message.MentionedUsers.Count() > 0 && bool.Parse(setting))
             {
                 var validChannels = args.Message.Channel.Guild.GetChannelsAsync().Result.Where(x => x.Topic.ToString().ToLower().Contains("ghost ping"));
