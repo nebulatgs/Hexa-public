@@ -10,7 +10,7 @@ namespace Hexa.Helpers
         {
             if (args.NicknameBefore is null && args.NicknameAfter is null)
                 return;
-            await client.SendMessageAsync(await client.GetChannelAsync(847657394343510056), $"```yaml\nNICKNAME CHANGE:\n{args.Guild}\nMember {args.Member.Id}; {args.Member.Username}#{args.Member.Discriminator}\n{args.NicknameBefore ?? "null"} ➜ {args.NicknameAfter ?? "null"}```");
+            await client.SendMessageAsync(await client.GetChannelAsync(849083307747704860), $"```yaml\nNICKNAME CHANGE:\n{args.Guild}\nMember {args.Member.Id}; {args.Member.Username}#{args.Member.Discriminator}\n{args.NicknameBefore ?? "null"} ➜ {args.NicknameAfter ?? "null"}```");
         }
     }
 

@@ -15,7 +15,7 @@ namespace Hexa.Modules
         [Aliases("inv")]
         [Description("Invite Hexa or another bot to your server")]
         [Category("Utilities")]
-        public async Task InviteCommand(CommandContext ctx, [Description("The snowflake of the bot you want to invite")] ulong? snowflake = null, [Description("The permissions integer")] int permissions = 8)
+        public async Task InviteCommand(CommandContext ctx, [Description("The snowflake of the bot you want to invite")] ulong? snowflake = null, [Description("The permissions integer")] int permissions = 339070023)
         {
             var hEmbed = new HexaEmbed(ctx, "bot invite");
             DiscordUser bot;
@@ -40,7 +40,7 @@ namespace Hexa.Modules
         [GuildOnly]
         [Command("invite")]
         [Category("Utilities")]
-        public async Task InviteCommand(CommandContext ctx, [Description("The bot you want to invite")] DiscordMember user = null, [Description("The permissions integer")] int permissions = 0)
+        public async Task InviteCommand(CommandContext ctx, [Description("The bot you want to invite")] DiscordMember user = null, [Description("The permissions integer")] int permissions = 339070023)
         {
             var hEmbed = new HexaEmbed(ctx, "bot invite");
             if (user is null)

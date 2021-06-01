@@ -14,6 +14,7 @@ namespace Hexa.Modules
     {
         [Command("buttons")]
         [Category("Random")]
+        [Disabled, Hidden]
         public async Task ButtonCommand(CommandContext ctx)
         {
             // await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(hEmbed.embed.Build()));

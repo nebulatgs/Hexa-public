@@ -115,6 +115,8 @@ namespace Hexa.Modules
                 var result = await interactivity.WaitForButtonAsync(message, buttons, timeout);
                 if (result.TimedOut)
                     continue;
+                if (!(result.Result.User == ctx.Message.Author || result.Result.User == opponent))
+                    continue;
                 if (turn % 2 == 0)
                 {
                     if (result.Result.User == ctx.Message.Author)
@@ -170,6 +172,13 @@ namespace Hexa.Modules
                     break;
                 }
 
+                if (values.Where(x => x == 2).Count() == 0)
+                {
+                    builder.Content = $"Play Tic Tac Toe against {opponent.DisplayName}!\nIt's a tie!";
+                    await message.ModifyAsync(builder);
+                    break;
+                }
+
                 if (buttons.Where(x => x.Label == "\u200B ").Count() <= 1)
                 {
                     await message.ModifyAsync(builder);
@@ -181,12 +190,13 @@ namespace Hexa.Modules
             {
                 button.Disabled = true;
             }
-            await message.ModifyAsync(builder);
+            try {await message.ModifyAsync(builder);}
+            catch (DSharpPlus.Exceptions.NotFoundException e) {}
         }
 
         [Command("tictactoe")]
         [Category("Games")]
-        [Description("Play Tic Tac Toe against the bot")]
+        [Description("Play Tic Tac Toe against the bot or a human")]
         public async Task TicTacToeCommand(CommandContext ctx)
         {
             DiscordButtonComponent[] button_row1 = new DiscordButtonComponent[3];
