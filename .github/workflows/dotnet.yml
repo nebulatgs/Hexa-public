@@ -23,7 +23,7 @@ jobs:
       run: dotnet publish -c "Release" --self-contained false
     - name: Deploy
       run: |
-        git clone https://github.com/nebulatgs/hexa-deploy
+        git clone https://github.com/nebulatgs/hexa-deploy.git
         cp bin/Release/net5.0/publish hexa-deploy -r
         cd hexa-deploy
         git add .
