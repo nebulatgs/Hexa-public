@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-      <RestoreSources>$(RestoreSources);/workspaces/dsharp/Hexa/nightly4;https://api.nuget.org/v3/index.json</RestoreSources>
+      <RestoreSources>$(RestoreSources);./nightly4;https://api.nuget.org/v3/index.json</RestoreSources>
 <!-- <DebugType>None</DebugType> -->
 <!-- <DebugSymbols>False</DebugSymbols> -->
   </PropertyGroup>
