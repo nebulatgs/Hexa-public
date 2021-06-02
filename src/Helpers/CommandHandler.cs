@@ -28,13 +28,14 @@ namespace Hexa
             // var cmdStart = msg.GetStringPrefixLength(setPrefix);
             string cmdString, args, prefix = "";
             Command command;
-            if (msg.MentionedUsers.Contains(client.CurrentUser))
+            if (msg.MentionedUsers.Contains(client.CurrentUser) && msg.Content.Replace("!", "").StartsWith(client.CurrentUser.Mention))
             {
                 // cmdString = msg.Content.Replace($"<@!{client.CurrentUser.Id}>", "");
                 cmdString = msg.Content.Remove(msg.Content.IndexOf($"<@!{client.CurrentUser.Id}>"), $"<@!{client.CurrentUser.Id}>".Length);
                 prefix = client.CurrentUser.Mention;
                 command = cnext.FindCommand(cmdString, out args);
-                if (command == null) command = cnext.FindCommand("help", out args);
+                if (cmdString is "") command = cnext.FindCommand("help", out args);
+                if (command is null) return;
             }
             else
             {

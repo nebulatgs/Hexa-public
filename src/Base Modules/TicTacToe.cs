@@ -191,7 +191,7 @@ namespace Hexa.Modules
                 button.Disabled = true;
             }
             try {await message.ModifyAsync(builder);}
-            catch (DSharpPlus.Exceptions.NotFoundException e) {}
+            catch (DSharpPlus.Exceptions.NotFoundException) {}
         }
 
         [Command("tictactoe")]
