@@ -146,10 +146,13 @@ namespace Hexa.Helpers
             {
                 // this.EmbedBuilder.AddField("bot info", $"``{HexaSettings.GetValue(this.Context.Guild, HexaSettings.SettingType.ServerPrefix).GetAwaiter().GetResult()}``: current server prefix", false);
                 var bot_info = new StringBuilder();
-                bot_info.Append($"``{HexaSettings.GetValue(this.Context.Guild, HexaSettings.SettingType.ServerPrefix).GetAwaiter().GetResult() ?? "-"}``: current server prefix\n");
+                var prefix = HexaSettings.GetValue(this.Context.Guild, HexaSettings.SettingType.ServerPrefix).GetAwaiter().GetResult() ?? "-";
+                bot_info.Append($"``{prefix}``: current server prefix\n");
                 bot_info.Append($"{this.Context.Client.CurrentUser.Mention}: mention me for help\n");
                 this.EmbedBuilder.Title = "bot info";
                 this.EmbedBuilder.Description = bot_info.ToString().Trim();
+                this.EmbedBuilder.AddField("important commands", $"use ``/activity`` or ``{prefix}activity`` to start an activity in a voice channel\nuse ``/youtube`` to start Youtube Together in a voice channel", true);
+                this.EmbedBuilder.AddField("bugs", $"report any bugs using the ``{prefix}bugreport`` command to help improve Hexa", false);
                 var categories = subcommands.GroupBy(x => x.CustomAttributes.Where(y => y.GetType() == typeof(CategoryAttribute)).Cast<CategoryAttribute>().FirstOrDefault());
                 foreach (var category in categories)
                 {

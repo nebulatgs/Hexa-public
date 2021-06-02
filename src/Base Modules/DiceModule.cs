@@ -1,14 +1,17 @@
 using System;
+using System.Numerics;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using DSharpPlus.Exceptions;
 using DSharpPlus.Interactivity.Extensions;
 using Hexa.Attributes;
 using Hexa.Helpers;
 
 namespace Hexa.Modules
 {
+    [HexaCooldown(5)]
     public class DiceModule : BaseCommandModule
     {
         public Random rand { get; set; }
@@ -19,21 +22,24 @@ namespace Hexa.Modules
         [Description("Roll a die!")]
         public async Task DiceCommand(CommandContext ctx, string sides = "6")
         {
-            if(!int.TryParse(sides, out int int_sides)) throw new ArgumentException("That's…physically impossible?");
-            if (int_sides <= 0) throw new ArgumentException("That's…physically impossible?");
+            // BigInteger.TryParse(sides, out var bigint_sides);
+            if (!BigInteger.TryParse(sides, out var bigint_sides)) throw new ArgumentException("That's…physically impossible?");
+            if (bigint_sides <= 0) throw new ArgumentException("That's…physically impossible?");
+            if (sides.Length > 150)
+                throw new ArgumentException("The die was too heavy to roll…");
             var button = new DiscordButtonComponent(ButtonStyle.Success, "roll", "roll again", false);
             var builder = new DiscordMessageBuilder();
             var interactivity = ctx.Client.GetInteractivity();
             DiscordButtonComponent[] buttons = { button };
 
             var hEmbed = new HexaEmbed(ctx, "dice roll");
-            hEmbed.embed.WithTitle($"Rolling a {int_sides}-sided die");
+            hEmbed.embed.WithTitle($"Rolling a {bigint_sides}-sided die");
             hEmbed.embed.WithDescription($"Rolling…");
             builder.WithEmbed(hEmbed.Build());
             var message = await builder.SendAsync(ctx.Channel);
             await Task.Delay(500);
-            var roll = rand.Next(1, int_sides + 1);
-            hEmbed.embed.Description = $"Rolled a {roll}";
+            var roll = rand.NextBigInteger(1, bigint_sides + 1);
+            hEmbed.embed.Description = $"**Rolled a** {roll}";
             builder.WithEmbed(hEmbed.Build()).WithComponents(button);
 
             message = await message.ModifyAsync(builder);
@@ -41,12 +47,12 @@ namespace Hexa.Modules
             while (DateTime.Now < timeout)
             {
                 var buttonResponse = await interactivity.WaitForButtonAsync(message, buttons, TimeSpan.FromSeconds(30));
-                hEmbed.embed.WithDescription($"Rolling…");
+                hEmbed.embed.WithDescription($"**Rolling…**");
                 builder.WithEmbed(hEmbed.Build());
                 await message.ModifyAsync(builder);
                 await Task.Delay(500);
-                roll = rand.Next(1, int_sides + 1);
-                hEmbed.embed.Description = $"Rolled a {roll}";
+                roll = rand.NextBigInteger(1, bigint_sides + 1);
+                hEmbed.embed.Description = $"**Rolled a** {roll}";
                 builder.WithEmbed(hEmbed.Build());
                 await message.ModifyAsync(builder);
             }

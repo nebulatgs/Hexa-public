@@ -3,12 +3,14 @@ using System.IO;
 using System.Threading.Tasks;
 
 using DSharpPlus.CommandsNext;
+using DSharpPlus.Entities;
 
 public class HexaLogger
 {
     private string file_name;
+    // private readonly DiscordChannel logChannel;
     public string LogFile { get{return file_name;} }
-    public HexaLogger(string log_file_name) { file_name = log_file_name; }
+    public HexaLogger(string log_file_name) { file_name = log_file_name;}
     public async Task LogCommandExecution(CommandsNextExtension command_ext, CommandExecutionEventArgs args)
     {
         string logString = $"Executed {args.Command} : {args.Context.Guild}, {args.Context.Channel};\nby {args.Context.Message.Author} with arguments \"{args.Context.RawArgumentString}\"\n"
@@ -18,6 +20,8 @@ public class HexaLogger
         Console.ResetColor();
         using StreamWriter file = File.AppendText(file_name);
         await file.WriteLineAsync(logString);
+        var logChannel = await args.Context.Client.GetChannelAsync(849357173775007804);
+        await logChannel.SendMessageAsync($"```diff\n+ {logString}```");
     }
 
     public async Task LogCommandError(CommandsNextExtension command_ext, CommandErrorEventArgs args)
@@ -30,6 +34,8 @@ public class HexaLogger
         Console.ResetColor();
         using StreamWriter file = File.AppendText(file_name);
         await file.WriteLineAsync(logString);
+        var logChannel = await args.Context.Client.GetChannelAsync(849357173775007804);
+        await logChannel.SendMessageAsync($"```diff\n- {logString}```");
     }
 
     public async Task LogInfo(CommandsNextExtension command_ext, CommandExecutionEventArgs args)
@@ -40,5 +46,7 @@ public class HexaLogger
         Console.ResetColor();
         using StreamWriter file = File.AppendText(file_name);
         await file.WriteLineAsync(logString);
+        var logChannel = await args.Context.Client.GetChannelAsync(849357173775007804);
+        await logChannel.SendMessageAsync($"```yaml\n{logString}```");
     }
 }

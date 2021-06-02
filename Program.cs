@@ -8,6 +8,7 @@ using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
+using DSharpPlus.Exceptions;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Enums;
 using DSharpPlus.Interactivity.Extensions;
@@ -168,12 +169,6 @@ namespace Hexa
             discord.ComponentInteractionCreated += async (DiscordClient client, ComponentInteractionCreateEventArgs args) =>
             {
                 await args.Interaction.CreateResponseAsync(InteractionResponseType.DefferedMessageUpdate);
-                // await args.Interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder()
-                // {
-                //     Content = "Wow",
-                //     IsEphemeral = true
-                // });
-                // await args.Message.ModifyAsync("Ok");
             };
             await discord.StartAsync();
             await PeriodicTask.Run(async () =>
@@ -188,6 +183,7 @@ namespace Hexa
         }
         private async Task CmdErroredHandler(CommandsNextExtension _, CommandErrorEventArgs e)
         {
+            if (e.Exception.GetType() == typeof(RequestSizeException)) return;
             await e.Context.RespondAsync(e.Exception.Message);
         }
     }

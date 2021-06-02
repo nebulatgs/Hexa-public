@@ -13,7 +13,7 @@ namespace Hexa.Modules
     public class StatsModule : BaseCommandModule
     {
         [Command("stats")]
-        [Aliases("botstats", "botinfo")]
+        // [Aliases("botstats", "botinfo")]
         [Description("Get Hexa's statistics")]
         [Category("Info")]
         public async Task StatsCommand(CommandContext ctx)

@@ -14,12 +14,14 @@ namespace Hexa.Modules
     {
         [Command("buttons")]
         [Category("Random")]
-        [Disabled, Hidden]
+        [DevOnly, Hidden]
         public async Task ButtonCommand(CommandContext ctx)
         {
             // await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(hEmbed.embed.Build()));
             var button = new DiscordButtonComponent(ButtonStyle.Primary, "hello", "test123", false);
-            var builder = new DiscordMessageBuilder().WithComponents(button);
+            var a = new DiscordSelectComponent();
+            a.Options = new DiscordSelectComponentOption[] { new DiscordSelectComponentOption("one", "1", "test")};
+            var builder = new DiscordMessageBuilder().WithComponents(new DiscordComponent[] {button, a});
             var interactivity = ctx.Client.GetInteractivity();
             builder.WithContent("buttons test");
             DiscordButtonComponent[] buttons = {button};

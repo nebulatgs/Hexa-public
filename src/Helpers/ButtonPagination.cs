@@ -33,10 +33,7 @@ namespace Hexa.Helpers
                 var result = await interactivity.WaitForButtonAsync(message, buttons, timeout);
                 if (result.TimedOut)
                 {
-                    builder.Clear();
-                    builder = builder.WithContent(page_list[current_page].Content).WithEmbed(page_list[current_page].Embed);
-                    await message.ModifyAsync(builder);
-                    return;
+                    break;
                 }
                 if (result.Result.User != u)
                     continue;
@@ -64,10 +61,9 @@ namespace Hexa.Helpers
                     return;
                 }
             }
-
-            // Delete buttons after timing out
-            builder.Clear();
-            builder = builder.WithContent(page_list[current_page].Content).WithEmbed(page_list[current_page].Embed);
+            next.Disabled = true;
+            previous.Disabled = true;
+            close.Disabled = true;
             await message.ModifyAsync(builder);
         }
     }

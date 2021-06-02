@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 
 namespace Hexa.Modules
 {
+    [HexaCooldown(5)]
     public class WikiModule : BaseCommandModule
     {
         public WikiResponse GetResponse(string query)
@@ -37,6 +38,7 @@ namespace Hexa.Modules
         [Command("wiki")]
         [Aliases("wikipedia", "search")]
         [Category("Fun")]
+        [Description("Search anything on Wikipedia")]
         public async Task WikiCommand(CommandContext ctx, [RemainingText] string query = null)
         {
             if (query is null)
@@ -57,7 +59,7 @@ namespace Hexa.Modules
                 pages.Add(new Page("", hEmbed.embed));
                 page_index++;
             }
-            await interactivity.SendButtonPaginatedMessageAsync(ctx.Channel, ctx.Message.Author, pages, "wikipedia", TimeSpan.FromSeconds(60));
+            await interactivity.SendButtonPaginatedMessageAsync(ctx.Channel, ctx.Message.Author, pages, "wikipedia", TimeSpan.FromSeconds(1));
         }
     }
 }

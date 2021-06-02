@@ -9,6 +9,7 @@ using Hexa.Helpers;
 
 namespace Hexa.Modules
 {
+    [HexaCooldown(5)]
     public class InviteModule : BaseCommandModule
     {
         [Command("invite")]

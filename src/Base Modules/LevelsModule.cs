@@ -14,6 +14,7 @@ using Hexa.Other;
 
 namespace Hexa.Modules
 {
+    [HexaCooldown(5)]
     public class LevelsModule : BaseCommandModule
     {
         [Command("rank")]

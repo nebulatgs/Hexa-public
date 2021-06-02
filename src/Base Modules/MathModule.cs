@@ -10,6 +10,7 @@ using Hexa.Helpers;
 
 namespace Hexa.Modules
 {
+    [HexaCooldown(5)]
     public class MathModule : BaseCommandModule
     {
         private string GetResponse(string query)
@@ -43,6 +44,8 @@ namespace Hexa.Modules
         [Category("Fun")]
         public async Task MathCommand(CommandContext ctx, [RemainingText, Description("The expression or equation to evaluate")] string query)
         {
+            if (query is null)
+                throw new ArgumentException("Please provide an expression or equation to evaluate.");
             await ctx.TriggerTypingAsync();
             var hEmbed = new HexaEmbed(ctx, "hexa math");
             try
