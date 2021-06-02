@@ -25,7 +25,7 @@ jobs:
       uses: drud/action-cross-commit@master
       with:
         source-folder: bin/Release/net5.0/publish
-        destination-repository: https://nebulatgs:${{ secrets.API_TOKEN_GITHUB }}@github.com/hexa-deploy
+        destination-repository: https://nebulatgs:${{ secrets.API_TOKEN_GITHUB }}@github.com/nebulatgs/hexa-deploy.git
         destination-folder: ./publish
         destination-branch: main
         git-user: "Actions"
