@@ -1,0 +1,32 @@
+name: .NET
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet publish -c "Release" --self-contained false
+    - name: Deploy
+      run: |
+        git clone https://github.com/nebulatgs/hexa-deploy
+        cp bin/Release/net5.0/publish hexa-deploy -r
+        cd hexa-deploy
+        git add .
+        git commit -m "Automated Build"
+        git push
+        
