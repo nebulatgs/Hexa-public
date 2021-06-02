@@ -17,16 +17,36 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+        
+    - name: Generate build number
+      uses: einaregilsson/build-number@v3
+      with:
+        token: ${{secrets.API_TOKEN_GITHUB}}
+        
     - name: Restore dependencies
       run: dotnet restore
+      
     - name: Build
       run: dotnet publish -c "Release" --self-contained false
+      
     - name: Deploy
-      run: |
-        git clone https://github.com/nebulatgs/hexa-deploy
-        cp bin/Release/net5.0/publish hexa-deploy -r
-        cd hexa-deploy
-        git add .
-        git commit -m "Automated Build"
-        git push
+      uses: drud/action-cross-commit@master
+      with:
+        source-folder: bin/Release/net5.0/publish
+        destination-repository: https://nebulatgs:${{ secrets.API_TOKEN_GITHUB }}@github.com/nebulatgs/hexa-deploy.git
+        destination-folder: ./publish
+        destination-branch: main
+        git-user: "Actions"
+        git-user-email: infinitewormhole@gmail.com
+        git-commit-message: "Automated Build #$BUILD_NUMBER"
+        git-commit-sign-off: "false"
+        excludes: README.md
+#     - name: Deploy
+#       run: |
+#         git clone https://github.com/nebulatgs/hexa-deploy.git
+#         cp bin/Release/net5.0/publish hexa-deploy -r
+#         cd hexa-deploy
+#         git add .
+#         git commit -m "Automated Build"
+#         git push
         
