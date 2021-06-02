@@ -17,10 +17,18 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+        
+    - name: Generate build number
+      uses: einaregilsson/build-number@v3
+      with:
+        token: ${{secrets.API_TOKEN_GITHUB}}
+        
     - name: Restore dependencies
       run: dotnet restore
+      
     - name: Build
       run: dotnet publish -c "Release" --self-contained false
+      
     - name: Deploy
       uses: drud/action-cross-commit@master
       with:
@@ -30,7 +38,7 @@ jobs:
         destination-branch: main
         git-user: "Actions"
         git-user-email: infinitewormhole@gmail.com
-        git-commit-message: "Automated Build"
+        git-commit-message: "Automated Build #$BUILD_NUMBER"
         git-commit-sign-off: "false"
         excludes: README.md
 #     - name: Deploy
