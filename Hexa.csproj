@@ -21,7 +21,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.6" />
     <PackageReference Include="postgrest-csharp" Version="1.0.6" />
     <!-- <PackageReference Include="Soyvolon.DSharpPlus.SlashCommands" Version="0.5.0" /> -->
-    <PackageReference Include="supabase-csharp" Version="0.1.5-prerelease" />
+    <PackageReference Include="supabase-csharp" Version="0.1.6-prerelease" />
   </ItemGroup>
 
 </Project>

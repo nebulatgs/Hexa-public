@@ -59,7 +59,7 @@ namespace Hexa.Modules
                 pages.Add(new Page("", hEmbed.embed));
                 page_index++;
             }
-            await interactivity.SendButtonPaginatedMessageAsync(ctx.Channel, ctx.Message.Author, pages, "wikipedia", TimeSpan.FromSeconds(1));
+            await interactivity.SendButtonPaginatedMessageAsync(ctx.Channel, ctx.Message.Author, pages, "wikipedia", TimeSpan.FromSeconds(60), showPrint: false, showClose: true);
         }
     }
 }

@@ -70,9 +70,9 @@ namespace Hexa
             var foundSettings = guildSettings.Models.Where(x => x.GuildId == guild.Id);
             return foundSettings;
         }
-        public static async Task SetValue(DiscordGuild guild, string find, string value)
+        public static async Task SetValue(DiscordGuild guild, string key, string value)
         {
-            var setting_type = SettingTypeFromString(find);
+            var setting_type = SettingTypeFromString(key);
             var instance = Supabase.Client.Instance;
             var new_setting = new GuildSetting
             {

@@ -38,7 +38,7 @@ jobs:
         destination-branch: main
         git-user: "Actions"
         git-user-email: infinitewormhole@gmail.com
-        git-commit-message: "Automated Build #$BUILD_NUMBER"
+        git-commit-message: "Automated Build #${{ BUILD_NUMBER }}"
         git-commit-sign-off: "false"
         excludes: README.md
 #     - name: Deploy
