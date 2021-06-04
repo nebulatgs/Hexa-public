@@ -21,7 +21,7 @@ namespace Hexa.Helpers
             using (var db = new HexaContext())
             {
                 StringBuilder logString = new StringBuilder($"```yaml\nUSER UPDATE: ");
-                if (db.PastUserStates.Count() > 0)
+                if (db.PastUserStates.Where(x => x.UserId == args.Member.Id).OrderBy(x => x.PastUserStateId).Count() > 0)
                 {
                     if (db.PastUserStates.Where(x => x.UserId == args.Member.Id).OrderBy(x => x.PastUserStateId).LastOrDefault().Username == args.Member.Username)
                     {
@@ -37,7 +37,6 @@ namespace Hexa.Helpers
 
                     await client.SendMessageAsync(await client.GetChannelAsync(849083307747704860), logString.ToString());
                 }
-                else { 
                 db.Add(new PastUserState()
                 {
                     UserId = args.Member.Id,
@@ -51,19 +50,18 @@ namespace Hexa.Helpers
             }
         }
     }
-}
 
-public class JoinLeaveLogger
-{
-    public async Task OnChange(DiscordClient client, GuildCreateEventArgs args)
+    public class JoinLeaveLogger
     {
-        await client.SendMessageAsync(await client.GetChannelAsync(847649085237755954), $"JOINED GUILD: ``{args.Guild.ToString() ?? "null"}``");
+        public async Task OnChange(DiscordClient client, GuildCreateEventArgs args)
+        {
+            await client.SendMessageAsync(await client.GetChannelAsync(847649085237755954), $"JOINED GUILD: ``{args.Guild.ToString() ?? "null"}``");
+        }
+        public async Task OnChange(DiscordClient client, GuildDeleteEventArgs args)
+        {
+            await client.SendMessageAsync(await client.GetChannelAsync(847649085237755954), $"LEFT GUILD: ``{args.Guild.ToString() ?? "null"}``");
+        }
     }
-    public async Task OnChange(DiscordClient client, GuildDeleteEventArgs args)
-    {
-        await client.SendMessageAsync(await client.GetChannelAsync(847649085237755954), $"LEFT GUILD: ``{args.Guild.ToString() ?? "null"}``");
-    }
-}
 
     // public class 
 }
