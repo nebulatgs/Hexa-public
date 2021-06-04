@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.Entities;
@@ -14,22 +16,34 @@ namespace Hexa.Helpers
             if ((DiscordUser)args.Member == lastMember)
                 return;
             lastMember = args.Member;
-            if(args.NicknameBefore != args.NicknameAfter)
+            if (args.NicknameBefore != args.NicknameAfter)
                 return;
             using (var db = new HexaContext())
             {
-                db.Add(new PastUserState(){
+                StringBuilder logString = new StringBuilder($"```yaml\nUSER UPDATE: ");
+                if (db.PastUserStates.Where(x => x.UserId == args.Member.Id).OrderBy(x => x.PastUserStateId).LastOrDefault().Username == args.Member.Username)
+                {
+                    logString.Append("PROFILE CHANGE");
+                    logString.AppendLine($"{args.Guild}\nMember {args.Member.Id}; {args.Member.Username}#{args.Member.Discriminator}```");
+                }
+                else
+                {
+                    logString.Append("NAME CHANGE");
+                    logString.AppendLine($"{args.Guild}\nMember {args.Member.Id}; {args.Member.Username}#{args.Member.Discriminator}");
+                    logString.AppendLine($"{db.PastUserStates.Where(x => x.UserId == args.Member.Id).OrderBy(x => x.PastUserStateId).LastOrDefault().Username ?? "null"} ➜ {args.Member.Username ?? "null"}```");
+                }
+                
+                await client.SendMessageAsync(await client.GetChannelAsync(849083307747704860), logString.ToString());
+                db.Add(new PastUserState()
+                {
                     UserId = args.Member.Id,
                     Username = args.Member.Username,
                     Discriminator = int.Parse(args.Member.Discriminator),
                     Flags = (int)args.Member.Flags,
-                    AvatarUrl = args.Member.AvatarUrl,
+                    AvatarUrl = args.Member.AvatarUrl,//.Split('/')[5].Split('?')[0].Split('.')[0],
                 });
                 await db.SaveChangesAsync();
             }
-            if (args.NicknameBefore is null && args.NicknameAfter is null)
-                return;
-            await client.SendMessageAsync(await client.GetChannelAsync(849083307747704860), $"```yaml\nUSER UPDATE:\n{args.Guild}\nMember {args.Member.Id}; {args.Member.Username}#{args.Member.Discriminator}\n{args.NicknameBefore ?? "null"} ➜ {args.NicknameAfter ?? "null"}```");
         }
     }
 
