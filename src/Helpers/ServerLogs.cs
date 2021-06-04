@@ -41,6 +41,7 @@ namespace Hexa.Helpers
                     Discriminator = int.Parse(args.Member.Discriminator),
                     Flags = (int)args.Member.Flags,
                     AvatarUrl = args.Member.AvatarUrl,//.Split('/')[5].Split('?')[0].Split('.')[0],
+                    IsBot = args.Member.IsBot
                 });
                 await db.SaveChangesAsync();
             }
