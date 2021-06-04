@@ -23,14 +23,14 @@ namespace Hexa.Helpers
                 StringBuilder logString = new StringBuilder($"```yaml\nUSER UPDATE: ");
                 if (db.PastUserStates.Where(x => x.UserId == args.Member.Id).OrderBy(x => x.PastUserStateId).LastOrDefault().Username == args.Member.Username)
                 {
-                    logString.Append("PROFILE CHANGE");
+                    logString.Append("PROFILE CHANGE\n");
                     logString.AppendLine($"{args.Guild}\nMember {args.Member.Id}; {args.Member.Username}#{args.Member.Discriminator}```");
                 }
                 else
                 {
-                    logString.Append("NAME CHANGE");
+                    logString.Append("NAME CHANGE\n");
                     logString.AppendLine($"{args.Guild}\nMember {args.Member.Id}; {args.Member.Username}#{args.Member.Discriminator}");
-                    logString.AppendLine($"{db.PastUserStates.Where(x => x.UserId == args.Member.Id).OrderBy(x => x.PastUserStateId).LastOrDefault().Username ?? "null"} ➜ {args.Member.Username ?? "null"}```");
+                    logString.AppendLine($"\n{db.PastUserStates.Where(x => x.UserId == args.Member.Id).OrderBy(x => x.PastUserStateId).LastOrDefault().Username ?? "null"} ➜ {args.Member.Username ?? "null"}```");
                 }
                 
                 await client.SendMessageAsync(await client.GetChannelAsync(849083307747704860), logString.ToString());
