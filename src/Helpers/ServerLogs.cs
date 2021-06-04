@@ -21,19 +21,23 @@ namespace Hexa.Helpers
             using (var db = new HexaContext())
             {
                 StringBuilder logString = new StringBuilder($"```yaml\nUSER UPDATE: ");
-                if (db.PastUserStates.Where(x => x.UserId == args.Member.Id).OrderBy(x => x.PastUserStateId).LastOrDefault().Username == args.Member.Username)
+                if (db.PastUserStates.Count() > 0)
                 {
-                    logString.Append("PROFILE CHANGE\n");
-                    logString.AppendLine($"{args.Guild}\nMember {args.Member.Id}; {args.Member.Username}#{args.Member.Discriminator}```");
+                    if (db.PastUserStates.Where(x => x.UserId == args.Member.Id).OrderBy(x => x.PastUserStateId).LastOrDefault().Username == args.Member.Username)
+                    {
+                        logString.Append("PROFILE CHANGE\n");
+                        logString.AppendLine($"{args.Guild}\nMember {args.Member.Id}; {args.Member.Username}#{args.Member.Discriminator}```");
+                    }
+                    else
+                    {
+                        logString.Append("NAME CHANGE\n");
+                        logString.AppendLine($"{args.Guild}\nMember {args.Member.Id}; {args.Member.Username}#{args.Member.Discriminator}");
+                        logString.AppendLine($"\n{db.PastUserStates.Where(x => x.UserId == args.Member.Id).OrderBy(x => x.PastUserStateId).LastOrDefault().Username ?? "null"} ➜ {args.Member.Username ?? "null"}```");
+                    }
+
+                    await client.SendMessageAsync(await client.GetChannelAsync(849083307747704860), logString.ToString());
                 }
-                else
-                {
-                    logString.Append("NAME CHANGE\n");
-                    logString.AppendLine($"{args.Guild}\nMember {args.Member.Id}; {args.Member.Username}#{args.Member.Discriminator}");
-                    logString.AppendLine($"\n{db.PastUserStates.Where(x => x.UserId == args.Member.Id).OrderBy(x => x.PastUserStateId).LastOrDefault().Username ?? "null"} ➜ {args.Member.Username ?? "null"}```");
-                }
-                
-                await client.SendMessageAsync(await client.GetChannelAsync(849083307747704860), logString.ToString());
+                else { 
                 db.Add(new PastUserState()
                 {
                     UserId = args.Member.Id,
@@ -47,18 +51,19 @@ namespace Hexa.Helpers
             }
         }
     }
+}
 
-    public class JoinLeaveLogger
+public class JoinLeaveLogger
+{
+    public async Task OnChange(DiscordClient client, GuildCreateEventArgs args)
     {
-        public async Task OnChange(DiscordClient client, GuildCreateEventArgs args)
-        {
-            await client.SendMessageAsync(await client.GetChannelAsync(847649085237755954), $"JOINED GUILD: ``{args.Guild.ToString() ?? "null"}``");
-        }
-        public async Task OnChange(DiscordClient client, GuildDeleteEventArgs args)
-        {
-            await client.SendMessageAsync(await client.GetChannelAsync(847649085237755954), $"LEFT GUILD: ``{args.Guild.ToString() ?? "null"}``");
-        }
+        await client.SendMessageAsync(await client.GetChannelAsync(847649085237755954), $"JOINED GUILD: ``{args.Guild.ToString() ?? "null"}``");
     }
+    public async Task OnChange(DiscordClient client, GuildDeleteEventArgs args)
+    {
+        await client.SendMessageAsync(await client.GetChannelAsync(847649085237755954), $"LEFT GUILD: ``{args.Guild.ToString() ?? "null"}``");
+    }
+}
 
     // public class 
 }
