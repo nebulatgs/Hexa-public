@@ -35,6 +35,7 @@ namespace Hexa.Database
         public int Discriminator { get; set; }
         public int Flags { get; set; }
         public string AvatarUrl { get; set; }
+        public bool IsBot { get; set; }
         public override string ToString()
         {
             return $"{Username}#{Discriminator}";
