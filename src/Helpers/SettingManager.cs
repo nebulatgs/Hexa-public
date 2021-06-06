@@ -24,30 +24,43 @@ namespace Hexa.Helpers
             AdminCategory,
             DangerCategory
         }
+        private static List<GuildSetting> guildSettings { get; set; }
+
+        public SettingsManager()
+        {
+            using (var db = new HexaContext())
+            {
+                var settings = db.GuildSettings.Include(y => y.Setting);
+                // return await settings.ToDictionaryAsync(x => x.SettingID);
+            guildSettings =  settings.ToList();
+            }
+        }
 
         public async Task<List<GuildSetting>> GetSettings(DiscordGuild guild)
         {
             await SetDefaults(guild);
             var guildId = guild is null ? 835722357485994005 : guild.Id;
-            using (var db = new HexaContext())
-            {
-                var settings = db.GuildSettings.Include(y => y.Setting).Where(x => x.GuildId == guildId);
-                // return await settings.ToDictionaryAsync(x => x.SettingID);
-                return await settings.ToListAsync();
-            }
+            return guildSettings.Where(x => x.GuildId == guildId).ToList();
+            // using (var db = new HexaContext())
+            // {
+            //     var settings = db.GuildSettings.Include(y => y.Setting).Where(x => x.GuildId == guildId);
+            //     // return await settings.ToDictionaryAsync(x => x.SettingID);
+            //     return await settings.ToListAsync();
+            // }
         }
 
         public async Task<GuildSetting> GetSetting(DiscordGuild guild, HexaSetting setting)
         {
             await SetDefaults(guild);
             var guildId = guild is null ? 835722357485994005 : guild.Id;
-            using (var db = new HexaContext())
-            {
-                int setting_int = ((int)setting);
-                var settings = db.GuildSettings.Include(y => y.Setting);
-                var first = await settings.Where(x => x.GuildId == guildId).FirstAsync(x => x.SettingID == setting_int);
-                return first;
-            }
+            int setting_int = ((int)setting);
+            return guildSettings.Where(x => x.GuildId == guildId).First(x => x.SettingID == setting_int);
+            // using (var db = new HexaContext())
+            // {
+            //     var settings = db.GuildSettings.Include(y => y.Setting);
+            //     var first = await settings.Where(x => x.GuildId == guildId).FirstAsync(x => x.SettingID == setting_int);
+            //     return first;
+            // }
         }
 
         public async Task<Setting> GetSettingDefinitionAsync(HexaSetting setting)
@@ -75,11 +88,18 @@ namespace Hexa.Helpers
             using (var db = new HexaContext())
             {
                 var foundSetting = db.GuildSettings.SingleOrDefault(x => x.GuildId == guildId && x.SettingID == setting);
+                var obj = guildSettings.SingleOrDefault(x => x.GuildId == guildId && x.SettingID == setting);
                 foundSetting.
+                    GuildId = guildId;
+                obj.
                     GuildId = guildId;
                 foundSetting.
                     SettingID = ((int)setting);
+                obj.
+                    SettingID = ((int)setting);
                 foundSetting.
+                    Value = value;
+                obj.
                     Value = value;
 
                 // db.Entry(foundSetting).State = EntityState.Modified;
@@ -102,12 +122,14 @@ namespace Hexa.Helpers
                     var set3 = set2.Any();
                     if (!set3)
                     {
-                        db.Add(new GuildSetting()
+                        var settingObj = new GuildSetting()
                         {
                             GuildId = guildId,
                             SettingID = setting.SettingID,
                             Value = setting.Default
-                        });
+                        };
+                        db.Add(settingObj);
+                        guildSettings.Add(settingObj);
                     }
                 }
                 await db.SaveChangesAsync();

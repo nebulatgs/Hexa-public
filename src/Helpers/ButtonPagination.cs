@@ -21,7 +21,7 @@ namespace Hexa.Helpers
     //         int current_page = 0;
     //         // Init the message builder
     //         var builder = new DiscordMessageBuilder();
-    //         var buttonBuilder = builder.WithComponents(buttons);
+    //         var buttonBuilder = builder.AddComponents(buttons);
     //         builder = buttonBuilder.WithContent(page_list[current_page].Content).WithEmbed(page_list[current_page].Embed);
 
     //         var message = await c.SendMessageAsync(builder);
@@ -96,7 +96,7 @@ namespace Hexa.Helpers
 
             // Init the message builder
             var builder = new DiscordMessageBuilder();
-            var buttonBuilder = builder.WithComponents(buttons);
+            var buttonBuilder = builder.AddComponents(buttons);
             builder = buttonBuilder.WithContent(page_list[current_page].Content).WithEmbed(page_list[current_page].Embed);
             var message = await channel.SendMessageAsync(builder);
 

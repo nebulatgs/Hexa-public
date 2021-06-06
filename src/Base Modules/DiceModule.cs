@@ -40,7 +40,7 @@ namespace Hexa.Modules
             await Task.Delay(500);
             var roll = rand.NextBigInteger(1, bigint_sides + 1);
             hEmbed.embed.Description = $"**Rolled a** {roll}";
-            builder.WithEmbed(hEmbed.Build()).WithComponents(button);
+            builder.WithEmbed(hEmbed.Build()).AddComponents(button);
 
             message = await message.ModifyAsync(builder);
             var timeout = DateTime.Now.AddSeconds(30);
@@ -78,7 +78,7 @@ namespace Hexa.Modules
             await Task.Delay(500);
             var flip = rand.Next(0, 2) == 0 ? "heads" : "tails";
             hEmbed.embed.Title = $"It's {flip}!";
-            builder.WithEmbed(hEmbed.Build()).WithComponents(button);
+            builder.WithEmbed(hEmbed.Build()).AddComponents(button);
 
             message = await message.ModifyAsync(builder);
             var timeout = DateTime.Now.AddSeconds(30);

@@ -96,7 +96,7 @@ namespace Hexa.Modules
             var builder = new DiscordMessageBuilder();
             var interactivity = ctx.Client.GetInteractivity();
             DiscordButtonComponent[] buttons = { close };
-            builder.WithComponents(buttons);
+            builder.AddComponents(buttons);
             await ctx.Channel.TriggerTypingAsync();
             var output = RequestAutoCompleteDeepAI("468f237f-d4c0-426b-b06f-7362d03daadb", text);
             // var output = RequestAutoCompleteInferKit("b0444ca5-bd34-4f24-bc56-8beaaa811b69", text);

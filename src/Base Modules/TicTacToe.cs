@@ -102,7 +102,7 @@ namespace Hexa.Modules
 
             // Init the message builder
             var builder = new DiscordMessageBuilder();
-            var buttonBuilder = builder.WithComponents(button_row1).WithComponents(button_row2).WithComponents(button_row3);
+            var buttonBuilder = builder.AddComponents(button_row1).AddComponents(button_row2).AddComponents(button_row3);
             builder = buttonBuilder.WithContent($"Play Tic Tac Toe against {opponent.DisplayName}!\n{(await ctx.Guild.GetMemberAsync(ctx.Message.Author.Id)).DisplayName}'s turn");
             // builder.Content
             var message = await ctx.Channel.SendMessageAsync(builder);
@@ -220,7 +220,7 @@ namespace Hexa.Modules
 
             // Init the message builder
             var builder = new DiscordMessageBuilder();
-            var buttonBuilder = builder.WithComponents(button_row1).WithComponents(button_row2).WithComponents(button_row3);
+            var buttonBuilder = builder.AddComponents(button_row1).AddComponents(button_row2).AddComponents(button_row3);
             builder = buttonBuilder.WithContent("Play Tic Tac Toe!");
             var message = await ctx.Channel.SendMessageAsync(builder);
 

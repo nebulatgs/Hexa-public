@@ -48,7 +48,7 @@ namespace Hexa.Modules
             }
             var activity_id = "755600276941176913";
             var code = ActivitiesModule.RequestActivity(activity_id, channel);
-            var b = new DiscordMessageBuilder().WithComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Youtube Together", false, new DiscordComponentEmoji(847668867751739435)) }).WithContent(channel.Mention);
+            var b = new DiscordMessageBuilder().AddComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Youtube Together", false, new DiscordComponentEmoji(847668867751739435)) }).WithContent(channel.Mention);
             await ctx.RespondAsync(b);
         }
     }
@@ -105,7 +105,7 @@ namespace Hexa.Modules
             }
             var activity_id = "755600276941176913";
             var code = RequestActivity(activity_id, channel);
-            var b = new DiscordMessageBuilder().WithComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Youtube Together", false, new DiscordComponentEmoji(847668867751739435)) }).WithContent(channel.Mention);
+            var b = new DiscordMessageBuilder().AddComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Youtube Together", false, new DiscordComponentEmoji(847668867751739435)) }).WithContent(channel.Mention);
             await ctx.RespondAsync(b);
         }
 
@@ -122,7 +122,7 @@ namespace Hexa.Modules
             }
             var activity_id = "814288819477020702";
             var code = RequestActivity(activity_id, channel);
-            var b = new DiscordMessageBuilder().WithComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Fishington.io", false, new DiscordComponentEmoji(847667655922024498)) }).WithContent(channel.Mention);
+            var b = new DiscordMessageBuilder().AddComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Fishington.io", false, new DiscordComponentEmoji(847667655922024498)) }).WithContent(channel.Mention);
             await ctx.RespondAsync(b);
         }
 
@@ -138,7 +138,7 @@ namespace Hexa.Modules
             }
             var activity_id = "755827207812677713";
             var code = RequestActivity(activity_id, channel);
-            var b = new DiscordMessageBuilder().WithComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Poker Night", false, new DiscordComponentEmoji(847667610279215144)) }).WithContent(channel.Mention);
+            var b = new DiscordMessageBuilder().AddComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Poker Night", false, new DiscordComponentEmoji(847667610279215144)) }).WithContent(channel.Mention);
             await ctx.RespondAsync(b);
         }
 
@@ -155,7 +155,7 @@ namespace Hexa.Modules
             }
             var activity_id = "773336526917861400";
             var code = RequestActivity(activity_id, channel);
-            var b = new DiscordMessageBuilder().WithComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Betrayal.io", false, new DiscordComponentEmoji(847667494202507264)) }).WithContent(channel.Mention);
+            var b = new DiscordMessageBuilder().AddComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Betrayal.io", false, new DiscordComponentEmoji(847667494202507264)) }).WithContent(channel.Mention);
             await ctx.RespondAsync(b);
         }
 
@@ -171,7 +171,7 @@ namespace Hexa.Modules
             }
             var activity_id = "832012586023256104";
             var code = RequestActivity(activity_id, channel);
-            var b = new DiscordMessageBuilder().WithComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Chess in the Park (Beta)", false, new DiscordComponentEmoji(847669270409904159)) }).WithContent(channel.Mention);
+            var b = new DiscordMessageBuilder().AddComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Chess in the Park (Beta)", false, new DiscordComponentEmoji(847669270409904159)) }).WithContent(channel.Mention);
             await ctx.RespondAsync(b);
         }
     }

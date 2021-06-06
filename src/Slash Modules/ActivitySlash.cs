@@ -86,7 +86,7 @@ namespace Hexa.Modules
             var code = RequestActivity(ActivityIds[(int)activity], channel);
             await ctx.CreateResponseAsync(
                 InteractionResponseType.ChannelMessageWithSource,
-                new DiscordInteractionResponseBuilder().WithComponents(
+                new DiscordInteractionResponseBuilder().AddComponents(
                     new DiscordComponent[] 
                         {
                             new DiscordLinkButtonComponent(
@@ -109,7 +109,7 @@ namespace Hexa.Modules
             var code = RequestActivity(ActivityIds[0], channel);
             await ctx.CreateResponseAsync(
                 InteractionResponseType.ChannelMessageWithSource,
-                new DiscordInteractionResponseBuilder().WithComponents(
+                new DiscordInteractionResponseBuilder().AddComponents(
                     new DiscordComponent[] 
                         {
                             new DiscordLinkButtonComponent(

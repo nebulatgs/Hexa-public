@@ -16,11 +16,11 @@ namespace Hexa.Modules
         {
             // await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(hEmbed.embed.Build()));
             var button = new DiscordButtonComponent(ButtonStyle.Primary, "hello", "test123", false);
-            var builder = new DiscordMessageBuilder().WithComponents(button);
+            var builder = new DiscordMessageBuilder().AddComponents(button);
             builder.WithContent("buttons test");
             DiscordComponent[] buttons = {button};
             var interactivity = ctx.Client.GetInteractivity();
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithComponents(buttons).WithContent("button test"));
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddComponents(buttons).WithContent("button test"));
         }
     }
 }
