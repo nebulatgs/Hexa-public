@@ -67,7 +67,7 @@ namespace Hexa.Modules
         // }
         private async Task ShowSettingsAsync(CommandContext ctx)
         {
-            await Manager.SetDefaults(ctx.Guild);
+            // await Manager.SetDefaults(ctx.Guild);
             var hEmbed = new HexaEmbed(ctx, "settings");
             var settings = (await Manager.GetSettings(ctx.Guild));
             var maxLength = 0;
@@ -109,7 +109,7 @@ namespace Hexa.Modules
         [Command("settings")]
         public async Task SettingsCommand(CommandContext ctx, [Description("The setting to get")] SettingsManager.HexaSetting setting)
         {
-            await Manager.SetDefaults(ctx.Guild);            
+            // await Manager.SetDefaults(ctx.Guild);            
             var dbSetting = await Manager.GetSetting(ctx.Guild, setting);
             var hEmbed = new HexaEmbed(ctx, "setting info");
             hEmbed.embed.WithTitle($"setting ``{dbSetting.Setting.Aliases.First()}``");

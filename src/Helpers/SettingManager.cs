@@ -27,6 +27,7 @@ namespace Hexa.Helpers
 
         public async Task<List<GuildSetting>> GetSettings(DiscordGuild guild)
         {
+            await SetDefaults(guild);
             using (var db = new HexaContext())
             {
                 var settings = db.GuildSettings.Include(y => y.Setting).Where(x => x.GuildId == guild.Id);
@@ -37,6 +38,7 @@ namespace Hexa.Helpers
 
         public async Task<GuildSetting> GetSetting(DiscordGuild guild, HexaSetting setting)
         {
+            await SetDefaults(guild);
             using (var db = new HexaContext())
             {
                 int setting_int = ((int)setting);
