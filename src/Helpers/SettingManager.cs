@@ -40,8 +40,9 @@ namespace Hexa.Helpers
             using (var db = new HexaContext())
             {
                 int setting_int = ((int)setting);
-                var settings = await db.GuildSettings.Include(y => y.Setting).FirstOrDefaultAsync(x => x.GuildId == guild.Id && x.SettingID == setting_int);
-                return settings;
+                var settings = db.GuildSettings.Include(y => y.Setting);
+                var first = await settings.FirstAsync(x => x.GuildId == guild.Id && x.SettingID == setting_int);
+                return first;
             }
         }
 
@@ -50,7 +51,7 @@ namespace Hexa.Helpers
             using (var db = new HexaContext())
             {
                 int setting_int = ((int)setting);
-                var def = await db.Settings.FirstOrDefaultAsync(x => x.SettingID == setting_int);
+                var def = await db.Settings.FirstAsync(x => x.SettingID == setting_int);
                 return def;
             }
         }
@@ -59,7 +60,7 @@ namespace Hexa.Helpers
         {
             using (var db = new HexaContext())
             {
-                var def = await db.Settings.FirstOrDefaultAsync(x => x.SettingID == setting);
+                var def = await db.Settings.FirstAsync(x => x.SettingID == setting);
                 return def;
             }
         }
