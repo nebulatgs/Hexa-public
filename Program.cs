@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Exceptions;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Exceptions;
@@ -25,33 +26,33 @@ using Supabase;
 namespace Hexa
 {
 
-    [Table("ServerSettings")]
-    public class GuildSetting : SupabaseModel
-    {
-        [PrimaryKey("SettingId", false)]
-        public int SettingId { get; set; }
+    // [Table("ServerSettings")]
+    // public class GuildSetting : SupabaseModel
+    // {
+    //     [PrimaryKey("SettingID", false)]
+    //     public int SettingID { get; set; }
 
-        [Column("GuildId")]
-        public ulong GuildId { get; set; }
+    //     [Column("GuildId")]
+    //     public ulong GuildId { get; set; }
 
-        [Column("SettingType")]
-        public int SettingTypeId { get; set; }
+    //     [Column("SettingType")]
+    //     public int SettingType { get; set; }
 
-        [Column("Value")]
-        public string Value { get; set; }
+    //     [Column("Value")]
+    //     public string Value { get; set; }
 
 
-        public override bool Equals(object obj)
-        {
-            return obj is GuildSetting message &&
-                    GuildId == message.GuildId;
-        }
+    //     public override bool Equals(object obj)
+    //     {
+    //         return obj is GuildSetting message &&
+    //                 GuildId == message.GuildId;
+    //     }
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(GuildId);
-        }
-    }
+    //     public override int GetHashCode()
+    //     {
+    //         return HashCode.Combine(GuildId);
+    //     }
+    // }
 
     class Program
     {
@@ -59,6 +60,7 @@ namespace Hexa
         public static DateTime LaunchTime { get; private set; }
         public static string TOKEN { get; private set; }
         public static List<ulong> DevGroupIds { get; set; }
+        public static string DBSTRING { get; private set; }
         public Program()
         {
             var _builder = new ConfigurationBuilder()
@@ -66,9 +68,15 @@ namespace Hexa
                 .AddJsonFile(path: "config.json");
             _config = _builder.Build();
             if (Environment.GetEnvironmentVariable("PROD") is not null)
+            {
+                DBSTRING = Environment.GetEnvironmentVariable("DBSTRING");
                 TOKEN = Environment.GetEnvironmentVariable("BOT_TOKEN");
+            }
             else
+            {
+                DBSTRING = _config["Dbstring"];
                 TOKEN = _config["Token"];
+            }
             DevGroupIds = new List<ulong>();
             var devs = _config["Devs"].Split(',');
             foreach (var dev in devs)
@@ -95,7 +103,7 @@ namespace Hexa
             });
             HexaLogger logger = new HexaLogger($"logs/{DateTime.Now.ToString("u").Replace(':', '.')}.log");
             HexaCommandHandler command_handler = new HexaCommandHandler(_config["Prefix"]);
-            var services = new ServiceCollection().AddSingleton<HexaLogger>(logger).AddSingleton<Random>().BuildServiceProvider();
+            var services = new ServiceCollection().AddSingleton<HexaLogger>(logger).AddSingleton<Random>().AddSingleton<SettingsManager>().BuildServiceProvider();
             var commands = await discord.UseCommandsNextAsync(new CommandsNextConfiguration()
             {
                 StringPrefixes = new[] { _config["Prefix"] },
@@ -145,6 +153,8 @@ namespace Hexa
                 command.Value.CommandErrored += logger.LogCommandError;
                 command.Value.CommandErrored += CmdErroredHandler;
                 command.Value.SetHelpFormatter<HexaHelpFormatter>();
+                command.Value.RegisterConverter(new Hexa.Converters.BoolConverter());
+                command.Value.RegisterConverter(new Hexa.Converters.HexaSettingConverter());
             }
 
             string url, key;
@@ -183,7 +193,7 @@ namespace Hexa
         }
         private async Task CmdErroredHandler(CommandsNextExtension _, CommandErrorEventArgs e)
         {
-            if (e.Exception.GetType() == typeof(RequestSizeException)) return;
+            if (e.Exception.GetType() == typeof(ChecksFailedException)) return;
             await e.Context.RespondAsync(e.Exception.Message);
         }
     }

@@ -41,7 +41,7 @@ namespace Hexa.Modules
         [Command("math")]
         [Aliases("expr", "calc", "calculate")]
         [Description("Evaluate a mathamatical expression or equation")]
-        [Category("Fun")]
+        [Category(SettingsManager.HexaSetting.FunCategory)]
         public async Task MathCommand(CommandContext ctx, [RemainingText, Description("The expression or equation to evaluate")] string query)
         {
             if (query is null)

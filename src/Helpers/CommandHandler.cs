@@ -5,15 +5,18 @@ using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.EventArgs;
+using Hexa.Helpers;
 
 namespace Hexa
 {
     public class HexaCommandHandler
     {
+        public SettingsManager Manager { get; set; }
         private string defaultPrefix { get; }
         public HexaCommandHandler(string default_prefix)
         {
             defaultPrefix = default_prefix;
+            Manager = new SettingsManager();
         }
         public async Task CommandHandler(DiscordClient client, MessageCreateEventArgs e)
         {
@@ -22,7 +25,7 @@ namespace Hexa
             if (msg.Author.IsBot)
                 return;
             string setPrefix = "";
-            setPrefix = Environment.GetEnvironmentVariable("PROD") is not null ? await HexaSettings.GetValue(e.Guild, HexaSettings.SettingType.ServerPrefix) ?? "-" : "+";
+            setPrefix = Environment.GetEnvironmentVariable("PROD") is not null ? (await Manager.GetSetting(e.Guild, SettingsManager.HexaSetting.ServerPrefix)).Value ?? "-" : "+";
             // if (setPrefix == "")
             // setPrefix = defaultPrefix;
             // var cmdStart = msg.GetStringPrefixLength(setPrefix);

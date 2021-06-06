@@ -49,6 +49,7 @@
 //         // return new CommandHelpMessage(content: _strBuilder.ToString());
 //     }
 // }
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -90,9 +91,9 @@ namespace Hexa.Helpers
         public override BaseHelpFormatter WithCommand(Command command)
         {
             this.Command = command;
-            var categories = command.CustomAttributes.Where(x => x.GetType() == typeof(CategoryAttribute)).Cast<CategoryAttribute>();
+            var categories = command.ExecutionChecks.Where(x => x.GetType() == typeof(CategoryAttribute)).Cast<CategoryAttribute>();
             if (categories.Count() > 0)
-                this.EmbedBuilder.AddField("Category", categories.First().Description, true);
+                this.EmbedBuilder.AddField("Category", categories.First().Name, true);
             else
                 this.EmbedBuilder.AddField("Category", "Uncategorized", true);
             this.EmbedBuilder.AddField("Description", command.Description ?? "none", true);
@@ -108,27 +109,40 @@ namespace Hexa.Helpers
             // if (command is CommandGroup cgroup && cgroup.IsExecutableWithoutSubcommands)
             // this.EmbedBuilder.WithDescription($"{this.EmbedBuilder.Description}\n\nThis group can be executed as a standalone command.");
 
-            if (command.Overloads?.Any() == true)
-            {
-                var sb = new StringBuilder();
-
-                foreach (var ovl in command.Overloads.OrderByDescending(x => x.Priority))
+            // if (!command.CustomAttributes.Contains(new HelpHideAttribute()))
+            // {
+                var methods = command.Module.ModuleType.GetMethods().Where(m => m.ReturnType == typeof(System.Threading.Tasks.Task) && m.CustomAttributes.Any(x => x.AttributeType == typeof(DSharpPlus.CommandsNext.Attributes.CommandAttribute)));
+                var thing = methods.Where(m => m.GetCustomAttributes(typeof(HelpHideAttribute), true).Any());
+                var types = thing.Select(x => x.GetParameters().Select(y => y.ParameterType).Skip(1));
+                if (command.Overloads?.Any() == true)
                 {
-                    sb.Append('`').Append(command.QualifiedName);
+                    var sb = new StringBuilder();
 
-                    foreach (var arg in ovl.Arguments)
-                        sb.Append(arg.IsOptional || arg.IsCatchAll ? " [" : " <").Append(arg.Name).Append(arg.IsCatchAll ? "..." : "").Append(arg.IsOptional || arg.IsCatchAll ? ']' : '>');
+                    foreach (var ovl in command.Overloads.OrderByDescending(x => x.Priority))
+                    {
+                        var ovlTypes = ovl.Arguments.Select(x => x.Type);
+                        var ovlSelect = ovlTypes.Select(y => y.FullName).OrderBy(x => x);
+                        // var typeSelect = 
+                        if(types.Any(x => !((x.Select(y => y.FullName).OrderBy(x => x)).Except(ovlSelect).Any()) && !(ovlSelect.Except(x.Select(y => y.FullName).OrderBy(x => x))).Any()))
+                            continue;
+                        
+                        sb.Append('`').Append(command.QualifiedName);
 
-                    sb.Append("`\n");
+                        foreach (var arg in ovl.Arguments)
+                            sb.Append(arg.IsOptional || arg.IsCatchAll ? " [" : " <").Append(arg.Name).Append(arg.IsCatchAll ? "..." : "").Append(arg.IsOptional || arg.IsCatchAll ? ']' : '>');
 
-                    // foreach (var arg in ovl.Arguments)
-                    // sb.Append('`').Append(arg.Name).Append(" (").Append(this.CommandsNext.GetUserFriendlyTypeName(arg.Type)).Append(")`: ").Append(arg.Description ?? "No description provided.").Append('\n');
+                        sb.Append("`\n");
 
-                    // sb.Append('\n');
+                        // foreach (var arg in ovl.Arguments)
+                        // sb.Append('`').Append(arg.Name).Append(" (").Append(this.CommandsNext.GetUserFriendlyTypeName(arg.Type)).Append(")`: ").Append(arg.Description ?? "No description provided.").Append('\n');
+
+                        // sb.Append('\n');
+                    }
+
+                    this.EmbedBuilder.AddField("Usage", sb.ToString().Trim(), false);
                 }
+            // }
 
-                this.EmbedBuilder.AddField("Usage", sb.ToString().Trim(), false);
-            }
             if (command.Aliases?.Any() == true)
                 this.EmbedBuilder.AddField("Aliases", string.Join(", ", command.Aliases.Select(Formatter.InlineCode)), false);
 
@@ -146,14 +160,15 @@ namespace Hexa.Helpers
             {
                 // this.EmbedBuilder.AddField("bot info", $"``{HexaSettings.GetValue(this.Context.Guild, HexaSettings.SettingType.ServerPrefix).GetAwaiter().GetResult()}``: current server prefix", false);
                 var bot_info = new StringBuilder();
-                var prefix = HexaSettings.GetValue(this.Context.Guild, HexaSettings.SettingType.ServerPrefix).GetAwaiter().GetResult() ?? "-";
+                // var prefix = HexaSettings.GetValue(this.Context.Guild, HexaSettings.SettingType.ServerPrefix) ?? "-";
+                var prefix = Environment.GetEnvironmentVariable("PROD") is not null ? (new SettingsManager().GetSetting(this.Context.Guild, SettingsManager.HexaSetting.ServerPrefix).GetAwaiter().GetResult()).Value ?? "-" : "+";
                 bot_info.Append($"``{prefix}``: current server prefix\n");
                 bot_info.Append($"{this.Context.Client.CurrentUser.Mention}: mention me for help\n");
                 this.EmbedBuilder.Title = "bot info";
                 this.EmbedBuilder.Description = bot_info.ToString().Trim();
                 this.EmbedBuilder.AddField("important commands", $"use ``/activity`` or ``{prefix}activity`` to start an activity in a voice channel\nuse ``/youtube`` to start Youtube Together in a voice channel", true);
                 this.EmbedBuilder.AddField("bugs", $"report any bugs using the ``{prefix}bugreport`` command to help improve Hexa", false);
-                var categories = subcommands.GroupBy(x => x.CustomAttributes.Where(y => y.GetType() == typeof(CategoryAttribute)).Cast<CategoryAttribute>().FirstOrDefault());
+                var categories = subcommands.GroupBy(x => x.ExecutionChecks.Where(y => y.GetType() == typeof(CategoryAttribute)).Cast<CategoryAttribute>().Select(x => x.Name).FirstOrDefault());
                 foreach (var category in categories)
                 {
                     // if (category.Count() == 0)
@@ -167,7 +182,7 @@ namespace Hexa.Helpers
                             command_list.Append("\n");
                         i++;
                     }
-                    this.EmbedBuilder.AddField(category.Key is not null ? category.Key.Description : "Uncategorized", command_list.ToString().Trim(), true);
+                    this.EmbedBuilder.AddField(category.Key is not null ? category.Key : "Uncategorized", command_list.ToString().Trim(), true);
                 }
             }
 

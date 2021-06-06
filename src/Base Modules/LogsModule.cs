@@ -7,6 +7,7 @@ using DSharpPlus.Entities;
 using DSharp​Plus.CommandsNext.Attributes;
 
 using Hexa.Attributes;
+using Hexa.Helpers;
 
 namespace Hexa.Modules
 {
@@ -18,7 +19,7 @@ namespace Hexa.Modules
         public HexaLogger Logger { private get; set; }
         [Command("logs")]
         [Aliases("log")]
-        [Category("Danger")]
+        [Category(SettingsManager.HexaSetting.DangerCategory)]
         public async Task StatsCommand(CommandContext ctx)
         {
             using FileStream file = File.OpenRead(Logger.LogFile);

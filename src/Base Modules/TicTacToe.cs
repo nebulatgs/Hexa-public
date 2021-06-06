@@ -7,6 +7,7 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Extensions;
 using Hexa.Attributes;
+using Hexa.Helpers;
 
 namespace Hexa.Modules
 {
@@ -195,7 +196,7 @@ namespace Hexa.Modules
         }
 
         [Command("tictactoe")]
-        [Category("Games")]
+        [Category(SettingsManager.HexaSetting.GamesCategory)]
         [Description("Play Tic Tac Toe against the bot or a human")]
         public async Task TicTacToeCommand(CommandContext ctx)
         {

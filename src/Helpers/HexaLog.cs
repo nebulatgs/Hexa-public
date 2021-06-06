@@ -1,9 +1,10 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-
+using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
+using DSharpPlus.EventArgs;
 
 public class HexaLogger
 {
@@ -47,6 +48,20 @@ public class HexaLogger
         using StreamWriter file = File.AppendText(file_name);
         await file.WriteLineAsync(logString);
         var logChannel = await args.Context.Client.GetChannelAsync(849357173775007804);
+        await logChannel.SendMessageAsync($"```yaml\n{logString}```");
+    }
+
+    public async Task LogDm(DiscordClient client, MessageCreateEventArgs args)
+    {
+        if (args.Channel.Type != ChannelType.Private || args.Author == client.CurrentUser)
+            return;
+        string logString = $"Received DM by {args.Message.Author} with content \"{args.Message}\"\n";
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine($"\x1b[33m{logString}");
+        Console.ResetColor();
+        using StreamWriter file = File.AppendText(file_name);
+        await file.WriteLineAsync(logString);
+        var logChannel = await client.GetChannelAsync(849357173775007804);
         await logChannel.SendMessageAsync($"```yaml\n{logString}```");
     }
 }

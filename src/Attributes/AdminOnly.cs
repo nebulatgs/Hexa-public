@@ -18,6 +18,11 @@ namespace Hexa.Attributes
 
         public override async Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
         {
+            if (ctx.Guild is null)
+            {
+                await ctx.RespondAsync("This command is for admins only!");
+                return false;
+            }
             var member = await ctx.Guild.GetMemberAsync(ctx.Message.Author.Id);
             bool isAdmin = member.PermissionsIn(ctx.Channel).HasPermission(Permissions.Administrator) || Program.DevGroupIds.Contains(ctx.Message.Author.Id) ;
             if(ctx.Channel is DiscordDmChannel || !isAdmin)
