@@ -7,6 +7,7 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using Hexa.Attributes;
+using Hexa.Helpers;
 using Microsoft.Extensions.Configuration;
 
 namespace Hexa.Modules
@@ -37,7 +38,7 @@ namespace Hexa.Modules
         [Command("youtube")]
         [Description("Start Youtube Together")]
         [Aliases("yt")]
-        [Category("Games")]
+        [Category(SettingsManager.HexaSetting.GamesCategory)]
         public async Task StartYoutubeAsync(CommandContext ctx, DiscordChannel channel = null)
         {
             if (channel is null)
@@ -56,7 +57,7 @@ namespace Hexa.Modules
     [Aliases("act")]
     [HexaCooldown(5)]
     [Description("Start an activity in a voice channel")]
-    [Category("Games")]
+    [Category(SettingsManager.HexaSetting.GamesCategory)]
     public class ActivitiesModule : BaseCommandModule
     {
         public static string RequestActivity(string activity, DiscordChannel channel)
@@ -84,7 +85,7 @@ namespace Hexa.Modules
         }
 
         [GroupCommand]
-        [Category("Games")]
+        [Category(SettingsManager.HexaSetting.GamesCategory)]
         [Description("Start an activity in a voice channel")]
         public async Task StartActivityAsync(CommandContext ctx)
         {
@@ -94,7 +95,7 @@ namespace Hexa.Modules
         [Command("yt")]
         [Description("Start Youtube Together")]
         [Aliases("youtube")]
-        [Category("Games")]
+        [Category(SettingsManager.HexaSetting.GamesCategory)]
         public async Task StartYoutubeAsync(CommandContext ctx, DiscordChannel channel = null)
         {
             if (channel is null)
@@ -111,7 +112,7 @@ namespace Hexa.Modules
         [Command("fish")]
         [Description("Start Fishington.io")]
         [Aliases("fishington")]
-        [Category("Games")]
+        [Category(SettingsManager.HexaSetting.GamesCategory)]
         public async Task StartFishingtonAsync(CommandContext ctx, DiscordChannel channel = null)
         {
             if (channel is null)
@@ -127,7 +128,7 @@ namespace Hexa.Modules
 
         [Command("poker")]
         [Description("Start Poker Night")]
-        [Category("Games")]
+        [Category(SettingsManager.HexaSetting.GamesCategory)]
         public async Task StartPokerAsync(CommandContext ctx, DiscordChannel channel = null)
         {
             if (channel is null)
@@ -144,7 +145,7 @@ namespace Hexa.Modules
         [Command("betrayal")]
         [Description("Start Betrayal.io")]
         [Aliases("amogus", "amongus")]
-        [Category("Games")]
+        [Category(SettingsManager.HexaSetting.GamesCategory)]
         public async Task StartBetrayalAsync(CommandContext ctx, DiscordChannel channel = null)
         {
             if (channel is null)
@@ -160,7 +161,7 @@ namespace Hexa.Modules
 
         [Command("chess")]
         [Description("Start Chess in the Park")]
-        [Category("Games")]
+        [Category(SettingsManager.HexaSetting.GamesCategory)]
         public async Task StartChessAsync(CommandContext ctx, DiscordChannel channel = null)
         {
             if (channel is null)

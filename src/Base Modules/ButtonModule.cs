@@ -7,13 +7,14 @@ using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.EventArgs;
 using DSharpPlus;
 using Hexa.Attributes;
+using Hexa.Helpers;
 
 namespace Hexa.Modules
 {
     public class ButtonModule : BaseCommandModule
     {
         [Command("buttons")]
-        [Category("Random")]
+        [Category(SettingsManager.HexaSetting.RandomCategory)]
         [DevOnly, Hidden]
         public async Task ButtonCommand(CommandContext ctx)
         {

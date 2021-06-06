@@ -15,7 +15,7 @@ namespace Hexa.Modules
         [Command("stats")]
         // [Aliases("botstats", "botinfo")]
         [Description("Get Hexa's statistics")]
-        [Category("Info")]
+        [Category(SettingsManager.HexaSetting.InfoCategory)]
         public async Task StatsCommand(CommandContext ctx)
         {
             var hEmbed = new HexaEmbed(ctx, "bot info");
@@ -36,7 +36,7 @@ namespace Hexa.Modules
         [Command("uptime")]
         [Aliases("up")]
         [Description("Get Hexa's session uptime")]
-        [Category("Info")]
+        [Category(SettingsManager.HexaSetting.InfoCategory)]
         public async Task UptimeCommand(CommandContext ctx)
         {
             var hEmbed = new HexaEmbed(ctx, $"hexa's session uptime");

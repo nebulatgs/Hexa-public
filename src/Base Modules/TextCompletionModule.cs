@@ -10,6 +10,8 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 
 using Hexa.Attributes;
+using Hexa.Helpers;
+using System;
 
 namespace Hexa.Modules
 {
@@ -81,14 +83,13 @@ namespace Hexa.Modules
         [Command("autocomplete")]
         [Aliases("ai", "complete")]
         [Description("Autocomplete text using GPT-2")]
-        [Category("Fun")]
+        [Category(SettingsManager.HexaSetting.FunCategory)]
         public async Task TextCompletionCommand(CommandContext ctx, [RemainingText, Description("The text to complete")] string text = null)
         {
+            if(!ctx.Channel.IsNSFW)
+                throw new UnauthorizedAccessException("This command is restricted to NSFW channels");
             if (text is null)
-            {
-                await ctx.RespondAsync("What text should I complete?");
-                return;
-            }
+                throw new ArgumentNullException("What text should I complete?");
             await ctx.Channel.TriggerTypingAsync();
             var output = RequestAutoCompleteDeepAI("468f237f-d4c0-426b-b06f-7362d03daadb", text);
             // var output = RequestAutoCompleteInferKit("b0444ca5-bd34-4f24-bc56-8beaaa811b69", text);

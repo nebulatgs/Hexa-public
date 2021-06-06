@@ -5,17 +5,18 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 
 using Hexa.Attributes;
+using Hexa.Helpers;
 
 namespace Hexa.Modules
 {
     [Hidden]
     [HexaCooldown(5)]
+    [AdminOnly]
     public class SayModule : BaseCommandModule
     {
         [Command("say")]
-        [RequireUserPermissions(Permissions.Administrator)]
         [Description("Make the bot say something")]
-        [Category("Fun")]
+        [Category(SettingsManager.HexaSetting.FunCategory)]
         public async Task SayCommand(CommandContext ctx, [RemainingText][Description("What the bot should say")] string message = null)
         {   
             if (message is null)
@@ -27,10 +28,9 @@ namespace Hexa.Modules
         }
 
         [Command("sayd")]
-        [RequireUserPermissions(Permissions.Administrator)]
         [RequireBotPermissions(Permissions.ManageMessages)]
         [Description("Make the bot say something and delete the original message")]
-        [Category("Fun")]
+        [Category(SettingsManager.HexaSetting.FunCategory)]
         [GuildOnly]
         public async Task SayDCommand(CommandContext ctx, [RemainingText][Description("What the bot should say")] string message = null)
         {

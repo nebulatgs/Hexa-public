@@ -2,7 +2,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-
+using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
@@ -19,7 +19,7 @@ namespace Hexa.Modules
     {   
         [Command("ping")]
         [Description("Pong!")]
-        [Category("Fun")]
+        [Category(SettingsManager.HexaSetting.FunCategory)]
         public async Task PingCommand(CommandContext ctx)
         {
             TimeSpan serverTimeDifference = ServerTime.ServerTimeDifference;
@@ -52,7 +52,7 @@ namespace Hexa.Modules
         [Aliases("sinfo", "guildinfo")]
         [GuildOnly]
         [Description("Get info about a server")]
-        [Category("Utilities")]
+        [Category(SettingsManager.HexaSetting.UtilityCategory)]
         public async Task ServerInfoCommand(CommandContext ctx, [Description("The snowflake of the server")] ulong? server = null)
         {
             DiscordGuild guild = ctx.Guild;
@@ -106,17 +106,17 @@ namespace Hexa.Modules
             //--------------------//
             hEmbed.embed.AddField(
                 name: "Text:",
-                value: $"{channels.Values.Where(x => x.Type == DSharpPlus.ChannelType.Text).Count()}",
+                value: $"{channels.Values.Where(x => x.Type == ChannelType.Text).Count()}",
                 inline: true
             );
             hEmbed.embed.AddField(
                 name: "Voice:",
-                value: $"{channels.Values.Where(x => x.Type == DSharpPlus.ChannelType.Voice).Count()}",
+                value: $"{channels.Values.Where(x => x.Type == ChannelType.Voice).Count()}",
                 inline: true
             );
             hEmbed.embed.AddField(
                 name: "Stage:",
-                value: $"{channels.Values.Where(x => (int)x.Type == 13).Count()}",
+                value: $"{channels.Values.Where(x => x.Type == ChannelType.Stage).Count()}",
                 inline: true
             );
             //-------------------//

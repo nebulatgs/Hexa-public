@@ -65,6 +65,8 @@ namespace Hexa.Other
     {
         public static async Task<GuildLevelRow> GetValue(DiscordGuild guild)
         {
+            if (guild is null)
+                return null;
             var instance = Supabase.Client.Instance;
             var channels = instance.From<GuildLevelRow>();
             var guild_levels = await channels.Get();
@@ -143,14 +145,14 @@ namespace Hexa.Other
     {
         public async Task MessageSent(DiscordClient client, MessageCreateEventArgs args)
         {
-            if (args.Author.IsBot)
+            if (args.Author.IsBot || args.Guild is null)
                 return;
             var this_guild = await LevelDBInterface.GetValue(args.Guild);
             await LevelDBInterface.SetValue(args.Guild, this_guild is null ? 0 : this_guild.CommandLevel, this_guild is null ? 1 : this_guild.MessageLevel + 1);
         }
         public async Task CommandExecuted(CommandsNextExtension commands, CommandExecutionEventArgs args)
         {
-            if (args.Context.Message.Author.IsBot)
+            if (args.Context.Message.Author.IsBot || args.Context.Guild is null)
                 return;
             var this_guild = await LevelDBInterface.GetValue(args.Context.Guild);
             await LevelDBInterface.SetValue(args.Context.Guild, this_guild is null ? 0 : this_guild.CommandLevel + 1, this_guild is null ? 1 : this_guild.MessageLevel);

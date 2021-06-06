@@ -37,7 +37,7 @@ namespace Hexa.Modules
 
         [Command("wiki")]
         [Aliases("wikipedia", "search")]
-        [Category("Fun")]
+        [Category(SettingsManager.HexaSetting.FunCategory)]
         [Description("Search anything on Wikipedia")]
         public async Task WikiCommand(CommandContext ctx, [RemainingText] string query = null)
         {

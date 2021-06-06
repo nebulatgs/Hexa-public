@@ -18,7 +18,10 @@ namespace Hexa.Modules{
                 throw new ArgumentException("Please provide a report");
             var reportChannel = await ctx.Client.GetChannelAsync(849330358700998669);
             var hEmbed = new HexaEmbed(ctx, "bug report");
-            hEmbed.embed.WithTitle($"Bug Report by {ctx.Message.Author.Id} in {ctx.Guild.Id} ({ctx.Guild.Name})");
+            if (ctx.Guild is null)
+                hEmbed.embed.WithTitle($"Bug Report by {ctx.Message.Author.Id} in DM");
+            else
+                hEmbed.embed.WithTitle($"Bug Report by {ctx.Message.Author.Id} in {ctx.Guild.Id} ({ctx.Guild.Name})");
             hEmbed.embed.WithDescription(report);
             await reportChannel.SendMessageAsync(hEmbed.Build());
 

@@ -18,7 +18,7 @@ namespace Hexa.Modules
 
         [Command("dice")]
         [Aliases("roll")]
-        [Category("Random")]
+        [Category(SettingsManager.HexaSetting.RandomCategory)]
         [Description("Roll a die!")]
         public async Task DiceCommand(CommandContext ctx, string sides = "6")
         {
@@ -62,7 +62,7 @@ namespace Hexa.Modules
 
         [Command("coinflip")]
         [Aliases("coin", "flip")]
-        [Category("Random")]
+        [Category(SettingsManager.HexaSetting.RandomCategory)]
         [Description("Flip a coin!")]
         public async Task FlipCommand(CommandContext ctx)
         {

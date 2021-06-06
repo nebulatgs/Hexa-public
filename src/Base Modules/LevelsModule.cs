@@ -9,18 +9,20 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 
 using Hexa.Attributes;
+using Hexa.Database;
 using Hexa.Helpers;
 using Hexa.Other;
 
 namespace Hexa.Modules
 {
     [HexaCooldown(5)]
+    [GuildOnly]
     public class LevelsModule : BaseCommandModule
     {
         [Command("rank")]
         // [Aliases("lv", "lvl")]
         [Description("Get a user/guild's rank")]
-        [Category("Utilities")]
+        [Category(SettingsManager.HexaSetting.UtilityCategory)]
         public async Task LevelsCommand(CommandContext ctx, [Description("The snowflake of the user/guild you want to look up")] ulong? snowflake = null)
         {
             if (snowflake is null)
@@ -37,9 +39,13 @@ namespace Hexa.Modules
                     await LevelDBInterface.SetValue(member, 0, 0);
                 value = await LevelDBInterface.GetValue(member);
                 var values = await LevelDBInterface.GetUserValues();
-                hEmbed.embed.AddField($"messages:", $"#{(values.OrderByDescending(x => x.MessageLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.MessageLevel} messages sent", true);
-                hEmbed.embed.AddField($"commands:", $"#{(values.OrderByDescending(x => x.CommandLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.CommandLevel} commands used", true);
-                hEmbed.embed.WithThumbnail(member.AvatarUrl, 32, 32);
+                using (var db = new HexaContext())
+                {
+                    hEmbed.embed.AddField($"messages:", $"#{(values.OrderByDescending(x => x.MessageLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.MessageLevel} messages sent", true);
+                    hEmbed.embed.AddField($"commands:", $"#{(values.OrderByDescending(x => x.CommandLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.CommandLevel} commands used", true);
+                    hEmbed.embed.AddField("past names:", $"{string.Join(", ", db.PastUserStates.Where(x => x.UserId == member.Id).Select(x => x.Username).Distinct())}");
+                    hEmbed.embed.WithThumbnail(member.AvatarUrl, 32);
+                }
             }
             catch
             {
@@ -81,9 +87,13 @@ namespace Hexa.Modules
                     await LevelDBInterface.SetValue(member, 0, 0);
                 value = await LevelDBInterface.GetValue(member);
                 var values = await LevelDBInterface.GetUserValues();
-                hEmbed.embed.AddField($"messages:", $"#{(values.OrderByDescending(x => x.MessageLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.MessageLevel} messages sent", true);
-                hEmbed.embed.AddField($"commands:", $"#{(values.OrderByDescending(x => x.CommandLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.CommandLevel} commands used", true);
-                hEmbed.embed.WithThumbnail(member.AvatarUrl, 32);
+                using (var db = new HexaContext())
+                {
+                    hEmbed.embed.AddField($"messages:", $"#{(values.OrderByDescending(x => x.MessageLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.MessageLevel} messages sent", true);
+                    hEmbed.embed.AddField($"commands:", $"#{(values.OrderByDescending(x => x.CommandLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.CommandLevel} commands used", true);
+                    hEmbed.embed.AddField("past names:", $"{string.Join(", ", db.PastUserStates.Where(x => x.UserId == member.Id).Select(x => x.Username).Distinct())}");
+                    hEmbed.embed.WithThumbnail(member.AvatarUrl, 32);
+                }
             }
             catch
             {
