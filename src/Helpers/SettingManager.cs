@@ -76,7 +76,7 @@ namespace Hexa.Helpers
             {
                 var foundSetting = db.GuildSettings.SingleOrDefault(x => x.GuildId == guildId && x.SettingID == setting);
                 foundSetting.
-                    GuildId = guild.Id;
+                    GuildId = guildId;
                 foundSetting.
                     SettingID = ((int)setting);
                 foundSetting.
@@ -104,7 +104,7 @@ namespace Hexa.Helpers
                     {
                         db.Add(new GuildSetting()
                         {
-                            GuildId = guild.Id,
+                            GuildId = guildId,
                             SettingID = setting.SettingID,
                             Value = setting.Default
                         });
