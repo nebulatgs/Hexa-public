@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using Hexa.Helpers;
 
@@ -25,7 +26,7 @@ namespace Hexa
             if (msg.Author.IsBot)
                 return;
             string setPrefix = "";
-            setPrefix = Environment.GetEnvironmentVariable("PROD") is not null ? (await Manager.GetSetting(e.Guild, SettingsManager.HexaSetting.ServerPrefix)).Value ?? "-" : "+";
+            setPrefix = e.Guild is null ? "-" : Environment.GetEnvironmentVariable("PROD") is not null ? (await Manager.GetSetting(e.Guild, SettingsManager.HexaSetting.ServerPrefix)).Value ?? "-" : "+";
             // if (setPrefix == "")
             // setPrefix = defaultPrefix;
             // var cmdStart = msg.GetStringPrefixLength(setPrefix);
@@ -49,7 +50,6 @@ namespace Hexa
                 command = cnext.FindCommand(cmdString, out args);
                 if (command == null) return;
             }
-
             var ctx = cnext.CreateContext(msg, setPrefix, command, args);
             // var help = cnext.CreateContext(msg, setPrefix, cnext.FindCommand($"help {command.Name}", out args), args);
             cnext.ExecuteCommandAsync(ctx);

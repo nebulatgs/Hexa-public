@@ -12,10 +12,12 @@ namespace Hexa.Modules
         public GhostPingDetector(){Manager = new SettingsManager();}
         public async Task OnDelete(DiscordClient client, DSharpPlus.EventArgs.MessageDeleteEventArgs args)
         {
+            if (args.Guild is null || args.Channel is null)
+                return;
             if (args.Message.Author == client.CurrentUser)
                 return;
             var setting = (await Manager.GetSetting(args.Guild, SettingsManager.HexaSetting.GhostPing)).Value ?? "false";
-            if(args.Message.MentionedUsers.Count() > 0 && bool.Parse(setting))
+            if(args.Message.MentionedUsers.Any() && bool.Parse(setting))
             {
                 var channels = (await args.Message.Channel.Guild.GetChannelsAsync());
                 var validChannels = channels.Where(x => (x.Topic ?? "").ToString().ToLower().Contains("ghost ping"));

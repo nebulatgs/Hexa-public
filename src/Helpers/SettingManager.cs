@@ -28,9 +28,10 @@ namespace Hexa.Helpers
         public async Task<List<GuildSetting>> GetSettings(DiscordGuild guild)
         {
             await SetDefaults(guild);
+            var guildId = guild is null ? 835722357485994005 : guild.Id;
             using (var db = new HexaContext())
             {
-                var settings = db.GuildSettings.Include(y => y.Setting).Where(x => x.GuildId == guild.Id);
+                var settings = db.GuildSettings.Include(y => y.Setting).Where(x => x.GuildId == guildId);
                 // return await settings.ToDictionaryAsync(x => x.SettingID);
                 return await settings.ToListAsync();
             }
@@ -39,11 +40,12 @@ namespace Hexa.Helpers
         public async Task<GuildSetting> GetSetting(DiscordGuild guild, HexaSetting setting)
         {
             await SetDefaults(guild);
+            var guildId = guild is null ? 835722357485994005 : guild.Id;
             using (var db = new HexaContext())
             {
                 int setting_int = ((int)setting);
                 var settings = db.GuildSettings.Include(y => y.Setting);
-                var first = await settings.FirstAsync(x => x.GuildId == guild.Id && x.SettingID == setting_int);
+                var first = await settings.Where(x => x.GuildId == guildId).FirstAsync(x => x.SettingID == setting_int);
                 return first;
             }
         }
@@ -69,9 +71,10 @@ namespace Hexa.Helpers
 
         public async Task SetSetting(DiscordGuild guild, int setting, string value)
         {
+            var guildId = guild is null ? 835722357485994005 : guild.Id;
             using (var db = new HexaContext())
             {
-                var foundSetting = db.GuildSettings.SingleOrDefault(x => x.GuildId == guild.Id && x.SettingID == setting);
+                var foundSetting = db.GuildSettings.SingleOrDefault(x => x.GuildId == guildId && x.SettingID == setting);
                 foundSetting.
                     GuildId = guild.Id;
                 foundSetting.
@@ -86,40 +89,26 @@ namespace Hexa.Helpers
 
         public async Task SetDefaults(DiscordGuild guild)
         {
+            var guildId = guild is null ? 835722357485994005 : guild.Id;
             using (var db = new HexaContext())
             {
-                // var prefix = ((int)HexaSetting.ServerPrefix);
-                // if (!(db.GuildSettings.Where(x => x.GuildId == guild.Id && x.SettingID == prefix).Count() > 0))
-                //     db.Add(new GuildSetting()
-                //     {
-                //         GuildId = guild.Id,
-                //         SettingID = prefix,
-                //         Value = Environment.GetEnvironmentVariable("PROD") is not null ? "-" : "+"
-                //     });
-                // var modlog = ((int)HexaSetting.ServerPrefix);
-                // if (!(db.GuildSettings.Where(x => x.GuildId == guild.Id && x.SettingID == modlog).Count() > 0))
-                // db.Add(new GuildSetting()
-                // {
-                //     GuildId = guild.Id,
-                //     SettingID = (int)HexaSetting.ModLog,
-                //     Value = "false"
-                // });
-                // db.Add(new GuildSetting()
-                // {
-                //     GuildId = guild.Id,
-                //     SettingID = (int)HexaSetting.GhostPing,
-                //     Value = "false"
-                // });
-                var allSettings = await db.Settings.ToListAsync();
+                var allSettings = db.Settings.ToList();
                 foreach (var setting in allSettings)
                 {
-                    if (!(db.GuildSettings.Where(x => x.GuildId == guild.Id && x.SettingID == setting.SettingID).Count() > 0))
+                    var set1 = db.GuildSettings.Where(x => x.GuildId == guildId);
+                    var set2 = set1.Where(x => x.SettingID == setting.SettingID);
+                    // Console.WriteLine(set2.FirstOrDefault().Value);
+                    // var set3 = set2 is null;
+                    var set3 = set2.Any();
+                    if (!set3)
+                    {
                         db.Add(new GuildSetting()
                         {
                             GuildId = guild.Id,
                             SettingID = setting.SettingID,
                             Value = setting.Default
                         });
+                    }
                 }
                 await db.SaveChangesAsync();
             }

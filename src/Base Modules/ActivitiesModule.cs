@@ -43,7 +43,7 @@ namespace Hexa.Modules
         {
             if (channel is null)
             {
-                await ctx.RespondAsync("What voice channel should I start Youtube Together in?");
+                await ctx.RespondAsync("Please provide a voice channel to start Youtube Together in");
                 return;
             }
             var activity_id = "755600276941176913";
@@ -89,7 +89,7 @@ namespace Hexa.Modules
         [Description("Start an activity in a voice channel")]
         public async Task StartActivityAsync(CommandContext ctx)
         {
-            await ctx.RespondAsync("What activity should I start?");
+            await ctx.RespondAsync("Please provide an activity to start");
         }
 
         [Command("yt")]
@@ -100,7 +100,7 @@ namespace Hexa.Modules
         {
             if (channel is null)
             {
-                await ctx.RespondAsync("What voice channel should I start Youtube Together in?");
+                await ctx.RespondAsync("Please provide a voice channel to start Youtube Together in");
                 return;
             }
             var activity_id = "755600276941176913";
@@ -117,7 +117,7 @@ namespace Hexa.Modules
         {
             if (channel is null)
             {
-                await ctx.RespondAsync("What voice channel should I start Fishington.io in?");
+                await ctx.RespondAsync("Please provide a voice channel to start Fishington.io in");
                 return;
             }
             var activity_id = "814288819477020702";
@@ -133,7 +133,7 @@ namespace Hexa.Modules
         {
             if (channel is null)
             {
-                await ctx.RespondAsync("What voice channel should I start Poker Night in?");
+                await ctx.RespondAsync("Please provide a voice channel to start Poker Night in");
                 return;
             }
             var activity_id = "755827207812677713";
@@ -150,7 +150,7 @@ namespace Hexa.Modules
         {
             if (channel is null)
             {
-                await ctx.RespondAsync("What voice channel should I start Betrayal.io in?");
+                await ctx.RespondAsync("Please provide a voice channel to start Betrayal.io in");
                 return;
             }
             var activity_id = "773336526917861400";
@@ -166,7 +166,7 @@ namespace Hexa.Modules
         {
             if (channel is null)
             {
-                await ctx.RespondAsync("What voice channel should I start Chess in the Park in?");
+                await ctx.RespondAsync("Please provide a voice channel to start Chess in the Park in");
                 return;
             }
             var activity_id = "832012586023256104";

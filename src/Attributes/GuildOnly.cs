@@ -18,10 +18,14 @@ namespace Hexa.Attributes
         public override async Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
         {
             // return Task.FromResult(CooldownExpires < DateTime.Now);
-            bool isGuild = ctx.Channel is not DiscordDmChannel;
-            if(!isGuild)
+            bool isDm = ctx.Channel is not DiscordDmChannel;
+            bool isGuild = ctx.Guild is not null;
+            if(!isDm)
                 await ctx.RespondAsync("This command is only available in servers");
-            return isGuild;
+            else if(!isGuild && !help)
+                await ctx.RespondAsync("I don't have access to that information in this server");
+                // Console.WriteLine("I don't have access to that information in guild");
+            return isGuild || help;
         }
     }
 }
