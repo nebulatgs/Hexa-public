@@ -12,6 +12,8 @@ using DSharpPlus.CommandsNext.Attributes;
 using Hexa.Attributes;
 using Hexa.Helpers;
 using System;
+using DSharpPlus.Entities;
+using DSharpPlus.Interactivity.Extensions;
 
 namespace Hexa.Modules
 {
@@ -90,11 +92,25 @@ namespace Hexa.Modules
                 throw new UnauthorizedAccessException("This command is restricted to NSFW channels");
             if (text is null)
                 throw new ArgumentNullException("What text should I complete?");
+            var close = new DiscordButtonComponent(ButtonStyle.Danger, "ai_close", "close", false);
+            var builder = new DiscordMessageBuilder();
+            var interactivity = ctx.Client.GetInteractivity();
+            DiscordButtonComponent[] buttons = { close };
+            builder.WithComponents(buttons);
             await ctx.Channel.TriggerTypingAsync();
             var output = RequestAutoCompleteDeepAI("468f237f-d4c0-426b-b06f-7362d03daadb", text);
             // var output = RequestAutoCompleteInferKit("b0444ca5-bd34-4f24-bc56-8beaaa811b69", text);
 
-            await ctx.RespondAsync($"```\n{output.ToString()}\n```");
+            var message = await ctx.Channel.SendMessageAsync(builder.WithContent($"```\n{output.ToString()}\n```"));
+
+            var buttonResponse = await interactivity.WaitForButtonAsync(message, buttons, TimeSpan.FromSeconds(60));
+            if(!buttonResponse.TimedOut)
+                await message.DeleteAsync();
+            else
+            {
+                close.Disabled = true;
+                await message.ModifyAsync(builder);
+            }
         }
     }
 }

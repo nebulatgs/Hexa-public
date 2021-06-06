@@ -6,7 +6,8 @@ using DSharpPlus;
 using DSharpPlus.CommandsNext;
 
 using DSharp​Plus.CommandsNext.Attributes;
-
+using DSharpPlus.Entities;
+using DSharpPlus.Interactivity.Extensions;
 using Hexa.Attributes;
 using Hexa.Database;
 using Hexa.Helpers;
@@ -108,7 +109,7 @@ namespace Hexa.Modules
         [Command("settings")]
         public async Task SettingsCommand(CommandContext ctx, [Description("The setting to get")] SettingsManager.HexaSetting setting)
         {
-            await Manager.SetDefaults(ctx.Guild);
+            await Manager.SetDefaults(ctx.Guild);            
             var dbSetting = await Manager.GetSetting(ctx.Guild, setting);
             var hEmbed = new HexaEmbed(ctx, "setting info");
             hEmbed.embed.WithTitle($"setting ``{dbSetting.Setting.Aliases.First()}``");
