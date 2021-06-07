@@ -162,17 +162,17 @@ namespace Hexa.Other
     {
         public async Task MessageSent(DiscordClient client, MessageCreateEventArgs args)
         {
-            if (args.Author.IsBot)
-                return;
-            var this_user = await LevelDBInterface.GetValue(args.Author);
-            await LevelDBInterface.SetValue(args.Author, this_user is null ? 0 : this_user.CommandLevel, this_user is null ? 1 : this_user.MessageLevel + 1);
+            // if (args.Author.IsBot)
+                // return;
+            // var this_user = await LevelDBInterface.GetValue(args.Author);
+            // await LevelDBInterface.SetValue(args.Author, this_user is null ? 0 : this_user.CommandLevel, this_user is null ? 1 : this_user.MessageLevel + 1);
         }
         public async Task CommandExecuted(CommandsNextExtension commands, CommandExecutionEventArgs args)
         {
-            if (args.Context.Message.Author.IsBot)
-                return;
-            var this_user = await LevelDBInterface.GetValue(args.Context.Message.Author);
-            await LevelDBInterface.SetValue(args.Context.Message.Author, this_user is null ? 0 : this_user.CommandLevel + 1, this_user is null ? 1 : this_user.MessageLevel);
+            // if (args.Context.Message.Author.IsBot)
+                // return;
+            // var this_user = await LevelDBInterface.GetValue(args.Context.Message.Author);
+            // await LevelDBInterface.SetValue(args.Context.Message.Author, this_user is null ? 0 : this_user.CommandLevel + 1, this_user is null ? 1 : this_user.MessageLevel);
         }
     }
 }
