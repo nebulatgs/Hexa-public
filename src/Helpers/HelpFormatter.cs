@@ -70,6 +70,7 @@ namespace Hexa.Helpers
     public class HexaHelpFormatter : BaseHelpFormatter
     {
         public DiscordEmbedBuilder EmbedBuilder { get; }
+        public SettingsManager Manager { get; set; }
         private Command Command { get; set; }
 
         /// <summary>
@@ -81,6 +82,7 @@ namespace Hexa.Helpers
         {
             var hEmbed = new HexaEmbed(ctx, "hexa help");
             this.EmbedBuilder = hEmbed.embed;
+            // this.Manager = new SettingsManager();
         }
 
         /// <summary>
@@ -161,7 +163,7 @@ namespace Hexa.Helpers
                 // this.EmbedBuilder.AddField("bot info", $"``{HexaSettings.GetValue(this.Context.Guild, HexaSettings.SettingType.ServerPrefix).GetAwaiter().GetResult()}``: current server prefix", false);
                 var bot_info = new StringBuilder();
                 // var prefix = HexaSettings.GetValue(this.Context.Guild, HexaSettings.SettingType.ServerPrefix) ?? "-";
-                var prefix = Environment.GetEnvironmentVariable("PROD") is not null ? (new SettingsManager().GetSetting(this.Context.Guild, SettingsManager.HexaSetting.ServerPrefix).GetAwaiter().GetResult()).Value ?? "-" : "+";
+                var prefix = Environment.GetEnvironmentVariable("PROD") is not null ? (Manager.GetSetting(this.Context.Guild, SettingsManager.HexaSetting.ServerPrefix).GetAwaiter().GetResult()).Value ?? "-" : "+";
                 bot_info.Append($"``{prefix}``: current server prefix\n");
                 bot_info.Append($"{this.Context.Client.CurrentUser.Mention}: mention me for help\n");
                 this.EmbedBuilder.Title = "bot info";
