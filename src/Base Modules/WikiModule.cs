@@ -1,27 +1,49 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Extensions;
 using Hexa.Attributes;
 using Hexa.Helpers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Hexa.Modules
 {
     [HexaCooldown(5)]
     public class WikiModule : BaseCommandModule
     {
-        public WikiResponse GetResponse(string query)
+        public ProfanityFilter.ProfanityFilter filter { get; set; }
+
+        public List<WikiPage> GetResponse(string query)
         {
-            var url = $"https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&prop=extracts&srsearch={Uri.EscapeDataString(query)}&explaintext=true";
+            NameValueCollection queryString = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            queryString.Add("action", "query");
+            queryString.Add("format", "json");
+            queryString.Add("formatversion", "2");
+            queryString.Add("generator", "search");
+            queryString.Add("redirects", "1");
+            queryString.Add("prop", "extracts|info|pageimages|revisions|categories");
+            queryString.Add("gsrsearch", $"intitle:{query}");
+            queryString.Add("gsrlimit", "15");
+            queryString.Add("exintro", "1");
+            queryString.Add("explaintext", "1");
+            queryString.Add("inprop", "url");
+            queryString.Add("piprop", "original");
+            queryString.Add("rvprop", "timestamp");
+            queryString.Add("clcategories", "Category:All disambiguation page");
+            var url = "https://en.wikipedia.org/w/api.php?" + queryString.ToString();
+            // var url = $"https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&prop=extracts&srsearch={Uri.EscapeDataString(query)}&explaintext=true";
 
             var httpRequest = (HttpWebRequest)WebRequest.Create(url);
 
@@ -30,8 +52,19 @@ namespace Hexa.Modules
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {
                 var result = streamReader.ReadToEnd();
-                var response = JsonConvert.DeserializeObject<WikiResponse>(result);
-                return response;
+                // var response = JsonConvert.DeserializeObject<WikiResponse>(result);
+                var response = JObject.Parse(result);
+                var list = (response["query"]["pages"]).
+                    Select(x => new WikiPage()
+                    {
+                        Title = x["title"].Value<string>(),
+                        Content = x["extract"].Value<string>(),
+                        Url = x["fullurl"].Value<string>(),
+                        ImageUrl = x["original"] is not null ? x["original"]["source"].Value<string>() : null
+                    }).
+                    ToList();
+                // var a = 1;
+                return list;
             }
         }
 
@@ -42,24 +75,33 @@ namespace Hexa.Modules
         public async Task WikiCommand(CommandContext ctx, [RemainingText] string query = null)
         {
             if (query is null)
-                throw new Exception("What should I search for?");
-
+                throw new ArgumentException("What should I search for?");
+            if (filter.DetectAllProfanities(query).Any() && !ctx.Channel.IsNSFW)
+                throw new InvalidOperationException("I can't search for that, sorry…");
+            var hEmbed = new HexaEmbed(ctx, "wikipedia");
+            hEmbed.embed.Description = "waiting… <a:pinging:781983658646175764>";
+            var message = await ctx.Channel.SendMessageAsync(hEmbed.Build());
+            // await ctx.Channel.TriggerTypingAsync();
             var response = GetResponse(query);
-            if (response.Query.Search.Count() == 0)
+            if (!response.Any())
                 throw new Exception($"I couldn't find any results for \"{query}\"");
-                
             var interactivity = ctx.Client.GetInteractivity();
+
             var pages = new List<Page>();
             int page_index = 1;
-            foreach (var search in response.Query.Search)
+            foreach (var search in response)
             {
-                var hEmbed = new HexaEmbed(ctx, "wikipedia").WithFooter($"Page {page_index} of {response.Query.Search.Count()}");
-                hEmbed.embed.Title = search.Title;
-                hEmbed.embed.Description = Regex.Replace(HttpUtility.HtmlDecode(search.Snippet), "<[^>]*>", "**");
+                hEmbed = new HexaEmbed(ctx, "wikipedia").WithFooter($"Page {page_index} of {response.Count()}");
+                hEmbed.embed.WithTitle(search.Title);
+                hEmbed.embed.WithUrl(search.Url);
+                // hEmbed.embed.Description = Regex.Replace(HttpUtility.HtmlDecode(search.Value), "<[^>]*>", "**");
+                hEmbed.embed.Description = filter.CensorString(search.Content).TruncateAtWord(1500, "…");
+                if (search.ImageUrl is not null && !filter.DetectAllProfanities(search.Content).Any())
+                    hEmbed.embed.WithImageUrl(search.ImageUrl);
                 pages.Add(new Page("", hEmbed.embed));
                 page_index++;
             }
-            await interactivity.SendButtonPaginatedMessageAsync(ctx.Channel, ctx.Message.Author, pages, "wikipedia", TimeSpan.FromSeconds(60), showPrint: false, showClose: true);
+            await interactivity.SendButtonPaginatedMessageAsync(ctx.Channel, ctx.Message.Author, pages, "wikipedia", TimeSpan.FromSeconds(60), msg: message, showPrint: false, showClose: true);
         }
     }
 }

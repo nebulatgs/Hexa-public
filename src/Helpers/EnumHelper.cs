@@ -18,5 +18,13 @@ namespace Hexa.Helpers
             var attributes = memInfo[0].GetCustomAttributes(typeof(T), false);
             return (attributes.Length > 0) ? (T)attributes[0] : null;
         }
+
+        public static string TruncateAtWord(this string value, int length, string end = "")
+        {
+            if (value == null || value.Length < length || value.IndexOf(" ", length) == -1)
+                return value;
+
+            return value.Substring(0, value.IndexOf(" ", length)) + end;
+        }
     }
 }

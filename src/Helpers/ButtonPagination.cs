@@ -69,8 +69,8 @@ namespace Hexa.Helpers
     public static class InteractivityExtensions
     {
         public static async Task SendButtonPaginatedMessageAsync(this InteractivityExtension interactivity, DiscordChannel channel, DiscordUser user,
-            IEnumerable<Page> pages, string pagination_id, TimeSpan? timeout = null, bool userCheck = true,
-            bool showFirst = true, bool showPrevious = true, bool showNext = true, bool showLast = true, bool showPrint = true, bool showClose = false)
+            IEnumerable<Page> pages, string pagination_id, TimeSpan? timeout = null, DiscordMessage msg = null,
+            bool userCheck = true, bool showFirst = true, bool showPrevious = true, bool showNext = true, bool showLast = true, bool showPrint = true, bool showClose = false)
         {
             var page_list = pages.ToImmutableList();
             var current_page = 0;
@@ -98,8 +98,7 @@ namespace Hexa.Helpers
             var builder = new DiscordMessageBuilder();
             var buttonBuilder = builder.AddComponents(buttons);
             builder = buttonBuilder.WithContent(page_list[current_page].Content).WithEmbed(page_list[current_page].Embed);
-            var message = await channel.SendMessageAsync(builder);
-
+            var message = msg is null ? await channel.SendMessageAsync(builder) : await msg.ModifyAsync(builder);
             // Loop until timeout and handle the buttons
             var loop_timeout = DateTime.Now + timeout;
             while (DateTime.Now < loop_timeout)
@@ -146,7 +145,7 @@ namespace Hexa.Helpers
             first.Disabled = true;
             last.Disabled = true;
             print.Disabled = true;
-            await message.ModifyAsync(builder);
+            try {await message.ModifyAsync(builder);} catch{}
         }
     }
 }

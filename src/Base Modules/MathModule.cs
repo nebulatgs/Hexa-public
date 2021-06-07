@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using DSharpPlus.Exceptions;
 using Hexa.Attributes;
 using Hexa.Helpers;
 
@@ -46,20 +47,31 @@ namespace Hexa.Modules
         {
             if (query is null)
                 throw new ArgumentException("Please provide an expression or equation to evaluate.");
-            await ctx.TriggerTypingAsync();
+            // await ctx.TriggerTypingAsync();
             var hEmbed = new HexaEmbed(ctx, "hexa math");
+            hEmbed.embed.WithDescription("waiting… <a:pinging:781983658646175764>");
+            var message = await ctx.RespondAsync(hEmbed.Build());
             try
             {
                 hEmbed.embed.WithImageUrl(GetResponse(query)).WithDescription($"Evaluation for **{query}**");
-                await ctx.RespondAsync(embed: hEmbed.Build());
+                await message.ModifyAsync(embed: hEmbed.Build());
+            }
+            catch (BadRequestException)
+            {
+                hEmbed.embed.ImageUrl = null;
+                if (query.Contains('='))
+                    hEmbed.embed.WithDescription("**Unable to evaluate expression**");
+                else
+                    hEmbed.embed.WithDescription("**Unable to evaluate equation**");
+                await message.ModifyAsync(hEmbed.Build());
             }
             catch
             {
                 if (query.Contains('='))
-                    throw new Exception("Invalid equation");
+                    hEmbed.embed.WithDescription("**Invalid equation**");
                 else
-                    throw new Exception("Invalid expression");
-                // return;
+                    hEmbed.embed.WithDescription("**Invalid expression**");
+                await message.ModifyAsync(hEmbed.Build());
             }
             // try
             // {

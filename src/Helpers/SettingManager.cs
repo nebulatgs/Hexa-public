@@ -47,7 +47,8 @@ namespace Hexa.Helpers
         {
             await SetDefaults(guild);
             var guildId = guild is null ? 835722357485994005 : guild.Id;
-            return guildSettings.Select(x => x.ToGuildSetting()).
+            return guildSettings.
+                Select(x => x.ToGuildSetting()).
                 Where(x => x.GuildId == guildId).
                 Join(// outer sequence 
                     guildSettingDefs,  // inner sequence 
@@ -72,7 +73,8 @@ namespace Hexa.Helpers
             await SetDefaults(guild);
             var guildId = guild is null ? 835722357485994005 : guild.Id;
             int setting_int = ((int)setting);
-            return guildSettings.Select(x => x.ToGuildSetting()).
+            return guildSettings.
+                Select(x => x.ToGuildSetting()).
                 Where(x => x.GuildId == guildId).
                 Join(// outer sequence 
                     guildSettingDefs,  // inner sequence 

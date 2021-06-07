@@ -117,7 +117,14 @@ namespace Hexa
 
             HexaLogger logger = new HexaLogger($"logs/{DateTime.Now.ToString("u").Replace(':', '.')}.log");
             HexaCommandHandler command_handler = new HexaCommandHandler(_config["Prefix"]);
-            var services = new ServiceCollection().AddSingleton<HexaLogger>(logger).AddSingleton<Random>().AddSingleton<SettingsManager>().BuildServiceProvider();
+            ProfanityFilter.ProfanityFilter filter = new();
+            AllowList.AddAllowed(filter);
+            var services = new ServiceCollection().
+                AddSingleton<HexaLogger>(logger).
+                AddSingleton<Random>().
+                AddSingleton<SettingsManager>().
+                AddSingleton<ProfanityFilter.ProfanityFilter>(filter).
+                BuildServiceProvider();
             var commands = await discord.UseCommandsNextAsync(new CommandsNextConfiguration()
             {
                 StringPrefixes = new[] { _config["Prefix"] },
@@ -138,6 +145,8 @@ namespace Hexa
             discord.GuildMemberUpdated += new UsernameChangeLogger().OnChange;
             discord.GuildCreated += new JoinLeaveLogger().OnChange;
             discord.GuildDeleted += new JoinLeaveLogger().OnChange;
+            var guild_levels = new GuildLevels();
+            var user_levels = new UserLevels();
             foreach (var client in discord.ShardClients)
             {
                 var slash = client.Value.UseSlashCommands();
@@ -145,17 +154,17 @@ namespace Hexa
                 {
                     slash.RegisterCommands<Modules.ActivitySlash>();
                     slash.RegisterCommands<Modules.AvatarSlash>();
-                    slash.RegisterCommands<Modules.ButtonSlash>();
+                    // slash.RegisterCommands<Modules.ButtonSlash>();
                 }
                 else
                 {
                     slash.RegisterCommands<Modules.ActivitySlash>(844754896358998018);
                     slash.RegisterCommands<Modules.AvatarSlash>(844754896358998018);
-                    slash.RegisterCommands<Modules.ButtonSlash>(844754896358998018);
+                    // slash.RegisterCommands<Modules.ButtonSlash>(844754896358998018);
                 }
+                slash.SlashCommandExecuted += logger.LogSlashCommandExecution;
+                slash.SlashCommandErrored += logger.LogSlashCommandError;
             }
-            var guild_levels = new GuildLevels();
-            var user_levels = new UserLevels();
             foreach (var command in commands)
             {
                 command.Value.RegisterCommands(Assembly.GetExecutingAssembly());

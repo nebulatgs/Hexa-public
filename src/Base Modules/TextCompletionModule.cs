@@ -14,12 +14,14 @@ using Hexa.Helpers;
 using System;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Extensions;
+using System.Linq;
 
 namespace Hexa.Modules
 {
     [HexaCooldown(60, 1)]
     public class TextCompletionModule : BaseCommandModule
     {
+        public ProfanityFilter.ProfanityFilter filter { get; set; }
         private class Prompt
         {
             public string text { get; set; }
@@ -88,29 +90,42 @@ namespace Hexa.Modules
         [Category(SettingsManager.HexaSetting.FunCategory)]
         public async Task TextCompletionCommand(CommandContext ctx, [RemainingText, Description("The text to complete")] string text = null)
         {
-            if(!ctx.Channel.IsNSFW)
-                throw new UnauthorizedAccessException("This command is restricted to NSFW channels");
+            // if(!ctx.Channel.IsNSFW)
+                // throw new UnauthorizedAccessException("This command is restricted to NSFW channels");
             if (text is null)
                 throw new ArgumentNullException("What text should I complete?");
+            if (filter.DetectAllProfanities(text).Any() && !ctx.Channel.IsNSFW)
+                throw new InvalidOperationException("I can't autocomplete that, sorry…");
             var close = new DiscordButtonComponent(ButtonStyle.Danger, "ai_close", "close", false);
             var builder = new DiscordMessageBuilder();
             var interactivity = ctx.Client.GetInteractivity();
             DiscordButtonComponent[] buttons = { close };
             builder.AddComponents(buttons);
-            await ctx.Channel.TriggerTypingAsync();
-            var output = RequestAutoCompleteDeepAI("468f237f-d4c0-426b-b06f-7362d03daadb", text);
+            var hEmbed = new HexaEmbed(ctx, "autocomplete");
+            hEmbed.embed.Description = "waiting… <a:pinging:781983658646175764>";
+            var message = await ctx.RespondAsync(hEmbed.Build());
+            
+            // await ctx.Channel.TriggerTypingAsync();
+            var output = RequestAutoCompleteDeepAI("468f237f-d4c0-426b-b06f-7362d03daadb", text).TruncateAtWord(900) + '…';
             // var output = RequestAutoCompleteInferKit("b0444ca5-bd34-4f24-bc56-8beaaa811b69", text);
-
-            var message = await ctx.Channel.SendMessageAsync(builder.WithContent($"```\n{output.ToString()}\n```"));
-
-            var buttonResponse = await interactivity.WaitForButtonAsync(message, buttons, TimeSpan.FromSeconds(60));
-            if(!buttonResponse.TimedOut)
-                await message.DeleteAsync();
-            else
+            hEmbed.embed.Description = $"```\n{((!ctx.Channel.IsNSFW) ? filter.CensorString(output) : output)}\n```";
+            builder.WithEmbed(hEmbed.Build());
+            message = await message.ModifyAsync(builder);
+            var timeout = TimeSpan.FromSeconds(60);
+            var then = DateTime.Now;
+            while (then + timeout > DateTime.Now)
             {
-                close.Disabled = true;
-                await message.ModifyAsync(builder);
+                var buttonResponse = await interactivity.WaitForButtonAsync(message, buttons, timeout);
+                if(!buttonResponse.TimedOut)
+                {
+                    if(buttonResponse.Result.User == ctx.Message.Author)
+                        await message.DeleteAsync();
+                }
+                else
+                    break;
             }
+            close.Disabled = true;
+            await message.ModifyAsync(builder);
         }
     }
 }
