@@ -6,7 +6,6 @@ using DSharpPlus.CommandsNext.Converters;
 using DSharpPlus.Entities;
 using Hexa.Database;
 using Hexa.Helpers;
-using Microsoft.EntityFrameworkCore;
 
 namespace Hexa.Converters
 {
@@ -14,15 +13,15 @@ namespace Hexa.Converters
     {
         public async Task<Optional<SettingsManager.HexaSetting>> ConvertAsync(string value, CommandContext ctx)
         {
-            using(var db = new HexaContext())
-            {
-                var setting = db.Settings.Where(x => x.Aliases.Contains(value));
+            // using(var db = new HexaContext())
+            // {
+                var setting = SettingsManager.guildSettingDefs.Where(x => x.Aliases.Contains(value));
                 if (setting.Count() > 0)
-                    return Optional.FromValue((SettingsManager.HexaSetting)(await setting.FirstAsync()).SettingID);
+                    return Optional.FromValue((SettingsManager.HexaSetting)(setting.First()).SettingID);
                 else
                     throw new Exception("Invalid setting name");
                     // return Optional.FromNoValue<SettingsManager.HexaSetting>();
-            }
+            // }
         }
     }
 }

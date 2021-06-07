@@ -101,6 +101,20 @@ namespace Hexa
                 AutoReconnect = true,
                 MinimumLogLevel = LogLevel.Information
             });
+
+            string url, key;
+            if (Environment.GetEnvironmentVariable("PROD") is null)
+            {
+                url = _config["Supabase_Url"];
+                key = _config["Supabase_Token"];
+            }
+            else
+            {
+                url = Environment.GetEnvironmentVariable("SUPABASE_URL");
+                key = Environment.GetEnvironmentVariable("SUPABASE_TOKEN");
+            }
+            await Supabase.Client.InitializeAsync(url, key);
+
             HexaLogger logger = new HexaLogger($"logs/{DateTime.Now.ToString("u").Replace(':', '.')}.log");
             HexaCommandHandler command_handler = new HexaCommandHandler(_config["Prefix"]);
             var services = new ServiceCollection().AddSingleton<HexaLogger>(logger).AddSingleton<Random>().AddSingleton<SettingsManager>().BuildServiceProvider();
@@ -157,18 +171,7 @@ namespace Hexa
                 command.Value.RegisterConverter(new Hexa.Converters.HexaSettingConverter());
             }
 
-            string url, key;
-            if (Environment.GetEnvironmentVariable("PROD") is null)
-            {
-                url = _config["Supabase_Url"];
-                key = _config["Supabase_Token"];
-            }
-            else
-            {
-                url = Environment.GetEnvironmentVariable("SUPABASE_URL");
-                key = Environment.GetEnvironmentVariable("SUPABASE_TOKEN");
-            }
-            await Supabase.Client.InitializeAsync(url, key);
+
 
             discord.MessageDeleted += new Modules.GhostPingDetector().OnDelete;
             discord.MessageCreated += command_handler.CommandHandler;

@@ -1,107 +1,120 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-// using System.Data.Entity;
-using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
+using Postgrest.Attributes;
+using Supabase;
 
 namespace Hexa.Database
 {
-    public class HexaContext : Microsoft.EntityFrameworkCore.DbContext
+    [Table("GuildSettings")]
+    public class GuildSetting : SupabaseModel
     {
-        // public HexaContext(){}   ;// : base(new Func<DbConnection>(() =>
-        // {
-        //     var conn = DbProviderFactories.GetFactory("Npgsql").CreateConnection();
-        //     conn.ConnectionString = Environment.GetEnvironmentVariable("DBSTRING");
-        //     return conn;
-        // })(), true){}
-        public DbSet<PastUserState> PastUserStates { get; set; }
-        public DbSet<GuildSetting> GuildSettings { get; set; }
-        public DbSet<Setting> Settings { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.HasDefaultSchema("public");
-            base.OnModelCreating(modelBuilder);
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql(Program.DBSTRING);
-        }
-    }
-
-    // public class GuildSetting
-    // {
-    //     [Key]
-    //     public int SettingID { get; set; }
-    //     public ulong GuildId { get; set; }
-    //     public int SettingType { get; set; }
-    //     public string Value { get; set; }
-    //     public override string ToString()
-    //     {
-    //         return $"{SettingID}: {GuildId} - {SettingType}:{Value}";
-    //     }
-    //     public string GetIdentifier()
-    //     {
-    //         return ToString();
-    //     }
-    //     // public override bool Equals(object obj)
-    //     // {
-    //     //     return obj is GuildSetting message &&
-    //     //             GuildId == message.GuildId;
-    //     // }
-
-    //     // public override int GetHashCode()
-    //     // {
-    //     //     return HashCode.Combine(GuildId);
-    //     // }
-    // }
-
-    public class GuildSetting
-    {
-        [Key]
+        [PrimaryKey("id", false)]
         public int id { get; set; }
+
+        [Column("GuildId")]
         public ulong GuildId { get; set; }
+
+        [Column("SettingID")]
         public int SettingID { get; set; }
+
+        [Column("Value")]
         public string Value { get; set; }
-        [ForeignKey("SettingID")]
-        public Setting Setting { get; set; }
-        public override string ToString()
-        {
-            return $"{id}: {GuildId} - {Setting}:{Value}";
-        }
-        public string GetIdentifier()
-        {
-            return ToString();
-        }
+
+        [JsonIgnore]
+        public SettingDef Setting { get; set; }
     }
-    public class Setting
+
+    [Table("GuildSettings")]
+    public class GuildSettingAddable : SupabaseModel
     {
-        [Key]
+        [PrimaryKey("id", false)]
+        public int id { get; set; }
+
+        [Column("GuildId")]
+        public ulong GuildId { get; set; }
+
+        [Column("SettingID")]
         public int SettingID { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set;}
-        public string Type { get; set; }
-        public List<string> Aliases { get; set;}
-        public string Default { get; set; }
+
+        [Column("Value")]
+        public string Value { get; set; }
+
+        public GuildSetting ToGuildSetting()
+        {
+            return new GuildSetting()
+            {
+                id = this.id,
+                GuildId = this.GuildId,
+                SettingID = this.SettingID,
+                Value = this.Value
+            };
+        }
     }
-    public class PastUserState
+
+    [Table("Settings")]
+    public class SettingDef : SupabaseModel
     {
-        [Key]
-        public long PastUserStateId { get; set; }
+        [PrimaryKey("SettingID", false)]
+        public int SettingID { get; set; }
+
+        [Column("Name")]
+        public string Name { get; set; }
+
+        [Column("Description")]
+        public string Description { get; set; }
+
+        [Column("Type")]
+        public string Type { get; set; }
+
+        [Column("Aliases")]
+        public List<string> Aliases { get; set; }
+
+        [Column("Default")]
+        public string Default { get; set; }
+
+        // public override bool Equals(object obj)
+        // {
+        //     return obj is GuildSetting message &&
+        //             GuildId == message.GuildId;
+        // }
+
+        // public override int GetHashCode()
+        // {
+        //     return HashCode.Combine(GuildId);
+        // }
+    }
+
+    [Table("PastUserStates")]
+    public class PastUserState : SupabaseModel
+    {
+        [PrimaryKey("PastUserStateId", false)]
+        public int PastUserStateId { get; set; }
+
+        [Column("UserId")]
         public ulong UserId { get; set; }
+
+        [Column("Username")]
         public string Username { get; set; }
+
+        [Column("Discriminator")]
         public int Discriminator { get; set; }
+
+        [Column("Flags")]
         public int Flags { get; set; }
+
+        [Column("AvatarUrl")]
         public string AvatarUrl { get; set; }
-        public bool IsBot { get; set; }
-        public override string ToString()
-        {
-            return $"{Username}#{Discriminator}";
-        }
-        public string GetIdentifier()
-        {
-            return $"{UserId}; {Username}#{Discriminator}: {Flags}, {AvatarUrl}, {IsBot}";
-        }
+
+        // public override bool Equals(object obj)
+        // {
+        //     return obj is GuildSetting message &&
+        //             GuildId == message.GuildId;
+        // }
+
+        // public override int GetHashCode()
+        // {
+        //     return HashCode.Combine(GuildId);
+        // }
     }
 }

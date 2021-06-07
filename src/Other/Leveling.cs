@@ -145,34 +145,34 @@ namespace Hexa.Other
     {
         public async Task MessageSent(DiscordClient client, MessageCreateEventArgs args)
         {
-            // if (args.Author.IsBot || args.Guild is null)
-            //     return;
-            // var this_guild = await LevelDBInterface.GetValue(args.Guild);
-            // await LevelDBInterface.SetValue(args.Guild, this_guild is null ? 0 : this_guild.CommandLevel, this_guild is null ? 1 : this_guild.MessageLevel + 1);
+            if (args.Author.IsBot || args.Guild is null)
+                return;
+            var this_guild = await LevelDBInterface.GetValue(args.Guild);
+            await LevelDBInterface.SetValue(args.Guild, this_guild is null ? 0 : this_guild.CommandLevel, this_guild is null ? 1 : this_guild.MessageLevel + 1);
         }
         public async Task CommandExecuted(CommandsNextExtension commands, CommandExecutionEventArgs args)
         {
-            // if (args.Context.Message.Author.IsBot || args.Context.Guild is null)
-            //     return;
-            // var this_guild = await LevelDBInterface.GetValue(args.Context.Guild);
-            // await LevelDBInterface.SetValue(args.Context.Guild, this_guild is null ? 0 : this_guild.CommandLevel + 1, this_guild is null ? 1 : this_guild.MessageLevel);
+            if (args.Context.Message.Author.IsBot || args.Context.Guild is null)
+                return;
+            var this_guild = await LevelDBInterface.GetValue(args.Context.Guild);
+            await LevelDBInterface.SetValue(args.Context.Guild, this_guild is null ? 0 : this_guild.CommandLevel + 1, this_guild is null ? 1 : this_guild.MessageLevel);
         }
     }
     public class UserLevels
     {
         public async Task MessageSent(DiscordClient client, MessageCreateEventArgs args)
         {
-            // if (args.Author.IsBot)
-                // return;
-            // var this_user = await LevelDBInterface.GetValue(args.Author);
-            // await LevelDBInterface.SetValue(args.Author, this_user is null ? 0 : this_user.CommandLevel, this_user is null ? 1 : this_user.MessageLevel + 1);
+            if (args.Author.IsBot)
+                return;
+            var this_user = await LevelDBInterface.GetValue(args.Author);
+            await LevelDBInterface.SetValue(args.Author, this_user is null ? 0 : this_user.CommandLevel, this_user is null ? 1 : this_user.MessageLevel + 1);
         }
         public async Task CommandExecuted(CommandsNextExtension commands, CommandExecutionEventArgs args)
         {
-            // if (args.Context.Message.Author.IsBot)
-                // return;
-            // var this_user = await LevelDBInterface.GetValue(args.Context.Message.Author);
-            // await LevelDBInterface.SetValue(args.Context.Message.Author, this_user is null ? 0 : this_user.CommandLevel + 1, this_user is null ? 1 : this_user.MessageLevel);
+            if (args.Context.Message.Author.IsBot)
+                return;
+            var this_user = await LevelDBInterface.GetValue(args.Context.Message.Author);
+            await LevelDBInterface.SetValue(args.Context.Message.Author, this_user is null ? 0 : this_user.CommandLevel + 1, this_user is null ? 1 : this_user.MessageLevel);
         }
     }
 }

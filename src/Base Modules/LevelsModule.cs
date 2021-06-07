@@ -39,13 +39,16 @@ namespace Hexa.Modules
                     await LevelDBInterface.SetValue(member, 0, 0);
                 value = await LevelDBInterface.GetValue(member);
                 var values = await LevelDBInterface.GetUserValues();
-                using (var db = new HexaContext())
-                {
+                var instance = Supabase.Client.Instance;
+                var channels = instance.From<PastUserState>();
+                var states = (await channels.Get()).Models;
+                // using (var db = new HexaContext())
+                // {
                     hEmbed.embed.AddField($"messages:", $"#{(values.OrderByDescending(x => x.MessageLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.MessageLevel} messages sent", true);
                     hEmbed.embed.AddField($"commands:", $"#{(values.OrderByDescending(x => x.CommandLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.CommandLevel} commands used", true);
-                    hEmbed.embed.AddField("past names:", $"{string.Join(", ", db.PastUserStates.Where(x => x.UserId == member.Id).Select(x => x.Username).Distinct())}");
+                    hEmbed.embed.AddField("past names:", /*zws*/$"​{string.Join(", ", states.Where(x => x.UserId == member.Id).Select(x => x.Username))}");
                     hEmbed.embed.WithThumbnail(member.AvatarUrl, 32);
-                }
+                // }
             }
             catch
             {
@@ -87,13 +90,16 @@ namespace Hexa.Modules
                     await LevelDBInterface.SetValue(member, 0, 0);
                 value = await LevelDBInterface.GetValue(member);
                 var values = await LevelDBInterface.GetUserValues();
-                using (var db = new HexaContext())
-                {
+                var instance = Supabase.Client.Instance;
+                var channels = instance.From<PastUserState>();
+                var states = (await channels.Get()).Models;
+                // using (var db = new HexaContext())
+                // {
                     hEmbed.embed.AddField($"messages:", $"#{(values.OrderByDescending(x => x.MessageLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.MessageLevel} messages sent", true);
                     hEmbed.embed.AddField($"commands:", $"#{(values.OrderByDescending(x => x.CommandLevel).Select(y => y.UserId).ToList().IndexOf(member.Id) + 1)}\n{value.CommandLevel} commands used", true);
-                    hEmbed.embed.AddField("past names:", $"{string.Join(", ", db.PastUserStates.Where(x => x.UserId == member.Id).Select(x => x.Username).Distinct())}");
+                    hEmbed.embed.AddField("past names:", /*zws*/$"​{string.Join(", ", states.Where(x => x.UserId == member.Id).Select(x => x.Username).Distinct())}");
                     hEmbed.embed.WithThumbnail(member.AvatarUrl, 32);
-                }
+                // }
             }
             catch
             {
