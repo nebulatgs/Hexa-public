@@ -82,7 +82,7 @@ namespace Hexa.Helpers
         {
             var hEmbed = new HexaEmbed(ctx, "hexa help");
             this.EmbedBuilder = hEmbed.embed;
-            // this.Manager = new SettingsManager();
+            this.Manager = new SettingsManager();
         }
 
         /// <summary>
