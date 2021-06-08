@@ -15,6 +15,7 @@ using System;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Extensions;
 using System.Linq;
+using DSharpPlus.Exceptions;
 
 namespace Hexa.Modules
 {
@@ -110,7 +111,7 @@ namespace Hexa.Modules
             // var output = RequestAutoCompleteInferKit("b0444ca5-bd34-4f24-bc56-8beaaa811b69", text);
             hEmbed.embed.Description = $"```\n{((!ctx.Channel.IsNSFW) ? filter.CensorString(output) : output)}\n```";
             builder.WithEmbed(hEmbed.Build());
-            message = await message.ModifyAsync(builder);
+            try { await message.ModifyAsync(builder); } catch (NotFoundException) { }
             var timeout = TimeSpan.FromSeconds(60);
             var then = DateTime.Now;
             while (then + timeout > DateTime.Now)
@@ -125,7 +126,7 @@ namespace Hexa.Modules
                     break;
             }
             close.Disabled = true;
-            await message.ModifyAsync(builder);
+                try { await message.ModifyAsync(builder); } catch (NotFoundException) { }
         }
     }
 }

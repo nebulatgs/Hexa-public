@@ -1,5 +1,7 @@
 using System;
 using System.Numerics;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
@@ -96,6 +98,51 @@ namespace Hexa.Modules
             }
             button.Disabled = true;
             await message.ModifyAsync(builder);
+        }
+
+        private string[] Responses = new[]
+        {
+            "It is Certain.",
+            "It is decidedly so.",
+            "Without a doubt.",
+            "Yes definitely.",
+            "You may rely on it.",
+            "As I see it, yes.",
+            "Most likely.",
+            "Outlook good.",
+            "Yes.",
+            "Signs point to yes.",
+            "Reply hazy, try again.",
+            "Ask again later.",
+            "Better not tell you now.",
+            "Cannot predict now.",
+            "Concentrate and ask again.",
+            "Don't count on it.",
+            "My reply is no.",
+            "My sources say no.",
+            "Outlook not so good.",
+            "Very doubtful."
+        };
+
+        [Command("8ball")]
+        [Aliases("8-ball")]
+        [Category(SettingsManager.HexaSetting.RandomCategory)]
+        [Description("Call upon the magic 8-ball to answer your questions")]
+        public async Task EightBallCommand(CommandContext ctx, [RemainingText] string query)
+        {
+            if (query is null)
+                throw new ArgumentException("What shall you ask the great 8-ball?");
+            var hEmbed = new HexaEmbed(ctx, "magic 8-ball");
+            hEmbed.embed.WithDescription("thinking… <a:pinging:781983658646175764>");
+            var message = await ctx.RespondAsync(hEmbed.Build());
+            await Task.Delay(500);
+            using var algo = SHA1.Create();
+            var hash = BitConverter.ToInt32(algo.ComputeHash(Encoding.UTF8.GetBytes(query)));
+            var rand = new Random(hash);
+            string response = Responses[rand.Next(0, 20)];
+            hEmbed.embed.WithDescription($"**{response}**");
+            try { await message.ModifyAsync(hEmbed.Build()); } catch (NotFoundException) { }
+            // await ctx.TriggerTypingAsync();
         }
     }
 }

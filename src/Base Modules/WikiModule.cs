@@ -11,6 +11,7 @@ using System.Web;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using DSharpPlus.Exceptions;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Extensions;
 using Hexa.Attributes;
@@ -90,7 +91,7 @@ namespace Hexa.Modules
             if (response is null)
             {
                 hEmbed.embed.WithDescription($"I couldn't find any results for **\"{query}\"**");
-                await message.ModifyAsync(hEmbed.Build());
+                try { await message.ModifyAsync(hEmbed.Build()); } catch (NotFoundException) { }
                 return;
             }
             // if (!response.Any())

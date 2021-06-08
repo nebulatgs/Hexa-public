@@ -34,7 +34,7 @@ namespace Hexa.Modules
             using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
             {
                 var result = streamReader.ReadToEnd();
-                if(result == "")
+                if (result == "")
                     throw new Exception("Blank response");
                 return result;
             }
@@ -54,7 +54,7 @@ namespace Hexa.Modules
             try
             {
                 hEmbed.embed.WithImageUrl(GetResponse(query)).WithDescription($"Evaluation for **{query}**");
-                await message.ModifyAsync(embed: hEmbed.Build());
+                try { await message.ModifyAsync(hEmbed.Build()); } catch (NotFoundException) { }
             }
             catch (BadRequestException)
             {
@@ -63,7 +63,7 @@ namespace Hexa.Modules
                     hEmbed.embed.WithDescription("**Unable to evaluate expression**");
                 else
                     hEmbed.embed.WithDescription("**Unable to evaluate equation**");
-                await message.ModifyAsync(hEmbed.Build());
+                try { await message.ModifyAsync(hEmbed.Build()); } catch (NotFoundException) { }
             }
             catch
             {
@@ -71,7 +71,7 @@ namespace Hexa.Modules
                     hEmbed.embed.WithDescription("**Invalid equation**");
                 else
                     hEmbed.embed.WithDescription("**Invalid expression**");
-                await message.ModifyAsync(hEmbed.Build());
+                try { await message.ModifyAsync(hEmbed.Build()); } catch (NotFoundException) { }
             }
             // try
             // {
