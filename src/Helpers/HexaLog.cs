@@ -43,7 +43,6 @@ public class HexaLogger
 
     public async Task LogCommandError(CommandsNextExtension command_ext, CommandErrorEventArgs args)
     {
-
         string logString = $"Error in {args.Command} : {args.Context.Guild}, {args.Context.Channel} with exception \n\t\'{args.Exception}\'\nby {args.Context.Message.Author} with arguments \"{args.Context.RawArgumentString}\"\n"
                             .Replace("   ", "\t");
         Console.ForegroundColor = ConsoleColor.Red;

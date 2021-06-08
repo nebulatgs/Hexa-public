@@ -34,7 +34,7 @@ namespace Hexa.Modules
             queryString.Add("generator", "search");
             queryString.Add("redirects", "1");
             queryString.Add("prop", "extracts|info|pageimages|revisions|categories");
-            queryString.Add("gsrsearch", $"intitle:{query}");
+            queryString.Add("gsrsearch", string.Join(' ', Regex.Split(query, @"\s+").Select(x => $"intitle:{x}")));
             queryString.Add("gsrlimit", "15");
             queryString.Add("exintro", "1");
             queryString.Add("explaintext", "1");
@@ -54,13 +54,17 @@ namespace Hexa.Modules
                 var result = streamReader.ReadToEnd();
                 // var response = JsonConvert.DeserializeObject<WikiResponse>(result);
                 var response = JObject.Parse(result);
+                if (response?["query"] is null)
+                    return null;
+                    // throw new Exception($"I couldn't find any results for \"{query}\"");
                 var list = (response["query"]["pages"]).
                     Select(x => new WikiPage()
                     {
                         Title = x["title"].Value<string>(),
                         Content = x["extract"].Value<string>(),
                         Url = x["fullurl"].Value<string>(),
-                        ImageUrl = x["original"] is not null ? x["original"]["source"].Value<string>() : null
+                        // ImageUrl = x["original"] is not null ? x["original"]["source"].Value<string>() : null
+                        ImageUrl = x["original"]?["source"]?.Value<string>()
                     }).
                     ToList();
                 // var a = 1;
@@ -83,8 +87,13 @@ namespace Hexa.Modules
             var message = await ctx.Channel.SendMessageAsync(hEmbed.Build());
             // await ctx.Channel.TriggerTypingAsync();
             var response = GetResponse(query);
-            if (!response.Any())
-                throw new Exception($"I couldn't find any results for \"{query}\"");
+            if (response is null)
+            {
+                hEmbed.embed.WithDescription($"I couldn't find any results for **\"{query}\"**");
+                await message.ModifyAsync(hEmbed.Build());
+                return;
+            }
+            // if (!response.Any())
             var interactivity = ctx.Client.GetInteractivity();
 
             var pages = new List<Page>();
