@@ -21,7 +21,8 @@ namespace Hexa.Helpers
             UtilityCategory,
             InfoCategory,
             AdminCategory,
-            DangerCategory
+            DangerCategory,
+            VoiceCategory
         }
         private static List<GuildSettingAddable> guildSettings { get; set; }
         public static List<SettingDef> guildSettingDefs { get; set; }
@@ -46,7 +47,7 @@ namespace Hexa.Helpers
         public async Task<List<GuildSetting>> GetSettings(DiscordGuild guild)
         {
             await SetDefaults(guild);
-            var guildId = guild is null ? 835722357485994005 : guild.Id;
+            var guildId = guild is null ? 847891805185245217 : guild.Id;
             return guildSettings.
                 Select(x => x.ToGuildSetting()).
                 Where(x => x.GuildId == guildId).
@@ -71,7 +72,7 @@ namespace Hexa.Helpers
         public async Task<GuildSetting> GetSetting(DiscordGuild guild, HexaSetting setting)
         {
             await SetDefaults(guild);
-            var guildId = guild is null ? 835722357485994005 : guild.Id;
+            var guildId = guild is null ? 847891805185245217 : guild.Id;
             int setting_int = ((int)setting);
             return guildSettings.
                 Select(x => x.ToGuildSetting()).
@@ -107,7 +108,7 @@ namespace Hexa.Helpers
 
         public async Task SetSetting(DiscordGuild guild, int setting, string value)
         {
-            var guildId = guild is null ? 835722357485994005 : guild.Id;
+            var guildId = guild is null ? 847891805185245217 : guild.Id;
             // using (var db = new HexaContext())
             // {
             // var foundSetting = guildSettings.SingleOrDefault(x => x.GuildId == guildId && x.SettingID == setting);
@@ -136,7 +137,7 @@ namespace Hexa.Helpers
 
         public async Task SetDefaults(DiscordGuild guild)
         {
-            var guildId = guild is null ? 835722357485994005 : guild.Id;
+            var guildId = guild is null ? 847891805185245217 : guild.Id;
             // using (var db = new HexaContext())
             // {
             // var allSettings = guildSettingDefs;

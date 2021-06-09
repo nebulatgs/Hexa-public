@@ -41,11 +41,14 @@ namespace Hexa.Modules
         [Category(SettingsManager.HexaSetting.GamesCategory)]
         public async Task StartYoutubeAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if (channel is null)
+            var vstat = ctx.Member?.VoiceState;
+            if (vstat?.Channel is null && channel is null)
             {
                 await ctx.RespondAsync("Please provide a voice channel to start Youtube Together in");
                 return;
             }
+            if(channel is null)
+                channel = vstat.Channel;
             var activity_id = "755600276941176913";
             var code = ActivitiesModule.RequestActivity(activity_id, channel);
             var b = new DiscordMessageBuilder().AddComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Youtube Together", false, new DiscordComponentEmoji(847668867751739435)) }).WithContent(channel.Mention);
@@ -98,11 +101,14 @@ namespace Hexa.Modules
         [Category(SettingsManager.HexaSetting.GamesCategory)]
         public async Task StartYoutubeAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if (channel is null)
+            var vstat = ctx.Member?.VoiceState;
+            if (vstat?.Channel is null && channel is null)
             {
                 await ctx.RespondAsync("Please provide a voice channel to start Youtube Together in");
                 return;
             }
+            if(channel is null)
+                channel = vstat.Channel;
             var activity_id = "755600276941176913";
             var code = RequestActivity(activity_id, channel);
             var b = new DiscordMessageBuilder().AddComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Youtube Together", false, new DiscordComponentEmoji(847668867751739435)) }).WithContent(channel.Mention);
@@ -115,11 +121,14 @@ namespace Hexa.Modules
         [Category(SettingsManager.HexaSetting.GamesCategory)]
         public async Task StartFishingtonAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if (channel is null)
+            var vstat = ctx.Member?.VoiceState;
+            if (vstat?.Channel is null && channel is null)
             {
                 await ctx.RespondAsync("Please provide a voice channel to start Fishington.io in");
                 return;
             }
+            if (channel is null)
+                channel = vstat.Channel;
             var activity_id = "814288819477020702";
             var code = RequestActivity(activity_id, channel);
             var b = new DiscordMessageBuilder().AddComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Fishington.io", false, new DiscordComponentEmoji(847667655922024498)) }).WithContent(channel.Mention);
@@ -131,11 +140,14 @@ namespace Hexa.Modules
         [Category(SettingsManager.HexaSetting.GamesCategory)]
         public async Task StartPokerAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if (channel is null)
+            var vstat = ctx.Member?.VoiceState;
+            if (vstat?.Channel is null && channel is null)
             {
                 await ctx.RespondAsync("Please provide a voice channel to start Poker Night in");
                 return;
             }
+            if(channel is null)
+                channel = vstat.Channel;
             var activity_id = "755827207812677713";
             var code = RequestActivity(activity_id, channel);
             var b = new DiscordMessageBuilder().AddComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Poker Night", false, new DiscordComponentEmoji(847667610279215144)) }).WithContent(channel.Mention);
@@ -148,11 +160,14 @@ namespace Hexa.Modules
         [Category(SettingsManager.HexaSetting.GamesCategory)]
         public async Task StartBetrayalAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if (channel is null)
+            var vstat = ctx.Member?.VoiceState;
+            if (vstat?.Channel is null && channel is null)
             {
                 await ctx.RespondAsync("Please provide a voice channel to start Betrayal.io in");
                 return;
             }
+            if(channel is null)
+                channel = vstat.Channel;
             var activity_id = "773336526917861400";
             var code = RequestActivity(activity_id, channel);
             var b = new DiscordMessageBuilder().AddComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Betrayal.io", false, new DiscordComponentEmoji(847667494202507264)) }).WithContent(channel.Mention);
@@ -164,11 +179,14 @@ namespace Hexa.Modules
         [Category(SettingsManager.HexaSetting.GamesCategory)]
         public async Task StartChessAsync(CommandContext ctx, DiscordChannel channel = null)
         {
-            if (channel is null)
+            var vstat = ctx.Member?.VoiceState;
+            if (vstat?.Channel is null && channel is null)
             {
                 await ctx.RespondAsync("Please provide a voice channel to start Chess in the Park in");
                 return;
             }
+            if(channel is null)
+                channel = vstat.Channel;
             var activity_id = "832012586023256104";
             var code = RequestActivity(activity_id, channel);
             var b = new DiscordMessageBuilder().AddComponents(new DiscordComponent[] { new DiscordLinkButtonComponent($"https://discord.gg/{code}", $" Start Chess in the Park (Beta)", false, new DiscordComponentEmoji(847669270409904159)) }).WithContent(channel.Mention);

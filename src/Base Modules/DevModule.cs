@@ -8,6 +8,10 @@ using DSharpPlus.CommandsNext.Attributes;
 using Hexa.Attributes;
 using DSharpPlus.Entities;
 using Hexa.Helpers;
+using System.Linq;
+using DSharpPlus.Net;
+using DSharpPlus;
+using System.Reflection;
 
 namespace Hexa.Modules
 {
@@ -46,7 +50,7 @@ namespace Hexa.Modules
             }
         }
         
-        [Command("leave")]
+        [Command("sleave")]
         [Description("Leave a server")]
         [Category(SettingsManager.HexaSetting.DangerCategory)]
         public async Task LeaveCommand(CommandContext ctx, ulong? server)
@@ -58,12 +62,25 @@ namespace Hexa.Modules
             await ctx.RespondAsync($"Left {guild}…");
         }
 
+        // [Command("dm")]
+        // public async Task DMCommand(CommandContext ctx, DiscordMember user, [RemainingText] string message)
+        // {
+        //     // await user.SendMessageAsync(message);
+
+        // }
+
         [Command("dm")]
         [Description("DM a user")]
         [Category(SettingsManager.HexaSetting.DangerCategory)]
-        public async Task DMCommand(CommandContext ctx, DiscordMember user, [RemainingText] string message)
+        public async Task DMCommand(CommandContext ctx, ulong user, [RemainingText] string message)
         {
-            await user.SendMessageAsync(message);
+            var apiClient = (DiscordApiClient) typeof(DiscordClient).GetProperty("ApiClient", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(ctx.Client)!;
+            var channel = await (Task<DiscordDmChannel>) typeof(DiscordApiClient).GetMethod("CreateDmAsync", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(apiClient, new object[] {user})!;
+            // int a = 1;
+            // var guild = ctx.Client.Guilds.First(x => x.Value.GetMemberAsync(user).GetAwaiter().GetResult() is not null);
+            // var member = await guild.Value.GetMemberAsync(user);
+            // await member.SendMessageAsync(message);
+            await channel.SendMessageAsync(message);
         }
     }
 }

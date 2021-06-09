@@ -14,6 +14,7 @@ using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Enums;
 using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.SlashCommands;
+using DSharpPlus.VoiceNext;
 using Hexa.Helpers;
 using Hexa.Other;
 using Microsoft.Extensions.Configuration;
@@ -61,6 +62,7 @@ namespace Hexa
         public static string TOKEN { get; private set; }
         public static List<ulong> DevGroupIds { get; set; }
         public static string DBSTRING { get; private set; }
+        public static string DSKEY { get; private set; }
         public Program()
         {
             var _builder = new ConfigurationBuilder()
@@ -71,11 +73,13 @@ namespace Hexa
             {
                 DBSTRING = Environment.GetEnvironmentVariable("DBSTRING");
                 TOKEN = Environment.GetEnvironmentVariable("BOT_TOKEN");
+                DSKEY = Environment.GetEnvironmentVariable("DSKEY");
             }
             else
             {
                 DBSTRING = _config["Dbstring"];
                 TOKEN = _config["Token"];
+                DSKEY = _config["DarkSky-key"];
             }
             DevGroupIds = new List<ulong>();
             var devs = _config["Devs"].Split(',');
@@ -131,6 +135,8 @@ namespace Hexa
                 EnableDms = true,
                 UseDefaultCommandHandler = false,
                 Services = services
+            });
+            await discord.UseVoiceNextAsync(new VoiceNextConfiguration(){
             });
 
             await discord.UseInteractivityAsync(new InteractivityConfiguration

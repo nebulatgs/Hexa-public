@@ -18,9 +18,9 @@ namespace Hexa.Attributes
         public override async Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
         {
             // return Task.FromResult(CooldownExpires < DateTime.Now);
-            bool isDm = ctx.Channel is not DiscordDmChannel;
+            bool isDm = ctx.Channel is DiscordDmChannel;
             bool isGuild = ctx.Guild is not null;
-            if(!isDm)
+            if(isDm && !help)
                 await ctx.RespondAsync("This command is only available in servers");
             else if(!isGuild && !help)
                 await ctx.RespondAsync("I don't have access to that information in this server");
