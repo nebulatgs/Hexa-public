@@ -129,8 +129,8 @@ namespace Hexa.Other
                 MessageLevel = message_level
             };
             var channels = instance.From<UserLevelRow>();
-            var guild_levels = await channels.Get();
-            bool foundSettings = guild_levels.Models.Where(x => x.UserId == user.Id).Count() > 0;
+            var user_levels = await channels.Get();
+            bool foundSettings = user_levels.Models.Where(x => x.UserId == user.Id).Any();
             if (!foundSettings)
             {
                 await channels.Insert(new_row);
