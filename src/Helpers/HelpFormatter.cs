@@ -53,7 +53,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Text.RegularExpressions;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Converters;
@@ -164,6 +164,7 @@ namespace Hexa.Helpers
                 var bot_info = new StringBuilder();
                 // var prefix = HexaSettings.GetValue(this.Context.Guild, HexaSettings.SettingType.ServerPrefix) ?? "-";
                 var prefix = Environment.GetEnvironmentVariable("PROD") is not null ? (Manager.GetSetting(this.Context.Guild, SettingsManager.HexaSetting.ServerPrefix).GetAwaiter().GetResult()).Value ?? "-" : "+";
+                prefix = Regex.Replace(prefix, @"[\\\*\~_>`]", (Match m) => $"{m.Value}\u200B");
                 bot_info.Append($"``{prefix}``: current server prefix\n");
                 bot_info.Append($"{this.Context.Client.CurrentUser.Mention}: mention me for help\n");
                 this.EmbedBuilder.Title = "bot info";

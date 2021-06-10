@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
@@ -8,10 +12,11 @@ using DSharpPlus.Entities;
 using DSharpPlus.VoiceNext;
 using Hexa.Attributes;
 using Hexa.Helpers;
+using Newtonsoft.Json.Linq;
 
 namespace Hexa.Modules.Voice
 {
-    [Hidden, Disabled]
+    // [Hidden, Disabled]
     public class ExampleVoiceCommands : BaseCommandModule
     {
         [Command("join"), Description("Joins a voice channel.")]
@@ -85,48 +90,57 @@ namespace Hexa.Modules.Voice
         [Category(SettingsManager.HexaSetting.VoiceCategory)]
         public async Task Play(CommandContext ctx, [RemainingText, Description("Full path to the file to play.")] string filename)
         {
-            // check whether VNext is enabled
-            var vnext = ctx.Client.GetVoiceNext();
-            if (vnext == null)
+            await YoutubePlayer.Play(ctx, filename);
+        }
+
+        public static class YoutubePlayer
+        {
+
+            public static async Task<IEnumerable<string>> GetResults(string query)
             {
-                // not enabled
-                await ctx.RespondAsync("VNext is not enabled or configured.");
-                return;
+                var url = $"https://www.youtube.com/results?search_query={Uri.EscapeUriString(query)}";
+
+                var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+
+                var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    var result = streamReader.ReadToEnd();
+                    var matches = Regex.Matches(result, "\"videoId\":\"(.{11})\"");
+                    return matches.Select(x => x.Groups?[1]?.Value).Distinct();
+                }
+            }
+            public static async Task<IEnumerable<string>> DownloadVideo(string query)
+            {
+
+                // Console.WriteLine(httpResponse.StatusCode);
             }
 
-            // check whether we aren't already connected
-            var vnc = vnext.GetConnection(ctx.Guild);
-            if (vnc == null)
+            public static async Task Play(CommandContext ctx, string query)
             {
-                // already connected
-                await ctx.RespondAsync("Not connected in this guild.");
-                return;
-            }
-
-            // check if file exists
-            if (!File.Exists(filename))
-            {
-                // file does not exist
-                await ctx.RespondAsync($"File `{filename}` does not exist.");
-                return;
-            }
-
-            // wait for current playback to finish
-            while (vnc.IsPlaying)
-                await vnc.WaitForPlaybackFinishAsync();
-
-            // play
-            Exception exc = null;
-            await ctx.Message.RespondAsync($"Playing `{filename}`");
-
-            try
-            {
+                var vnext = ctx.Client.GetVoiceNext();
+                // check whether we aren't already connected
+                var vnc = vnext.GetConnection(ctx.Guild);
+                if (vnc == null)
+                {
+                    var vstat = ctx.Member?.VoiceState;
+                    if (vstat?.Channel == null)
+                    {
+                        await ctx.RespondAsync("You are not in a voice channel.");
+                        return;
+                    }
+                    vnc = await vnext.ConnectAsync(vstat.Channel);
+                }
+                while (vnc.IsPlaying)
+                    await vnc.WaitForPlaybackFinishAsync();
+                // try
+                // {
                 await vnc.SendSpeakingAsync(true);
-
+                await DownloadVideo(query);
                 var psi = new ProcessStartInfo
                 {
-                    FileName = "ffmpeg.exe",
-                    Arguments = $@"-i ""{filename}"" -ac 2 -f s16le -ar 48000 pipe:1 -loglevel quiet",
+                    FileName = "ffmpeg",
+                    Arguments = $@"-i ""{query}"" -ac 2 -f s16le -ar 48000 pipe:1 -loglevel quiet",
                     RedirectStandardOutput = true,
                     UseShellExecute = false
                 };
@@ -137,16 +151,17 @@ namespace Hexa.Modules.Voice
                 await ffout.CopyToAsync(txStream);
                 await txStream.FlushAsync();
                 await vnc.WaitForPlaybackFinishAsync();
-            }
-            catch (Exception ex) { exc = ex; }
-            finally
-            {
+                // }
+                // catch (Exception ex) { exc = ex; }
+                // finally
+                // {
                 await vnc.SendSpeakingAsync(false);
-                await ctx.Message.RespondAsync($"Finished playing `{filename}`");
-            }
+                await ctx.Message.RespondAsync($"Finished playing `{query}`");
+                // }
 
-            if (exc != null)
-                await ctx.RespondAsync($"An exception occured during playback: `{exc.GetType()}: {exc.Message}`");
+                // if (exc != null)
+                //     await ctx.RespondAsync($"An exception occured during playback: `{exc.GetType()}: {exc.Message}`");
+            }
         }
     }
 }

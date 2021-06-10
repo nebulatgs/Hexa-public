@@ -57,7 +57,7 @@ namespace Hexa.Modules
                 var response = JObject.Parse(result);
                 if (response?["query"] is null)
                     return null;
-                    // throw new Exception($"I couldn't find any results for \"{query}\"");
+                // throw new Exception($"I couldn't find any results for \"{query}\"");
                 var list = (response["query"]["pages"]).
                     Select(x => new WikiPage()
                     {
@@ -102,6 +102,11 @@ namespace Hexa.Modules
             foreach (var search in response)
             {
                 hEmbed = new HexaEmbed(ctx, "wikipedia").WithFooter($"Page {page_index} of {response.Count()}");
+                // if (filter.DetectAllProfanities(search.Title).Any())
+                // {
+                //     page_index++;
+                //     continue;
+                // }
                 hEmbed.embed.WithTitle(search.Title);
                 hEmbed.embed.WithUrl(search.Url);
                 // hEmbed.embed.Description = Regex.Replace(HttpUtility.HtmlDecode(search.Value), "<[^>]*>", "**");

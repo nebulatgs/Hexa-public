@@ -13,8 +13,9 @@ using DSharpPlus.Exceptions;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Enums;
 using DSharpPlus.Interactivity.Extensions;
+using DSharpPlus.Lavalink;
+using DSharpPlus.Net;
 using DSharpPlus.SlashCommands;
-using DSharpPlus.VoiceNext;
 using Hexa.Helpers;
 using Hexa.Other;
 using Microsoft.Extensions.Configuration;
@@ -63,6 +64,7 @@ namespace Hexa
         public static List<ulong> DevGroupIds { get; set; }
         public static string DBSTRING { get; private set; }
         public static string DSKEY { get; private set; }
+        public static string LAVALINK_PW { get; set; }
         public Program()
         {
             var _builder = new ConfigurationBuilder()
@@ -74,12 +76,14 @@ namespace Hexa
                 DBSTRING = Environment.GetEnvironmentVariable("DBSTRING");
                 TOKEN = Environment.GetEnvironmentVariable("BOT_TOKEN");
                 DSKEY = Environment.GetEnvironmentVariable("DSKEY");
+                LAVALINK_PW = Environment.GetEnvironmentVariable("DSKEY");
             }
             else
             {
                 DBSTRING = _config["Dbstring"];
                 TOKEN = _config["Token"];
                 DSKEY = _config["DarkSky-key"];
+                LAVALINK_PW = _config["Lavalink-PW"];
             }
             DevGroupIds = new List<ulong>();
             var devs = _config["Devs"].Split(',');
@@ -103,7 +107,7 @@ namespace Hexa
                 TokenType = TokenType.Bot,
                 Intents = DiscordIntents.All,
                 AutoReconnect = true,
-                MinimumLogLevel = LogLevel.Information
+                MinimumLogLevel = LogLevel.Debug
             });
 
             string url, key;
@@ -120,7 +124,7 @@ namespace Hexa
             await Supabase.Client.InitializeAsync(url, key);
 
             HexaLogger logger = new HexaLogger($"logs/{DateTime.Now.ToString("u").Replace(':', '.')}.log");
-            HexaCommandHandler command_handler = new HexaCommandHandler(_config["Prefix"]);
+            HexaCommandHandler command_handler = new(_config["Prefix"]);
             ProfanityFilter.ProfanityFilter filter = new();
             AllowList.AddAllowed(filter);
             var services = new ServiceCollection().
@@ -129,17 +133,23 @@ namespace Hexa
                 AddSingleton<SettingsManager>().
                 AddSingleton<ProfanityFilter.ProfanityFilter>(filter).
                 BuildServiceProvider();
-            var commands = await discord.UseCommandsNextAsync(new CommandsNextConfiguration()
+            var commands = await discord.UseCommandsNextAsync(new()
             {
                 StringPrefixes = new[] { _config["Prefix"] },
                 EnableDms = true,
                 UseDefaultCommandHandler = false,
                 Services = services
             });
-            await discord.UseVoiceNextAsync(new VoiceNextConfiguration(){
-            });
 
-            await discord.UseInteractivityAsync(new InteractivityConfiguration
+            // await discord.UseVoiceNextAsync(new VoiceNextConfiguration(){
+            //     AudioFormat = new(
+            //         sampleRate: 48000,
+            //         channelCount: 2,
+            //         voiceApplication: VoiceApplication.Voice
+            //     )
+            // });
+
+            await discord.UseInteractivityAsync(new()
             {
                 // default pagination behaviour to just ignore the reactions
                 PaginationBehaviour = PaginationBehaviour.Ignore,
@@ -153,6 +163,12 @@ namespace Hexa
             discord.GuildDeleted += new JoinLeaveLogger().OnChange;
             var guild_levels = new GuildLevels();
             var user_levels = new UserLevels();
+            var lavaconfig = new LavalinkConfiguration
+            {
+                RestEndpoint = new() { Hostname = "138.197.231.194", Port = 8080 },
+                SocketEndpoint = new() { Hostname = "138.197.231.194", Port = 8080 },
+                Password = LAVALINK_PW
+            };
             foreach (var client in discord.ShardClients)
             {
                 var slash = client.Value.UseSlashCommands();
@@ -182,8 +198,8 @@ namespace Hexa
                 command.Value.CommandErrored += logger.LogCommandError;
                 command.Value.CommandErrored += CmdErroredHandler;
                 command.Value.SetHelpFormatter<HexaHelpFormatter>();
-                command.Value.RegisterConverter(new Hexa.Converters.BoolConverter());
-                command.Value.RegisterConverter(new Hexa.Converters.HexaSettingConverter());
+                command.Value.RegisterConverter(new Converters.BoolConverter());
+                command.Value.RegisterConverter(new Converters.HexaSettingConverter());
             }
 
 
@@ -199,6 +215,11 @@ namespace Hexa
                 await args.Interaction.CreateResponseAsync(InteractionResponseType.DefferedMessageUpdate);
             };
             await discord.StartAsync();
+            foreach (var client in discord.ShardClients)
+            {
+                var lavalink = client.Value.UseLavalink();
+                await lavalink.ConnectAsync(lavaconfig);
+            }
             await PeriodicTask.Run(async () =>
             {
                 foreach (var client in discord.ShardClients)
@@ -211,7 +232,7 @@ namespace Hexa
         }
         private async Task CmdErroredHandler(CommandsNextExtension _, CommandErrorEventArgs e)
         {
-            if (e.Exception.GetType() == typeof(ChecksFailedException)) return;
+            if (e.Exception is ChecksFailedException) return;
             await e.Context.RespondAsync(e.Exception.Message);
         }
     }
