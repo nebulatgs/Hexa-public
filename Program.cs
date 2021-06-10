@@ -65,6 +65,7 @@ namespace Hexa
         public static string DBSTRING { get; private set; }
         public static string DSKEY { get; private set; }
         public static string LAVALINK_PW { get; set; }
+        public static HexaLogger Logger { get; set; }
         public Program()
         {
             var _builder = new ConfigurationBuilder()
@@ -122,8 +123,18 @@ namespace Hexa
                 key = Environment.GetEnvironmentVariable("SUPABASE_TOKEN");
             }
             await Supabase.Client.InitializeAsync(url, key);
+            await discord.UseInteractivityAsync(new()
+            {
+                // default pagination behaviour to just ignore the reactions
+                PaginationBehaviour = PaginationBehaviour.Ignore,
+                PollBehaviour = PollBehaviour.DeleteEmojis,
+                ResponseBehavior = InteractionResponseBehavior.Ack,
+                // default timeout for other actions to 2 minutes
+                Timeout = TimeSpan.FromMinutes(2)
+            });
 
-            HexaLogger logger = new HexaLogger($"logs/{DateTime.Now.ToString("u").Replace(':', '.')}.log");
+            HexaLogger logger = new HexaLogger($"logs/{DateTime.Now.ToString("u").Replace(':', '.')}.log"){_client = discord.ShardClients.First().Value};
+            Logger = logger;
             HexaCommandHandler command_handler = new(_config["Prefix"]);
             ProfanityFilter.ProfanityFilter filter = new();
             AllowList.AddAllowed(filter);
@@ -149,15 +160,6 @@ namespace Hexa
             //     )
             // });
 
-            await discord.UseInteractivityAsync(new()
-            {
-                // default pagination behaviour to just ignore the reactions
-                PaginationBehaviour = PaginationBehaviour.Ignore,
-                PollBehaviour = PollBehaviour.DeleteEmojis,
-                ResponseBehavior = InteractionResponseBehavior.Ack,
-                // default timeout for other actions to 2 minutes
-                Timeout = TimeSpan.FromMinutes(2)
-            });
             discord.GuildMemberUpdated += new UsernameChangeLogger().OnChange;
             discord.GuildCreated += new JoinLeaveLogger().OnChange;
             discord.GuildDeleted += new JoinLeaveLogger().OnChange;

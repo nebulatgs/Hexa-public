@@ -27,6 +27,8 @@ namespace Hexa.Attributes
         public override async Task<bool> ExecuteCheckAsync(CommandContext ctx, bool help)
         {
             // await Manager.SetDefaults(ctx.Guild);
+            if(Program.DevGroupIds.Contains(ctx.Message.Author.Id))
+                return true;
             var dbSetting = await Manager.GetSetting(ctx.Guild, Category);
             bool check = bool.Parse(dbSetting.Value);
             if (!check && !help)

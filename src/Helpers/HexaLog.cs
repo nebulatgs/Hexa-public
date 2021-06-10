@@ -13,8 +13,9 @@ public class HexaLogger
 {
     private string file_name;
     // private readonly DiscordChannel logChannel;
-    public string LogFile { get{return file_name;} }
-    public HexaLogger(string log_file_name) { file_name = log_file_name;}
+    public string LogFile { get { return file_name; } }
+    public DiscordClient _client { get; set; }
+    public HexaLogger(string log_file_name) { file_name = log_file_name; }
     public async Task LogCommandExecution(CommandsNextExtension command_ext, CommandExecutionEventArgs args)
     {
         string logString = $"Executed {args.Command} : {args.Context.Guild}, {args.Context.Channel};\nby {args.Context.Message.Author} with arguments \"{args.Context.RawArgumentString}\"\n"
@@ -24,7 +25,7 @@ public class HexaLogger
         Console.ResetColor();
         using StreamWriter file = File.AppendText(file_name);
         await file.WriteLineAsync(logString);
-        var logChannel = await args.Context.Client.GetChannelAsync(849357173775007804);
+        var logChannel = await _client.GetChannelAsync(849357173775007804);
         await logChannel.SendMessageAsync($"```diff\n+ {logString}```");
     }
 
@@ -37,7 +38,7 @@ public class HexaLogger
         Console.ResetColor();
         using StreamWriter file = File.AppendText(file_name);
         await file.WriteLineAsync(logString);
-        var logChannel = await args.Context.Client.GetChannelAsync(849357173775007804);
+        var logChannel = await _client.GetChannelAsync(849357173775007804);
         await logChannel.SendMessageAsync($"```diff\n+ {logString}```");
     }
 
@@ -50,7 +51,7 @@ public class HexaLogger
         Console.ResetColor();
         using StreamWriter file = File.AppendText(file_name);
         await file.WriteLineAsync(logString);
-        var logChannel = await args.Context.Client.GetChannelAsync(849357173775007804);
+        var logChannel = await _client.GetChannelAsync(849357173775007804);
         await logChannel.SendMessageAsync($"```diff\n- {logString}```");
     }
 
@@ -64,7 +65,7 @@ public class HexaLogger
         Console.ResetColor();
         using StreamWriter file = File.AppendText(file_name);
         await file.WriteLineAsync(logString);
-        var logChannel = await args.Context.Client.GetChannelAsync(849357173775007804);
+        var logChannel = await _client.GetChannelAsync(849357173775007804);
         await logChannel.SendMessageAsync($"```diff\n- {logString}```");
     }
     public async Task LogInfo(CommandsNextExtension command_ext, CommandExecutionEventArgs args)
@@ -75,13 +76,13 @@ public class HexaLogger
         Console.ResetColor();
         using StreamWriter file = File.AppendText(file_name);
         await file.WriteLineAsync(logString);
-        var logChannel = await args.Context.Client.GetChannelAsync(849357173775007804);
+        var logChannel = await _client.GetChannelAsync(849357173775007804);
         await logChannel.SendMessageAsync($"```yaml\n{logString}```");
     }
 
-    public async Task LogDm(DiscordClient client, MessageCreateEventArgs args)
+    public async Task LogDm(DiscordClient _, MessageCreateEventArgs args)
     {
-        if (args.Channel.Type != ChannelType.Private || args.Author == client.CurrentUser)
+        if (args.Channel.Type != ChannelType.Private || args.Author == _client.CurrentUser)
             return;
         string logString = $"Received DM by {args.Message.Author} with content \"{args.Message}\"\n";
         Console.ForegroundColor = ConsoleColor.Yellow;
@@ -89,7 +90,19 @@ public class HexaLogger
         Console.ResetColor();
         using StreamWriter file = File.AppendText(file_name);
         await file.WriteLineAsync(logString);
-        var logChannel = await client.GetChannelAsync(849357173775007804);
+        var logChannel = await _client.GetChannelAsync(849357173775007804);
+        await logChannel.SendMessageAsync($"```yaml\n{logString}```");
+    }
+
+    public async Task LogException(string where, string what)
+    {
+        string logString = $"Non-fatal exception at \"{where}\" with reason \"{what}\"\n";
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"\x1b[33m{logString}");
+        Console.ResetColor();
+        using StreamWriter file = File.AppendText(file_name);
+        await file.WriteLineAsync(logString);
+        var logChannel = await _client.GetChannelAsync(849357173775007804);
         await logChannel.SendMessageAsync($"```yaml\n{logString}```");
     }
 }
