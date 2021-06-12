@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
@@ -8,6 +9,7 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using DSharpPlus.Lavalink;
 using DSharpPlus.Lavalink.EventArgs;
+using DSharpPlus.Net;
 using Hexa.Attributes;
 using Hexa.Helpers;
 
@@ -17,6 +19,32 @@ namespace Hexa.Modules
     public class LavalinkModule : BaseCommandModule
     {
         private Dictionary<ulong, List<LavalinkTrack>> queue = new();
+        private Dictionary<ulong, bool> locked = new();
+        private async Task Register(CommandContext ctx, LavalinkGuildConnection conn)
+        {
+            try { await ctx.Guild.CurrentMember.SetDeafAsync(true); } catch { }
+            conn.PlaybackFinished += FinishedEventHandler;
+        }
+        private async Task FinishedEventHandler(LavalinkGuildConnection conn, TrackFinishEventArgs args)
+        {
+            queue[conn.Guild.Id].Remove(queue[conn.Guild.Id].First());
+            await conn.PlayAsync(queue[conn.Guild.Id].First());
+        }
+        private async Task<bool> PlayQueue(CommandContext ctx, LavalinkGuildConnection conn)
+        {
+            if (locked.ContainsKey(ctx.Guild.Id) && queue[ctx.Guild.Id].Count > 1)
+                return false;
+            // locked[ctx.Guild.Id] = true;
+            locked.TryAdd(ctx.Guild.Id, true);
+            await conn.PlayAsync(queue[ctx.Guild.Id].First());
+            return true;
+            // queue[ctx.Guild.Id].Remove(queue[ctx.Guild.Id].First());
+            // foreach(var track in queue[ctx.Guild.Id])
+            // {
+            // await conn.PlayAsync(track);
+            // conn.
+            // }
+        }
         [Command("join")]
         [Aliases("connect", "j", "summon")]
         [Category(SettingsManager.HexaSetting.VoiceCategory)]
@@ -31,7 +59,8 @@ namespace Hexa.Modules
                 throw new ArgumentException("I can only connect to voice channels");
 
             var link = ctx.Client.GetLavalink().GetIdealNodeConnection();
-            await link.ConnectAsync(channel);
+
+            await Register(ctx, await link.ConnectAsync(channel));
             await ctx.RespondAsync($"Connected to {channel.Mention}");
         }
 
@@ -47,39 +76,36 @@ namespace Hexa.Modules
                 var vstat = ctx.Member?.VoiceState;
                 if (vstat?.Channel is null)
                     throw new ArgumentException("You must join a voice channel first");
+
                 var channel = vstat.Channel;
                 conn = await link.ConnectAsync(channel);
-                // await ctx.RespondAsync($"Connected to {channel.Mention}");
+                await Register(ctx, conn);
             }
+
             var hEmbed = new HexaEmbed(ctx, "hexa music");
             hEmbed.embed.Description = "fetching… <a:pinging:781983658646175764>";
             var message = await ctx.Channel.SendMessageAsync(hEmbed.Build());
+
             var tracks = await conn.GetTracksAsync(query);
-            var self = await ctx.Guild.GetMemberAsync(ctx.Client.CurrentUser.Id);
-            await self.SetDeafAsync(true);
-            await conn.StopAsync();
+            if (!tracks.Tracks.Any())
+            {
+                hEmbed.embed.WithDescription("Unable to find any results for your query!");
+                await message.SafeModifyAsync(hEmbed.Build());
+                return;
+            }
+
             var track = tracks.Tracks.First();
-            var StartTime = DateTime.Now;
-            hEmbed.embed.WithTitle($"Now Playing: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("");
+            queue.TryAdd(ctx.Guild.Id, new());
+            queue[ctx.Guild.Id].Add(tracks.Tracks.First());
+
+            bool first = await PlayQueue(ctx, conn);
+            if (first)
+                hEmbed.embed.WithTitle($"Now Playing: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("");
+            else
+                hEmbed.embed.WithTitle($"Enqueued: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("");
             hEmbed.embed.AddField("Duration", track.Length.ToString("c"));
-            // var pos = (DateTime.Now - StartTime);
-            // hEmbed.embed.AddField("Position", pos.ToString(@"hh\:mm\:ss\.ff"), true);
-            // hEmbed.embed.RemoveFieldAt(1);
-            // hEmbed.WithFooter(track.Author);
+
             await message.SafeModifyAsync(hEmbed.Build());
-            await conn.PlayAsync(tracks.Tracks.First());
-            // conn.
-            // var playing = Task.Delay(track.Length);
-            // bool canceled = false;
-            // conn.PlaybackFinished += async (LavalinkGuildConnection _, TrackFinishEventArgs _) => canceled = true;
-            // while (!canceled)
-            // {
-            //     hEmbed.embed.RemoveFieldAt(1);
-            //     pos = (DateTime.Now - StartTime);
-            //     hEmbed.embed.AddField("Position", pos.ToString(@"hh\:mm\:ss\.ff"), true);
-            //     await message.SafeModifyAsync(hEmbed.Build());
-            //     await Task.Delay(10_000);
-            // }
         }
 
         [Command("play")]
@@ -92,33 +118,65 @@ namespace Hexa.Modules
                 var vstat = ctx.Member?.VoiceState;
                 if (vstat?.Channel is null)
                     throw new ArgumentException("You must join a voice channel first");
+
                 var channel = vstat.Channel;
                 conn = await link.ConnectAsync(channel);
-                // await ctx.RespondAsync($"Connected to {channel.Mention}");
+                await Register(ctx, conn);
             }
+
             var hEmbed = new HexaEmbed(ctx, "hexa music");
             hEmbed.embed.Description = "fetching… <a:pinging:781983658646175764>";
             var message = await ctx.Channel.SendMessageAsync(hEmbed.Build());
-            await conn.StopAsync();
             var tracks = await conn.GetTracksAsync(url);
-            var self = await ctx.Guild.GetMemberAsync(ctx.Client.CurrentUser.Id);
-            await self.SetDeafAsync(true);
-            var track = tracks.Tracks.First();
-            hEmbed.embed.WithTitle($"Now Playing: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("");
-            hEmbed.embed.AddField("Duration", track.Length.ToString("c"));
-            // hEmbed.WithFooter(track.Author);
-            await message.SafeModifyAsync(hEmbed.Build());
-            await conn.PlayAsync(track);
+            if (!tracks.Tracks.Any())
+            {
+                hEmbed.embed.WithDescription("Unable to find any results for your query!");
+                await message.SafeModifyAsync(hEmbed.Build());
+                return;
+            }
 
+            var track = tracks.Tracks.First();
+            queue.TryAdd(ctx.Guild.Id, new());
+            queue[ctx.Guild.Id].Add(tracks.Tracks.First());
+
+            bool first = await PlayQueue(ctx, conn);
+            if (first)
+                hEmbed.embed.WithTitle($"Now Playing: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("");
+            else
+                hEmbed.embed.WithTitle($"Enqueued: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("");
+
+            hEmbed.embed.AddField("Duration", track.Length.ToString("c"));
+            await message.SafeModifyAsync(hEmbed.Build());
         }
 
         [Command("skip")]
         [Aliases("s", "stop")]
-        public async Task StopCommand(CommandContext ctx)
+        public async Task StopCommand(CommandContext ctx, int count = 1)
         {
+            if (queue.ContainsKey(ctx.Guild.Id))
+            {
+                if (!queue[ctx.Guild.Id].Any())
+                    throw new InvalidOperationException("There's nothing in the queue to be skipped!");
+            }
+            else
+            {
+                throw new InvalidOperationException("There's nothing in the queue to be skipped!");
+            }
+            var hEmbed = new HexaEmbed(ctx, "hexa music");
+            hEmbed.embed.Description = "fetching… <a:pinging:781983658646175764>";
+            var message = await ctx.Channel.SendMessageAsync(hEmbed.Build());
+
             var link = ctx.Client.GetLavalink().GetIdealNodeConnection();
             var conn = link.GetGuildConnection(ctx.Guild);
+            var track = queue[ctx.Guild.Id].First();
+            var newTrack = queue[ctx.Guild.Id].Count() > 1 ? queue[ctx.Guild.Id][1] : null;
+
             await conn.StopAsync();
+            if (queue[ctx.Guild.Id].Count() > 1)
+                hEmbed.embed.WithTitle($"Skipped: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription($"[Now Playing: {newTrack.Title} by {newTrack.Author}]({newTrack.Uri})");
+            else
+                hEmbed.embed.WithTitle($"Skipped: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("The queue is now empty");
+            await message.SafeModifyAsync(hEmbed.Build());
         }
 
         [Command("leave")]
@@ -147,10 +205,23 @@ namespace Hexa.Modules
                     throw new ArgumentException("You must join a voice channel first");
                 var channel = vstat.Channel;
                 conn = await link.ConnectAsync(channel);
+                await Register(ctx, conn);
                 // await ctx.RespondAsync($"Connected to {channel.Mention}");
             }
-            var tracks = await conn.GetTracksAsync(new Uri("https://cdn.offline.codes/21/06/hip_shop.ogg"));
-            await conn.PlayAsync(tracks.Tracks.First());
+            var hEmbed = new HexaEmbed(ctx, "hexa music");
+            hEmbed.embed.Description = "fetching… <a:pinging:781983658646175764>";
+            var message = await ctx.Channel.SendMessageAsync(hEmbed.Build());
+            // await conn.StopAsync();
+            var tracks = await conn.GetTracksAsync(new Uri("https://www.youtube.com/watch?v=LeEBVtsqej0"));
+            queue.TryAdd(ctx.Guild.Id, new());
+            queue[ctx.Guild.Id].Add(tracks.Tracks.First());
+            await PlayQueue(ctx, conn);
+            // await conn.PlayAsync(tracks.Tracks.First());
+            hEmbed.embed.WithImageUrl("https://cdn.offline.codes/21/06/1159-iTX5fx2s2y.gif")
+                        .WithDescription("")
+                        .WithTitle("Box")
+                        .WithUrl("https://box.cubedhuang.com");
+            await message.SafeModifyAsync(hEmbed.Build());
         }
     }
 }
