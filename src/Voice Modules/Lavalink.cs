@@ -12,10 +12,12 @@ using DSharpPlus.Lavalink.EventArgs;
 using DSharpPlus.Net;
 using Hexa.Attributes;
 using Hexa.Helpers;
+using Humanizer;
+using Humanizer.Localisation;
 
 namespace Hexa.Modules
 {
-    [Hidden]
+    [GuildOnly]
     public class LavalinkModule : BaseCommandModule
     {
         private Dictionary<ulong, List<LavalinkTrack>> queue = new();
@@ -47,6 +49,7 @@ namespace Hexa.Modules
         }
         [Command("join")]
         [Aliases("connect", "j", "summon")]
+        [Description("Join a voice channel")]
         [Category(SettingsManager.HexaSetting.VoiceCategory)]
         public async Task ConnectCommand(CommandContext ctx, DiscordChannel channel = null)
         {
@@ -66,6 +69,7 @@ namespace Hexa.Modules
 
         [Command("play")]
         [Aliases("p")]
+        [Description("Play music in a voice channel")]
         [Category(SettingsManager.HexaSetting.VoiceCategory)]
         public async Task PlayCommand(CommandContext ctx, [RemainingText] string query)
         {
@@ -103,7 +107,7 @@ namespace Hexa.Modules
                 hEmbed.embed.WithTitle($"Now Playing: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("");
             else
                 hEmbed.embed.WithTitle($"Enqueued: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("");
-            hEmbed.embed.AddField("Duration", track.Length.ToString("c"));
+            hEmbed.embed.AddField("Duration", track.Length.Humanize(3, maxUnit: TimeUnit.Hour, minUnit: TimeUnit.Second));
 
             await message.SafeModifyAsync(hEmbed.Build());
         }
@@ -145,12 +149,14 @@ namespace Hexa.Modules
             else
                 hEmbed.embed.WithTitle($"Enqueued: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("");
 
-            hEmbed.embed.AddField("Duration", track.Length.ToString("c"));
+            hEmbed.embed.AddField("Duration", track.Length.Humanize(3, maxUnit: TimeUnit.Hour, minUnit: TimeUnit.Second));
             await message.SafeModifyAsync(hEmbed.Build());
         }
 
         [Command("skip")]
         [Aliases("s", "stop")]
+        [Description("Skip tracks in the music queue")]
+        [Category(SettingsManager.HexaSetting.VoiceCategory)]
         public async Task StopCommand(CommandContext ctx, int count = 1)
         {
             if (queue.ContainsKey(ctx.Guild.Id))
@@ -181,6 +187,8 @@ namespace Hexa.Modules
 
         [Command("leave")]
         [Aliases("l")]
+        [Description("Leave the current voice channel")]
+        [Category(SettingsManager.HexaSetting.VoiceCategory)]
         public async Task LeaveCommand(CommandContext ctx)
         {
             var conn = ctx.Client.
@@ -193,7 +201,35 @@ namespace Hexa.Modules
             await ctx.RespondAsync($"Left {conn.Channel.Mention}");
         }
 
+        [Command("queue")]
+        [Aliases("q")]
+        [Description("View all tracks in the queue")]
+        [Category(SettingsManager.HexaSetting.VoiceCategory)]
+        public async Task QueueCommand(CommandContext ctx)
+        {
+            var hEmbed = new HexaEmbed(ctx, "hexa music");
+            hEmbed.embed.WithDescription("fetching… <a:pinging:781983658646175764>");
+            var message = await ctx.Channel.SendMessageAsync(hEmbed.Build());
+            hEmbed.embed.WithTitle("Current Queue");
+            if (!queue.ContainsKey(ctx.Guild.Id) || (!queue?[ctx.Guild.Id]?.Any() ?? false))
+            {
+                hEmbed.embed.WithDescription("The queue is empty");
+                await message.SafeModifyAsync(hEmbed.Build());
+                return;
+            }
+            int i = 0;
+            hEmbed.embed.WithDescription("");
+            hEmbed.embed.WithTitle($"Current Queue ({TimeSpan.FromSeconds(queue[ctx.Guild.Id].Sum(x => x.Length.TotalSeconds)).Humanize(3)})");
+            foreach (var track in queue[ctx.Guild.Id])
+            {
+                i++;
+                hEmbed.embed.Description += $"\n**Track {i}:** [{track.Title}]({track.Uri}) by {track.Author} ({track.Length.Humanize(3, maxUnit: TimeUnit.Hour, minUnit: TimeUnit.Second)})";
+            }
+            await message.SafeModifyAsync(hEmbed.Build());
+        }
+
         [Command("box")]
+        [Category(SettingsManager.HexaSetting.RandomCategory)]
         public async Task BoxCommand(CommandContext ctx)
         {
             var link = ctx.Client.GetLavalink().GetIdealNodeConnection();

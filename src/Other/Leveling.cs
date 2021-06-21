@@ -107,9 +107,9 @@ namespace Hexa.Other
         {
             var instance = Supabase.Client.Instance;
             var channels = instance.From<UserLevelRow>();
-            var guild_levels = await channels.Get();
-            var this_guild = guild_levels.Models.Where(x => x.UserId == user.Id).FirstOrDefault();
-            return this_guild;
+            var user_levels = await channels.Get();
+            var this_user = user_levels.Models.Where(x => x.UserId == user.Id).FirstOrDefault();
+            return this_user;
         }
         public static async Task<List<UserLevelRow>> GetUserValues()
         {
@@ -130,14 +130,15 @@ namespace Hexa.Other
             };
             var channels = instance.From<UserLevelRow>();
             var user_levels = await channels.Get();
+            // var set = user_levels.Models.Where(x => x.UserId == user.Id);
             bool foundSettings = user_levels.Models.Where(x => x.UserId == user.Id).Any();
             if (!foundSettings)
             {
-                await channels.Insert(new_row);
+                await channels.Update(new_row);
             }
             else
             {
-                await channels.Update(new_row);
+                await channels.Insert(new_row);
             }
         }
     }

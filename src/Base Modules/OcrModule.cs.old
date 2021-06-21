@@ -1,0 +1,41 @@
+// using System;
+// using System.IO;
+// using System.Linq;
+// using System.Net;
+// using System.Threading.Tasks;
+// using DSharpPlus;
+// using DSharpPlus.CommandsNext;
+// using DSharpPlus.CommandsNext.Attributes;
+// using Hexa.Attributes;
+// using Hexa.Helpers;
+// using Patagames.Ocr;
+// using Patagames.Ocr.Enums;
+
+// namespace Hexa.Modules
+// {
+//     [HexaCooldown(5)]
+//     public class OcrModule : BaseCommandModule
+//     {
+//         [Command("ocr")]
+//         [Description("Use Optical Character Recognition on an image to convert it to text")]
+//         [Category(SettingsManager.HexaSetting.UtilityCategory)]
+//         public async Task OcrCommand(CommandContext ctx, Uri image_url = null)
+//         {
+//             WebRequest request = WebRequest.Create(image_url.ToString() ?? ctx.Message.Attachments.First().Url);
+//             WebResponse response = request.GetResponse();
+//             // string originalFileName = response.Headers["Content-Disposition"];
+//             string originalFileName = request.RequestUri.ToString().Split('/').Last();
+//             Stream streamWithFileBody = response.GetResponseStream();
+//             using (FileStream outputFileStream = new FileStream($"ocr/{originalFileName}", FileMode.Create))
+//             {
+//                 streamWithFileBody.CopyTo(outputFileStream);
+//             }
+//             using (var api = OcrApi.Create())
+//             {
+//                 api.Init(Languages.English);
+//                 string plainText = api.GetTextFromImage($"ocr/{originalFileName}");
+//                 await ctx.RespondAsync(plainText);
+//             }
+//         }
+//     }
+// }
