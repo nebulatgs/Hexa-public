@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,6 +65,7 @@ namespace Hexa
         public static string TOKEN { get; private set; }
         public static List<ulong> DevGroupIds { get; set; }
         public static string DBSTRING { get; private set; }
+        public static string DBOTS_TOKEN { get; private set; }
         public static string DSKEY { get; private set; }
         public static string LAVALINK_PW { get; set; }
         public static HexaLogger Logger { get; set; }
@@ -78,6 +81,13 @@ namespace Hexa
                 TOKEN = Environment.GetEnvironmentVariable("BOT_TOKEN");
                 DSKEY = Environment.GetEnvironmentVariable("DSKEY");
                 LAVALINK_PW = Environment.GetEnvironmentVariable("LAVALINK");
+                DBOTS_TOKEN = Environment.GetEnvironmentVariable("DBOTS_TOKEN");
+
+                Environment.SetEnvironmentVariable("DBSTRING", null);
+                Environment.SetEnvironmentVariable("BOT_TOKEN", null);
+                Environment.SetEnvironmentVariable("DSKEY", null);
+                Environment.SetEnvironmentVariable("LAVALINK", null);
+                Environment.SetEnvironmentVariable("DBOTS_TOKEN", null);
             }
             else
             {
@@ -85,6 +95,7 @@ namespace Hexa
                 TOKEN = _config["Token"];
                 DSKEY = _config["DarkSky-key"];
                 LAVALINK_PW = _config["Lavalink-PW"];
+                DBOTS_TOKEN = _config["Dbots_Token"];
             }
             DevGroupIds = new List<ulong>();
             var devs = _config["Devs"].Split(',');
@@ -121,6 +132,9 @@ namespace Hexa
             {
                 url = Environment.GetEnvironmentVariable("SUPABASE_URL");
                 key = Environment.GetEnvironmentVariable("SUPABASE_TOKEN");
+
+                Environment.SetEnvironmentVariable("SUPABASE_URL", null);
+                Environment.SetEnvironmentVariable("SUPABASE_TOKEN", null);
             }
             await Supabase.Client.InitializeAsync(url, key);
             await discord.UseInteractivityAsync(new()
@@ -133,7 +147,7 @@ namespace Hexa
                 Timeout = TimeSpan.FromMinutes(2)
             });
 
-            HexaLogger logger = new HexaLogger($"logs/{DateTime.Now.ToString("u").Replace(':', '.')}.log"){_client = discord.ShardClients.First().Value};
+            HexaLogger logger = new HexaLogger($"logs/{DateTime.Now.ToString("u").Replace(':', '.')}.log") { _client = discord.ShardClients.First().Value };
             Logger = logger;
             HexaCommandHandler command_handler = new(_config["Prefix"]);
             ProfanityFilter.ProfanityFilter filter = new();
@@ -184,7 +198,7 @@ namespace Hexa
                 {
                     slash.RegisterCommands<Modules.ActivitySlash>(844754896358998018);
                     slash.RegisterCommands<Modules.AvatarSlash>(844754896358998018);
-                    // slash.RegisterCommands<Modules.ButtonSlash>(844754896358998018);
+                    slash.RegisterCommands<Modules.ButtonSlash>(847891805185245217);
                 }
                 slash.SlashCommandExecuted += logger.LogSlashCommandExecution;
                 slash.SlashCommandErrored += logger.LogSlashCommandError;
@@ -224,18 +238,46 @@ namespace Hexa
             }
             await PeriodicTask.Run(async () =>
             {
+                int guildCount = discord.ShardClients.Sum(client => client.Value.Guilds.Sum(x => x.Value.MemberCount));
                 foreach (var client in discord.ShardClients)
                 {
-                    var activity = new DiscordActivity($"{_config["Prefix"]}help | {client.Value.Guilds.Sum(x => x.Value.MemberCount).ToString("N0")} users", ActivityType.Playing);
+                    var activity = new DiscordActivity($"{_config["Prefix"]}help | {guildCount.ToString("N0")} users", ActivityType.Playing);
                     await client.Value.UpdateStatusAsync(activity, UserStatus.Online);
                 }
                 ServerTime.FetchServerTimeDifference();
+                // PostDBotsStats(discord.CurrentUser.Id, guildCount);
             }, TimeSpan.FromMinutes(1));
         }
         private async Task CmdErroredHandler(CommandsNextExtension _, CommandErrorEventArgs e)
         {
             if (e.Exception is ChecksFailedException) return;
             await e.Context.RespondAsync(e.Exception.Message);
+        }
+        private void PostDBotsStats(ulong clientSnowflake, int guildCount)
+        {
+            var url = $"https://discord.bots.gg/api/v1/bots/{clientSnowflake}/stats";
+
+            var httpRequest = (HttpWebRequest)WebRequest.Create(url);
+            httpRequest.Method = "POST";
+
+            httpRequest.Headers["Authorization"] = Program.DBOTS_TOKEN;
+            httpRequest.ContentType = "application/json";
+
+            var data = "{\"guildCount\": " + guildCount + "}";
+
+            using (var streamWriter = new StreamWriter(httpRequest.GetRequestStream()))
+            {
+                streamWriter.Write(data);
+            }
+
+            var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
+            if(httpResponse.StatusCode == HttpStatusCode.OK)
+            {
+                Console.WriteLine("Posted stats to bots.gg");
+            }
+            else{
+                Console.WriteLine("Failed to post stats to bots.gg");
+            }
         }
     }
 
