@@ -240,7 +240,7 @@ namespace Hexa
             {
                 int guildCount = discord.ShardClients.Sum(client => client.Value.Guilds.Sum(x => x.Value.MemberCount));
                 if(Environment.GetEnvironmentVariable("PROD") is not null)
-                    await dbl_me.UpdateStatsAsync(0, discord.ShardClients.Count, discord.ShardClients.Select(client => client.Value.Guilds.Sum(x => x.Value.MemberCount)).ToArray());
+                    await dbl_me.UpdateStatsAsync(0, discord.ShardClients.Count, discord.ShardClients.Select(client => client.Value.Guilds.Count).ToArray());
                 foreach (var client in discord.ShardClients)
                 {
                     var activity = new DiscordActivity($"{_config["Prefix"]}help | {guildCount.ToString("N0")} users", ActivityType.Playing);
