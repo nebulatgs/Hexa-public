@@ -283,7 +283,7 @@ namespace Hexa.Modules
                 }
 
                 var checkBoard = new TicTacToeAlgorithm();
-                checkBoard.board = new List<int>(values);
+                checkBoard.board = new(values);
 
                 var aiButton = 0;
                 if (turn == 1)

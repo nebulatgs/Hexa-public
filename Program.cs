@@ -6,26 +6,21 @@ using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using DiscordBotsList.Api;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Exceptions;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
-using DSharpPlus.Exceptions;
-using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Enums;
 using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.Lavalink;
-using DSharpPlus.Net;
 using DSharpPlus.SlashCommands;
 using Hexa.Helpers;
 using Hexa.Other;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Postgrest.Attributes;
-using Postgrest.Models;
-using Supabase;
 
 namespace Hexa
 {
@@ -66,6 +61,7 @@ namespace Hexa
         public static List<ulong> DevGroupIds { get; set; }
         public static string DBSTRING { get; private set; }
         public static string DBOTS_TOKEN { get; private set; }
+        public static string DBL_TOKEN { get; private set; }
         public static string DSKEY { get; private set; }
         public static string LAVALINK_PW { get; set; }
         public static HexaLogger Logger { get; set; }
@@ -82,11 +78,13 @@ namespace Hexa
                 DSKEY = Environment.GetEnvironmentVariable("DSKEY");
                 LAVALINK_PW = Environment.GetEnvironmentVariable("LAVALINK");
                 DBOTS_TOKEN = Environment.GetEnvironmentVariable("DBOTS_TOKEN");
+                DBL_TOKEN = Environment.GetEnvironmentVariable("DBL_TOKEN");
                 Environment.SetEnvironmentVariable("DBSTRING", null);
                 Environment.SetEnvironmentVariable("BOT_TOKEN", null);
                 Environment.SetEnvironmentVariable("DSKEY", null);
                 Environment.SetEnvironmentVariable("LAVALINK", null);
                 Environment.SetEnvironmentVariable("DBOTS_TOKEN", null);
+                Environment.SetEnvironmentVariable("DBL_TOKEN", null);
             }
             else
             {
@@ -95,6 +93,7 @@ namespace Hexa
                 DSKEY = _config["DarkSky-key"];
                 LAVALINK_PW = _config["Lavalink-PW"];
                 DBOTS_TOKEN = _config["Dbots_Token"];
+                DBL_TOKEN = _config["Dbl_Token"];
             }
             DevGroupIds = new List<ulong>();
             var devs = _config["Devs"].Split(',');
@@ -235,9 +234,13 @@ namespace Hexa
                 var lavalink = client.Value.UseLavalink();
                 await lavalink.ConnectAsync(lavaconfig);
             }
+            AuthDiscordBotListApi DblApi = new(discord.CurrentUser.Id, DBL_TOKEN);
+            var dbl_me = await DblApi.GetMeAsync();
             await PeriodicTask.Run(async () =>
             {
                 int guildCount = discord.ShardClients.Sum(client => client.Value.Guilds.Sum(x => x.Value.MemberCount));
+                if(Environment.GetEnvironmentVariable("PROD") is not null)
+                    await dbl_me.UpdateStatsAsync(0, discord.ShardClients.Count, discord.ShardClients.Select(client => client.Value.Guilds.Sum(x => x.Value.MemberCount)).ToArray());
                 foreach (var client in discord.ShardClients)
                 {
                     var activity = new DiscordActivity($"{_config["Prefix"]}help | {guildCount.ToString("N0")} users", ActivityType.Playing);
