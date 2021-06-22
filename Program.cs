@@ -82,7 +82,6 @@ namespace Hexa
                 DSKEY = Environment.GetEnvironmentVariable("DSKEY");
                 LAVALINK_PW = Environment.GetEnvironmentVariable("LAVALINK");
                 DBOTS_TOKEN = Environment.GetEnvironmentVariable("DBOTS_TOKEN");
-
                 Environment.SetEnvironmentVariable("DBSTRING", null);
                 Environment.SetEnvironmentVariable("BOT_TOKEN", null);
                 Environment.SetEnvironmentVariable("DSKEY", null);
