@@ -7,6 +7,8 @@ using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using DSharpPlus.Interactivity;
+using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.Lavalink;
 using DSharpPlus.Lavalink.EventArgs;
 using DSharpPlus.Net;
@@ -29,7 +31,11 @@ namespace Hexa.Modules
         }
         private async Task FinishedEventHandler(LavalinkGuildConnection conn, TrackFinishEventArgs args)
         {
+            if (!queue[conn.Guild.Id].Any())
+                return;
             queue[conn.Guild.Id].Remove(queue[conn.Guild.Id].First());
+            if (!queue[conn.Guild.Id].Any())
+                return;
             await conn.PlayAsync(queue[conn.Guild.Id].First());
         }
         private async Task<bool> PlayQueue(CommandContext ctx, LavalinkGuildConnection conn)
@@ -218,14 +224,41 @@ namespace Hexa.Modules
                 return;
             }
             int i = 0;
-            hEmbed.embed.WithDescription("");
-            hEmbed.embed.WithTitle($"Current Queue ({TimeSpan.FromSeconds(queue[ctx.Guild.Id].Sum(x => x.Length.TotalSeconds)).Humanize(3)})");
-            foreach (var track in queue[ctx.Guild.Id])
+            var pages = new List<Page>();
+            int page_index = 1;
+            var chunks = queue[ctx.Guild.Id].Chunk(10);
+            foreach (var chunk in chunks)
             {
-                i++;
-                hEmbed.embed.Description += $"\n**Track {i}:** [{track.Title}]({track.Uri}) by {track.Author} ({track.Length.Humanize(3, maxUnit: TimeUnit.Hour, minUnit: TimeUnit.Second)})";
+                hEmbed = new HexaEmbed(ctx, "hexa music").WithFooter($"Page {page_index} of {Math.Ceiling(queue[ctx.Guild.Id].Count / 10.0)}");
+                hEmbed.embed.WithTitle($"Current Queue ({TimeSpan.FromSeconds(queue[ctx.Guild.Id].Sum(x => x.Length.TotalSeconds)).Humanize(3)})");
+                foreach (var track in chunk)
+                {
+                    i++;
+                    hEmbed.embed.Description += $"\n**Track {i}:** [{track.Title}]({track.Uri}) by {track.Author} ({track.Length.Humanize(3, maxUnit: TimeUnit.Hour, minUnit: TimeUnit.Second)})";
+                }
+                pages.Add(new(embed: hEmbed.embed));
+                page_index++;
             }
-            await message.SafeModifyAsync(hEmbed.Build());
+            var interactivity = ctx.Client.GetInteractivity();
+            await interactivity.SendButtonPaginatedMessageAsync(ctx.Channel, ctx.Message.Author, pages, "queue", timeout: TimeSpan.FromSeconds(60), msg: message, showPrint: false);
+        }
+
+        [Command("clearqueue")]
+        [Aliases("cq")]
+        [Description("Clear the queue")]
+        [Category(SettingsManager.HexaSetting.VoiceCategory)]
+        public async Task ClearQueueCommand(CommandContext ctx)
+        {
+            var hEmbed = new HexaEmbed(ctx, "hexa music");
+            if (!queue.ContainsKey(ctx.Guild.Id) || (!queue?[ctx.Guild.Id]?.Any() ?? false))
+                throw new InvalidOperationException("The queue is already empty!");
+            queue.Remove(ctx.Guild.Id);
+            var link = ctx.Client.GetLavalink().GetIdealNodeConnection();
+            var conn = link.GetGuildConnection(ctx.Guild);
+            await conn.StopAsync();
+            hEmbed.embed.WithDescription("The queue is now empty");
+            await ctx.RespondAsync(hEmbed.Build());
+            return;
         }
 
         [Command("box")]
