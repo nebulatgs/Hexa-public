@@ -40,7 +40,7 @@ namespace Hexa.Modules
             builder.WithEmbed(hEmbed.Build());
             var message = await builder.SendAsync(ctx.Channel);
             await Task.Delay(500);
-            var roll = rand.NextBigInteger(1, bigint_sides + 1);
+            var roll = rand.NextBigInteger(1, bigint_sides);
             hEmbed.embed.Description = $"**Rolled a** {roll}";
             builder.WithEmbed(hEmbed.Build()).AddComponents(button);
 
@@ -53,7 +53,7 @@ namespace Hexa.Modules
                 builder.WithEmbed(hEmbed.Build());
                 await message.ModifyAsync(builder);
                 await Task.Delay(500);
-                roll = rand.NextBigInteger(1, bigint_sides + 1);
+                roll = rand.NextBigInteger(1, bigint_sides);
                 hEmbed.embed.Description = $"**Rolled a** {roll}";
                 builder.WithEmbed(hEmbed.Build());
                 await message.ModifyAsync(builder);

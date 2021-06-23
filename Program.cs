@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using DiscordBotsList.Api;
+using DiscordBotsList.Api.Objects;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Exceptions;
@@ -117,7 +118,8 @@ namespace Hexa
                 TokenType = TokenType.Bot,
                 Intents = DiscordIntents.All,
                 AutoReconnect = true,
-                MinimumLogLevel = LogLevel.Debug
+                MinimumLogLevel = LogLevel.Debug,
+                ShardCount = 3
             });
 
             string url, key;
@@ -234,12 +236,16 @@ namespace Hexa
                 var lavalink = client.Value.UseLavalink();
                 await lavalink.ConnectAsync(lavaconfig);
             }
-            AuthDiscordBotListApi DblApi = new(discord.CurrentUser.Id, DBL_TOKEN);
-            var dbl_me = await DblApi.GetMeAsync();
+            IDblSelfBot dbl_me = null;
+            if (Environment.GetEnvironmentVariable("PROD") is not null)
+            {
+                AuthDiscordBotListApi DblApi = new(discord.CurrentUser.Id, DBL_TOKEN);
+                dbl_me = await DblApi.GetMeAsync();
+            }
             await PeriodicTask.Run(async () =>
             {
                 int guildCount = discord.ShardClients.Sum(client => client.Value.Guilds.Sum(x => x.Value.MemberCount));
-                if(Environment.GetEnvironmentVariable("PROD") is not null)
+                if (Environment.GetEnvironmentVariable("PROD") is not null)
                     await dbl_me.UpdateStatsAsync(0, discord.ShardClients.Count, discord.ShardClients.Select(client => client.Value.Guilds.Count).ToArray());
                 foreach (var client in discord.ShardClients)
                 {
@@ -273,11 +279,12 @@ namespace Hexa
             }
 
             var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
-            if(httpResponse.StatusCode == HttpStatusCode.OK)
+            if (httpResponse.StatusCode == HttpStatusCode.OK)
             {
                 Console.WriteLine("Posted stats to bots.gg");
             }
-            else{
+            else
+            {
                 Console.WriteLine("Failed to post stats to bots.gg");
             }
         }

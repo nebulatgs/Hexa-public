@@ -71,6 +71,13 @@ namespace Hexa.Modules
             }
         }
 
+        [Command("shard")]
+        [Category(SettingsManager.HexaSetting.DangerCategory)]
+        public async Task ShardCommand(CommandContext ctx)
+        {
+           await ctx.RespondAsync(ctx.Client.ShardId.ToString("N0"));
+        }
+        
         [Command("sleave")]
         [Description("Leave a server")]
         [Category(SettingsManager.HexaSetting.DangerCategory)]
