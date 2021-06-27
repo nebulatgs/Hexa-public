@@ -22,7 +22,8 @@ namespace Hexa.Helpers
             InfoCategory,
             AdminCategory,
             DangerCategory,
-            VoiceCategory
+            VoiceCategory,
+            DumbCategory
         }
         private static List<GuildSettingAddable> guildSettings { get; set; }
         public static List<SettingDef> guildSettingDefs { get; set; }

@@ -170,7 +170,7 @@ namespace Hexa.Modules
 
         [Command("settings")]
         [HelpHide]
-        public Task SettingsCommand(CommandContext ctx, [RemainingText] string setting)
+        public async Task SettingsCommand(CommandContext ctx, [RemainingText] string setting)
         {
             throw new ArgumentException("That's not a valid setting");
         }

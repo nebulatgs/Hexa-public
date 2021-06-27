@@ -151,12 +151,14 @@ namespace Hexa
             Logger = logger;
             HexaCommandHandler command_handler = new(_config["Prefix"]);
             ProfanityFilter.ProfanityFilter filter = new();
+            SnipeHelper snipeHelper = new();
             AllowList.AddAllowed(filter);
             var services = new ServiceCollection().
                 AddSingleton<HexaLogger>(logger).
                 AddSingleton<Random>().
                 AddSingleton<SettingsManager>().
                 AddSingleton<ProfanityFilter.ProfanityFilter>(filter).
+                AddSingleton<SnipeHelper>(snipeHelper).
                 BuildServiceProvider();
             var commands = await discord.UseCommandsNextAsync(new()
             {
@@ -220,6 +222,7 @@ namespace Hexa
 
 
 
+            discord.MessageDeleted += snipeHelper.MessageDeleted;
             discord.MessageDeleted += new Modules.GhostPingDetector().OnDelete;
             discord.MessageCreated += command_handler.CommandHandler;
             discord.MessageCreated += guild_levels.MessageSent;
@@ -228,7 +231,7 @@ namespace Hexa
 
             discord.ComponentInteractionCreated += async (DiscordClient client, ComponentInteractionCreateEventArgs args) =>
             {
-                await args.Interaction.CreateResponseAsync(InteractionResponseType.DefferedMessageUpdate);
+                await args.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
             };
             await discord.StartAsync();
             foreach (var client in discord.ShardClients)

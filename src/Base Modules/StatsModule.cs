@@ -7,11 +7,13 @@ using DSharp​Plus.CommandsNext.Attributes;
 
 using Hexa.Helpers;
 using Hexa.Attributes;
+using DSharpPlus;
 
 namespace Hexa.Modules
 {
     public class StatsModule : BaseCommandModule
     {
+        public DiscordShardedClient client { get; set; }
         [Command("stats")]
         // [Aliases("botstats", "botinfo")]
         [Description("Get Hexa's statistics")]
@@ -21,12 +23,12 @@ namespace Hexa.Modules
             var hEmbed = new HexaEmbed(ctx, "bot info");
             hEmbed.embed.AddField(
                 name: "Server Count",
-                value: ctx.Client.Guilds.Count().ToString(),
+                value: client.ShardClients.Sum(c => c.Value.Guilds.Count).ToString(),
                 inline: true
             );
             hEmbed.embed.AddField(
                 name: "User Count",
-                value: ctx.Client.Guilds.Sum(x => x.Value.MemberCount).ToString(),
+                value: client.ShardClients.Sum(c => c.Value.Guilds.Sum(g => g.Value.MemberCount)).ToString(),
                 inline: true
             );
 
