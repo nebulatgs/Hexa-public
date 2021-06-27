@@ -159,6 +159,7 @@ namespace Hexa
                 AddSingleton<SettingsManager>().
                 AddSingleton<ProfanityFilter.ProfanityFilter>(filter).
                 AddSingleton<SnipeHelper>(snipeHelper).
+                AddSingleton<DiscordShardedClient>(discord).
                 BuildServiceProvider();
             var commands = await discord.UseCommandsNextAsync(new()
             {
