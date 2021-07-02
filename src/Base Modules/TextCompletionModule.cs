@@ -96,7 +96,7 @@ namespace Hexa.Modules
                 throw new ArgumentException("What text should I complete?");
             if (filter.DetectAllProfanities(text).Any() && !ctx.Channel.IsNSFW)
                 throw new InvalidOperationException("I can't autocomplete that, sorry…");
-            var close = new DiscordButtonComponent(ButtonStyle.Danger, "ai_close", "close", false);
+            var close = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Danger, "ai_close", "close", false);
             var builder = new DiscordMessageBuilder();
             var interactivity = ctx.Client.GetInteractivity();
             DiscordButtonComponent[] buttons = { close };

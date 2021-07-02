@@ -89,9 +89,9 @@ namespace Hexa.Modules
             List<int> values = new List<int>();
             for (var i = 0; i < 3; i++)
             {
-                button_row1[i] = (new DiscordButtonComponent(ButtonStyle.Secondary, $"tictactoe_{i}", "\u200B ", false));
-                button_row2[i] = (new DiscordButtonComponent(ButtonStyle.Secondary, $"tictactoe_{i + 3}", "\u200B ", false));
-                button_row3[i] = (new DiscordButtonComponent(ButtonStyle.Secondary, $"tictactoe_{i + 6}", "\u200B ", false));
+                button_row1[i] = (new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, $"tictactoe_{i}", "\u200B ", false));
+                button_row2[i] = (new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, $"tictactoe_{i + 3}", "\u200B ", false));
+                button_row3[i] = (new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, $"tictactoe_{i + 6}", "\u200B ", false));
                 values.Add(2);
                 values.Add(2);
                 values.Add(2);
@@ -138,7 +138,7 @@ namespace Hexa.Modules
                 var button = buttons.Where(x => x.CustomId == result.Result.Id).First();
                 var player = result.Result.User == ctx.Message.Author ? 5 : 4;
                 button.Disabled = true;
-                button.Style = ButtonStyle.Primary;
+                button.Style = DSharpPlus.ButtonStyle.Primary;
                 button.Label = player == 5 ? "\u200A✕\u200A" : "\u200A◯\u200A";
                 values[buttonInd] = player;
                 turn++;
@@ -147,13 +147,13 @@ namespace Hexa.Modules
                 if (cells_X.Item1)
                 {
                     builder.Content = $"Play Tic Tac Toe against {opponent.DisplayName}!\n{(await ctx.Guild.GetMemberAsync(ctx.Message.Author.Id)).DisplayName} wins!";
-                    buttons.ElementAt(cells_X.Item2).Style = ButtonStyle.Success;
-                    buttons.ElementAt(cells_X.Item3).Style = ButtonStyle.Success;
-                    buttons.ElementAt(cells_X.Item4).Style = ButtonStyle.Success;
+                    buttons.ElementAt(cells_X.Item2).Style = DSharpPlus.ButtonStyle.Success;
+                    buttons.ElementAt(cells_X.Item3).Style = DSharpPlus.ButtonStyle.Success;
+                    buttons.ElementAt(cells_X.Item4).Style = DSharpPlus.ButtonStyle.Success;
                     var losingSide = values.Select((val, index) => (val, index)).Where(x => x.val == 4);
                     foreach (var elem in losingSide)
                     {
-                        buttons.ElementAt(elem.index).Style = ButtonStyle.Danger;
+                        buttons.ElementAt(elem.index).Style = DSharpPlus.ButtonStyle.Danger;
                     }
                     break;
                 }
@@ -162,13 +162,13 @@ namespace Hexa.Modules
                 if (cells_O.Item1)
                 {
                     builder.Content = $"Play Tic Tac Toe against {opponent.DisplayName}!\n{opponent.DisplayName} wins!";
-                    buttons.ElementAt(cells_O.Item2).Style = ButtonStyle.Success;
-                    buttons.ElementAt(cells_O.Item3).Style = ButtonStyle.Success;
-                    buttons.ElementAt(cells_O.Item4).Style = ButtonStyle.Success;
+                    buttons.ElementAt(cells_O.Item2).Style = DSharpPlus.ButtonStyle.Success;
+                    buttons.ElementAt(cells_O.Item3).Style = DSharpPlus.ButtonStyle.Success;
+                    buttons.ElementAt(cells_O.Item4).Style = DSharpPlus.ButtonStyle.Success;
                     var losingSide = values.Select((val, index) => (val, index)).Where(x => x.val == 4);
                     foreach (var elem in losingSide)
                     {
-                        buttons.ElementAt(elem.index).Style = ButtonStyle.Danger;
+                        buttons.ElementAt(elem.index).Style = DSharpPlus.ButtonStyle.Danger;
                     }
                     break;
                 }
@@ -207,9 +207,9 @@ namespace Hexa.Modules
             List<int> values = new List<int>();
             for (var i = 0; i < 3; i++)
             {
-                button_row1[i] = (new DiscordButtonComponent(ButtonStyle.Secondary, $"tictactoe_{i}", "\u200B ", false));
-                button_row2[i] = (new DiscordButtonComponent(ButtonStyle.Secondary, $"tictactoe_{i + 3}", "\u200B ", false));
-                button_row3[i] = (new DiscordButtonComponent(ButtonStyle.Secondary, $"tictactoe_{i + 6}", "\u200B ", false));
+                button_row1[i] = (new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, $"tictactoe_{i}", "\u200B ", false));
+                button_row2[i] = (new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, $"tictactoe_{i + 3}", "\u200B ", false));
+                button_row3[i] = (new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, $"tictactoe_{i + 6}", "\u200B ", false));
                 values.Add(2);
                 values.Add(2);
                 values.Add(2);
@@ -258,20 +258,20 @@ namespace Hexa.Modules
                 var button = buttons.Where(x => x.CustomId == result.Result.Id).First();
 
                 button.Disabled = true;
-                button.Style = ButtonStyle.Primary;
+                button.Style = DSharpPlus.ButtonStyle.Primary;
                 button.Label = "\u200A✕\u200A";
                 values[buttonInd] = 5;
 
                 var cells_X = board.check(player: 5);
                 if (cells_X.Item1)
                 {
-                    buttons.ElementAt(cells_X.Item2).Style = ButtonStyle.Success;
-                    buttons.ElementAt(cells_X.Item3).Style = ButtonStyle.Success;
-                    buttons.ElementAt(cells_X.Item4).Style = ButtonStyle.Success;
+                    buttons.ElementAt(cells_X.Item2).Style = DSharpPlus.ButtonStyle.Success;
+                    buttons.ElementAt(cells_X.Item3).Style = DSharpPlus.ButtonStyle.Success;
+                    buttons.ElementAt(cells_X.Item4).Style = DSharpPlus.ButtonStyle.Success;
                     var losingSide = values.Select((val, index) => (val, index)).Where(x => x.val == 4);
                     foreach (var elem in losingSide)
                     {
-                        buttons.ElementAt(elem.index).Style = ButtonStyle.Danger;
+                        buttons.ElementAt(elem.index).Style = DSharpPlus.ButtonStyle.Danger;
                     }
                     break;
                 }
@@ -322,13 +322,13 @@ namespace Hexa.Modules
                 var cells_O = board.check(player: 4);
                 if (cells_O.Item1)
                 {
-                    buttons.ElementAt(cells_O.Item2).Style = ButtonStyle.Success;
-                    buttons.ElementAt(cells_O.Item3).Style = ButtonStyle.Success;
-                    buttons.ElementAt(cells_O.Item4).Style = ButtonStyle.Success;
+                    buttons.ElementAt(cells_O.Item2).Style = DSharpPlus.ButtonStyle.Success;
+                    buttons.ElementAt(cells_O.Item3).Style = DSharpPlus.ButtonStyle.Success;
+                    buttons.ElementAt(cells_O.Item4).Style = DSharpPlus.ButtonStyle.Success;
                     var losingSide = values.Select((val, index) => (val, index)).Where(x => x.val == 5);
                     foreach (var elem in losingSide)
                     {
-                        buttons.ElementAt(elem.index).Style = ButtonStyle.Danger;
+                        buttons.ElementAt(elem.index).Style = DSharpPlus.ButtonStyle.Danger;
                     }
                     break;
                 }

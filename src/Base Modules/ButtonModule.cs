@@ -19,7 +19,7 @@ namespace Hexa.Modules
         public async Task ButtonCommand(CommandContext ctx)
         {
             // await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(hEmbed.embed.Build()));
-            var button = new DiscordButtonComponent(ButtonStyle.Primary, "hello", "test123", false);
+            var button = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "hello", "test123", false);
             var a = new DiscordSelectComponent();
             a.Options = new DiscordSelectComponentOption[] { new DiscordSelectComponentOption("one", "1", "test")};
             var builder = new DiscordMessageBuilder().AddComponents(new DiscordComponent[] {button, a});

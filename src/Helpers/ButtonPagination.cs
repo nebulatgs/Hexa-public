@@ -13,9 +13,9 @@ namespace Hexa.Helpers
     //     public static async Task SendButtonPaginatedMessageAsync(this InteractivityExtension interactivity, DiscordChannel c, DiscordUser u, IEnumerable<Page> pages, string pagination_id, TimeSpan? timeout = null)
     //     {
     //         // Create the buttons
-    //         var next = new DiscordButtonComponent(ButtonStyle.Primary, $"{pagination_id}_next", "next page", false);
-    //         var previous = new DiscordButtonComponent(ButtonStyle.Primary, $"{pagination_id}_previous", "previous page", true);
-    //         var close = new DiscordButtonComponent(ButtonStyle.Danger, $"{pagination_id}_close", "close", false);
+    //         var next = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, $"{pagination_id}_next", "next page", false);
+    //         var previous = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, $"{pagination_id}_previous", "previous page", true);
+    //         var close = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Danger, $"{pagination_id}_close", "close", false);
     //         DiscordButtonComponent[] buttons = { previous, next, close };
     //         var page_list = pages.ToImmutableList();
     //         int current_page = 0;
@@ -76,12 +76,12 @@ namespace Hexa.Helpers
             var current_page = 0;
 
             // Create the buttons
-            var first = new DiscordButtonComponent(ButtonStyle.Secondary, $"{pagination_id}_first", "First", true);
-            var previous = new DiscordButtonComponent(ButtonStyle.Secondary, $"{pagination_id}_previous", "Previous", true);
-            var next = new DiscordButtonComponent(ButtonStyle.Secondary, $"{pagination_id}_next", "Next", current_page == (page_list.Count - 1));
-            var last = new DiscordButtonComponent(ButtonStyle.Secondary, $"{pagination_id}_last", "Last", current_page == (page_list.Count - 1));
-            var print = new DiscordButtonComponent(ButtonStyle.Success, $"{pagination_id}_print", "Print", false);
-            var close = new DiscordButtonComponent(ButtonStyle.Danger, $"{pagination_id}_close", "Close", false);
+            var first = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, $"{pagination_id}_first", "First", true);
+            var previous = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, $"{pagination_id}_previous", "Previous", true);
+            var next = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, $"{pagination_id}_next", "Next", current_page == (page_list.Count - 1));
+            var last = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Secondary, $"{pagination_id}_last", "Last", current_page == (page_list.Count - 1));
+            var print = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Success, $"{pagination_id}_print", "Print", false);
+            var close = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Danger, $"{pagination_id}_close", "Close", false);
 
             var buttons = new List<DiscordButtonComponent>();
             if (showFirst) buttons.Add(first);

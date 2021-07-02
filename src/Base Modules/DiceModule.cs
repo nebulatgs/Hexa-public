@@ -29,7 +29,7 @@ namespace Hexa.Modules
             if (bigint_sides <= 0) throw new ArgumentException("That's…physically impossible?");
             if (sides.Length > 150)
                 throw new ArgumentException("The die was too heavy to roll…");
-            var button = new DiscordButtonComponent(ButtonStyle.Success, "roll", "roll again", false);
+            var button = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Success, "roll", "roll again", false);
             var builder = new DiscordMessageBuilder();
             var interactivity = ctx.Client.GetInteractivity();
             DiscordButtonComponent[] buttons = { button };
@@ -68,7 +68,7 @@ namespace Hexa.Modules
         [Description("Flip a coin!")]
         public async Task FlipCommand(CommandContext ctx)
         {
-            var button = new DiscordButtonComponent(ButtonStyle.Success, "flip", "flip again", false);
+            var button = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Success, "flip", "flip again", false);
             var builder = new DiscordMessageBuilder();
             var interactivity = ctx.Client.GetInteractivity();
             DiscordButtonComponent[] buttons = { button };

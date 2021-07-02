@@ -15,7 +15,7 @@ namespace Hexa.Modules
         public async Task ButtonCommand(InteractionContext ctx)
         {
             // await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().AddEmbed(hEmbed.embed.Build()));
-            var button = new DiscordButtonComponent(ButtonStyle.Primary, "hello", "test123", false);
+            var button = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "hello", "test123", false);
             var builder = new DiscordMessageBuilder().AddComponents(button);
             builder.WithContent("buttons test");
             DiscordComponent[] buttons = {button};
