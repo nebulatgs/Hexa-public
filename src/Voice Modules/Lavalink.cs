@@ -16,6 +16,7 @@ using Hexa.Attributes;
 using Hexa.Helpers;
 using Humanizer;
 using Humanizer.Localisation;
+using SpotifyAPI.Web;
 
 namespace Hexa.Modules
 {
@@ -24,6 +25,7 @@ namespace Hexa.Modules
     {
         private Dictionary<ulong, List<LavalinkTrack>> queue = new();
         private Dictionary<ulong, bool> locked = new();
+        public SpotifyClient spotify { get; set; }
         private async Task Register(CommandContext ctx, LavalinkGuildConnection conn)
         {
             try { await ctx.Guild.CurrentMember.SetDeafAsync(true); } catch { }
@@ -53,6 +55,11 @@ namespace Hexa.Modules
             // conn.
             // }
         }
+        // private async Task<FullTrack> SearchSpotify(string query)
+        // {
+        //     var track = await spotify.Search;
+        //     track.Name
+        // }
         [Command("join")]
         [Aliases("connect", "j", "summon")]
         [Description("Join a voice channel")]
@@ -113,6 +120,7 @@ namespace Hexa.Modules
                 hEmbed.embed.WithTitle($"Now Playing: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("");
             else
                 hEmbed.embed.WithTitle($"Enqueued: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("");
+            hEmbed.embed.WithThumbnail($"https://img.youtube.com/vi/{track.Identifier}/0.jpg");
             hEmbed.embed.AddField("Duration", track.Length.Humanize(3, maxUnit: TimeUnit.Hour, minUnit: TimeUnit.Second));
 
             await message.SafeModifyAsync(hEmbed.Build());
@@ -154,6 +162,7 @@ namespace Hexa.Modules
                 hEmbed.embed.WithTitle($"Now Playing: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("");
             else
                 hEmbed.embed.WithTitle($"Enqueued: {track.Title} by {track.Author}").WithUrl(track.Uri).WithDescription("");
+            hEmbed.embed.WithThumbnail($"https://img.youtube.com/vi/{track.Identifier}/0.jpg");
 
             hEmbed.embed.AddField("Duration", track.Length.Humanize(3, maxUnit: TimeUnit.Hour, minUnit: TimeUnit.Second));
             await message.SafeModifyAsync(hEmbed.Build());
