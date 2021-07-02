@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -23,13 +24,13 @@ namespace Hexa.Modules
         {
             var scriptOptions = Microsoft.CodeAnalysis.Scripting.ScriptOptions.Default
                                .AddReferences(Assembly.GetExecutingAssembly());
-                            //    .AddReferences("System")
-                            //    .AddReferences("System.Linq")
-                            //    .AddReferences(typeof(System.Linq.Enumerable).Assembly)
-                            //    .AddReferences(typeof(DSharpPlus.DiscordClient).Assembly)
-                            //    .AddReferences(typeof(DSharpPlus.Lavalink.DiscordClientExtensions).Assembly)
-                            //    .AddReferences(typeof(DSharpPlus.CommandsNext.BaseCommandModule).Assembly)
-                            //    .AddReferences(typeof(Hexa.Helpers.HexaEmbed).Assembly);
+            //    .AddReferences("System")
+            //    .AddReferences("System.Linq")
+            //    .AddReferences(typeof(System.Linq.Enumerable).Assembly)
+            //    .AddReferences(typeof(DSharpPlus.DiscordClient).Assembly)
+            //    .AddReferences(typeof(DSharpPlus.Lavalink.DiscordClientExtensions).Assembly)
+            //    .AddReferences(typeof(DSharpPlus.CommandsNext.BaseCommandModule).Assembly)
+            //    .AddReferences(typeof(Hexa.Helpers.HexaEmbed).Assembly);
             // .AddReferences(Assembly.GetExecutingAssembly());
             // .AddReferences("Microsoft.CSharp")
             state = CSharpScript.Create(
@@ -75,9 +76,9 @@ namespace Hexa.Modules
         [Category(SettingsManager.HexaSetting.DangerCategory)]
         public async Task ShardCommand(CommandContext ctx)
         {
-           await ctx.RespondAsync(ctx.Client.ShardId.ToString("N0"));
+            await ctx.RespondAsync(ctx.Client.ShardId.ToString("N0"));
         }
-        
+
         [Command("sleave")]
         [Description("Leave a server")]
         [Category(SettingsManager.HexaSetting.DangerCategory)]
