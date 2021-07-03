@@ -39,7 +39,8 @@ namespace Hexa.Modules
             hEmbed.embed.Description = $"snowflake info on {snowflake}";
             hEmbed.embed.AddField(
                 name: "created: ",
-                value: $"{snowTime.ToString("U")} ({Math.Floor((DateTime.Now - snowTime).TotalDays)} days ago)",
+                // value: $"{snowTime.ToString("U")} ({Math.Floor((DateTime.Now - snowTime).TotalDays)} days ago)",
+                value: $"<t:{(long)(((snowflake >> 22) + 1420070400000) / 1000)}:F>\n<t:{(long)(((snowflake >> 22) + 1420070400000) / 1000)}:R>",
                 inline: false
             );
             DiscordUser member;
